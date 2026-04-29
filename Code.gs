@@ -451,9 +451,151 @@ function insertDefaultSettings_(sheet) {
 
 
 /* =====================================================================
- *  End of Phase 2B.
- *  Next phases will add:
- *    - Sample question seeding inside setupSpreadsheet()
+ * 8. SAMPLE QUESTION DATA — VOCAB RUSH
+ * ---------------------------------------------------------------------
+ *  All questions below are ORIGINAL practice items written for this
+ *  project. They are inspired by the general style of TOEIC business
+ *  English vocabulary questions but do not reproduce any copyrighted
+ *  content. Each row is an array whose order matches HEADERS.QUESTIONS:
+ *
+ *    Question_ID, Mode, Part, Category, Level, Passage, Question_Text,
+ *    Choice_A, Choice_B, Choice_C, Choice_D, Correct_Answer,
+ *    Explanation_TH, Tip, Point
+ * ===================================================================== */
+
+/**
+ * getVocabRushSamples – Returns 10 original Vocab Rush questions.
+ * The Mode field is "Vocab Rush" for every row. Passage is empty
+ * because vocabulary items are stand-alone sentences.
+ *
+ * @return {Array<Array>} A 2D array ready to write to the Questions sheet.
+ */
+function getVocabRushSamples() {
+  return [
+
+    // V001 – business meeting vocabulary
+    [
+      'V001', 'Vocab Rush', 'Part 5', 'Business Meeting', 'Easy', '',
+      'The marketing team will ______ the new campaign strategy at tomorrow\'s meeting.',
+      'discuss', 'disclose', 'dismiss', 'distract',
+      'A',
+      'คำว่า "discuss" แปลว่า "อภิปราย/พูดคุยเรื่อง" เหมาะกับการประชุมที่ต้องพูดคุยเกี่ยวกับกลยุทธ์ ส่วน disclose = เปิดเผย, dismiss = ไล่ออก/ปฏิเสธ, distract = ทำให้เสียสมาธิ',
+      'จำว่า "discuss" ตามด้วยคำนามตรง ๆ ได้เลย ไม่ต้องใส่ about',
+      10
+    ],
+
+    // V002 – finance / accounting vocabulary
+    [
+      'V002', 'Vocab Rush', 'Part 5', 'Finance', 'Medium', '',
+      'The accountant prepared a detailed ______ of last quarter\'s expenses.',
+      'review', 'reception', 'refund', 'remark',
+      'A',
+      'คำว่า "review" หมายถึง "การตรวจสอบ/รายงานสรุป" จึงเหมาะกับการตรวจสอบค่าใช้จ่าย ส่วน reception = แผนกต้อนรับ, refund = การคืนเงิน, remark = ความคิดเห็น',
+      'ในบริบทธุรกิจ "review" มักใช้กับเอกสารทางการเงิน เช่น budget review, performance review',
+      10
+    ],
+
+    // V003 – HR / recruitment vocabulary
+    [
+      'V003', 'Vocab Rush', 'Part 5', 'Human Resources', 'Easy', '',
+      'All applicants must ______ their résumés before the deadline.',
+      'submit', 'subscribe', 'suggest', 'supply',
+      'A',
+      'คำว่า "submit" แปลว่า "ส่ง/ยื่น" ใช้กับเอกสาร ใบสมัคร หรือรายงาน ส่วน subscribe = สมัครสมาชิก, suggest = แนะนำ, supply = จัดหา',
+      'จำคู่คำว่า "submit a document / application / report" เป็นวลีติดปาก',
+      10
+    ],
+
+    // V004 – office / workplace vocabulary
+    [
+      'V004', 'Vocab Rush', 'Part 5', 'Office', 'Medium', '',
+      'Please ______ Ms. Tanaka of the schedule change as soon as possible.',
+      'inform', 'inflate', 'invest', 'install',
+      'A',
+      'คำว่า "inform" แปลว่า "แจ้งให้ทราบ" ใช้รูป inform + someone + of + something ส่วน inflate = ทำให้พอง, invest = ลงทุน, install = ติดตั้ง',
+      'โครงสร้างที่ต้องจำ: inform somebody of/about something',
+      10
+    ],
+
+    // V005 – logistics vocabulary
+    [
+      'V005', 'Vocab Rush', 'Part 5', 'Logistics', 'Medium', '',
+      'The shipment is expected to ______ at the warehouse by Friday morning.',
+      'arrive', 'appear', 'approve', 'arrange',
+      'A',
+      'คำว่า "arrive" แปลว่า "มาถึง" ใช้กับสินค้าที่ส่งมาถึงปลายทาง ส่วน appear = ปรากฏ, approve = อนุมัติ, arrange = จัดเตรียม',
+      'จำว่า arrive at + สถานที่เล็ก เช่น warehouse, office และ arrive in + เมือง/ประเทศ',
+      10
+    ],
+
+    // V006 – customer service vocabulary
+    [
+      'V006', 'Vocab Rush', 'Part 5', 'Customer Service', 'Hard', '',
+      'The hotel offers a complimentary breakfast as a way to ______ guest satisfaction.',
+      'enhance', 'enclose', 'endorse', 'enroll',
+      'A',
+      'คำว่า "enhance" แปลว่า "เพิ่ม/ยกระดับ" เหมาะกับการเพิ่มความพึงพอใจ ส่วน enclose = แนบ, endorse = สนับสนุน/รับรอง, enroll = ลงทะเบียน',
+      '"enhance" มักใช้คู่กับคำที่เป็นนามธรรม เช่น quality, experience, satisfaction',
+      10
+    ],
+
+    // V007 – marketing vocabulary
+    [
+      'V007', 'Vocab Rush', 'Part 5', 'Marketing', 'Medium', '',
+      'The advertising agency launched a ______ campaign to attract younger customers.',
+      'targeted', 'tangled', 'tasteless', 'temporary',
+      'A',
+      'คำว่า "targeted" แปลว่า "ที่มุ่งเป้าไปยังกลุ่มเฉพาะ" ส่วน tangled = พันกัน, tasteless = ไร้รสชาติ, temporary = ชั่วคราว',
+      'ในการตลาดสมัยใหม่ มักเจอคำว่า targeted marketing, targeted audience',
+      10
+    ],
+
+    // V008 – contract / legal vocabulary
+    [
+      'V008', 'Vocab Rush', 'Part 5', 'Contracts', 'Hard', '',
+      'Both parties must sign the agreement before it becomes legally ______.',
+      'binding', 'boring', 'building', 'bouncing',
+      'A',
+      'คำว่า "binding" แปลว่า "มีผลผูกพันทางกฎหมาย" จึงเหมาะกับสัญญา ส่วนตัวเลือกอื่นไม่เกี่ยวกับเรื่องสัญญาเลย',
+      'จำวลี "legally binding agreement / contract" ที่มักออกข้อสอบ',
+      10
+    ],
+
+    // V009 – productivity vocabulary
+    [
+      'V009', 'Vocab Rush', 'Part 5', 'Productivity', 'Medium', '',
+      'The new software has significantly improved the team\'s ______.',
+      'efficiency', 'emergency', 'entrance', 'envelope',
+      'A',
+      'คำว่า "efficiency" แปลว่า "ประสิทธิภาพ" จึงเข้ากับการทำงานของทีม ส่วน emergency = เหตุฉุกเฉิน, entrance = ทางเข้า, envelope = ซองจดหมาย',
+      'เน้นรากศัพท์ efficient (adj.) → efficiency (n.) → efficiently (adv.)',
+      10
+    ],
+
+    // V010 – travel / business trip vocabulary
+    [
+      'V010', 'Vocab Rush', 'Part 5', 'Business Travel', 'Easy', '',
+      'Please ______ your flight at least 24 hours before departure.',
+      'confirm', 'consume', 'contain', 'connect',
+      'A',
+      'คำว่า "confirm" แปลว่า "ยืนยัน" ใช้กับการยืนยันเที่ยวบิน การจอง หรือนัดหมาย ส่วน consume = บริโภค, contain = บรรจุ, connect = เชื่อมต่อ',
+      'จำกลุ่มคำ confirm a reservation / appointment / flight ที่พบบ่อยใน TOEIC',
+      10
+    ]
+
+  ];
+}
+
+
+/* =====================================================================
+ *  End of Phase 2C-1.
+ *  Next sub-phases will add:
+ *    - getGrammarSprintSamples()
+ *    - getReadingMissionSamples()
+ *    - getSampleQuestions() aggregator
+ *    - insertSampleQuestionsIfEmpty_(ss)
+ *    - Hook into setupSpreadsheet()
+ *  Followed by:
  *    - getQuestions(mode, limit)
  *    - submitGameResult(result)
  *    - saveMistakes(playerName, mistakes)

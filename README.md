@@ -1152,6 +1152,91 @@ encountered. Please use the new template available in the shared drive.
 
 ---
 
-> ➡ ส่วนถัดไป (Phase 7E-4) จะอธิบายวิธีใช้ข้อมูลในชีต Scores และ
-> Mistakes เพื่อวิเคราะห์ผลและพัฒนาทักษะ TOEIC ตลอดจนการแก้ปัญหา
-> ที่พบบ่อย และไอเดียพัฒนาต่อในอนาคต
+## 14. ปัญหาที่พบบ่อยและวิธีแก้ไข
+
+ส่วนนี้รวบรวมปัญหาที่ผู้ติดตั้งและผู้ใช้งานมักพบ พร้อมแนวทางแก้ไข
+อ่านตารางจากซ้ายไปขวา: **อาการ → สาเหตุที่เป็นไปได้ → วิธีแก้ไข**
+
+### 🔴 ปัญหาหน้าเว็บ
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **เปิดเว็บแอปแล้วเป็นหน้าจอว่าง (Blank page)** | 1. ไฟล์ `Index.html` ตั้งชื่อผิด (เช่น `index` หรือ `Index.htm`)<br>2. โค้ดใน `Code.gs` มี syntax error ทำให้ `doGet()` พัง<br>3. ไฟล์ `Style.html` หรือ `Script.html` หาย | 1. ตรวจชื่อไฟล์ให้ตรงกับ `HtmlService.createTemplateFromFile('Index')`<br>2. ดู Log ที่เมนู **บันทึกของผู้ดำเนินการ** (Executions)<br>3. ตรวจให้แน่ใจว่ามี 4 ไฟล์ครบ |
+| **โหลดเว็บแอปช้าหรือค้างนาน** | 1. ขนาดไฟล์ใหญ่เกินไป<br>2. โควต้า Apps Script เต็ม<br>3. อินเทอร์เน็ตช้า | 1. ลองรีโหลด (`Ctrl + F5`)<br>2. รอ 24 ชม. ถ้าโควต้าหมด<br>3. ทดสอบเครือข่าย |
+| **เห็นข้อความ "Script function not found: doGet"** | ฟังก์ชัน `doGet` ไม่มีใน `Code.gs` หรือสะกดผิด | เปิด `Code.gs` ตรวจให้มี `function doGet(e) { ... }` พร้อม Deploy ใหม่ |
+
+### 🟠 ปัญหาเกี่ยวกับ Google Sheets
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **เริ่มเกมแล้วโหลดคำถามไม่ได้ (Questions not loading)** | 1. `SPREADSHEET_ID` ผิดหรือยังเป็นค่า placeholder<br>2. ยังไม่ได้รัน `setupSpreadsheet()`<br>3. ชีต `Questions` ไม่มีคำถามในโหมดที่เลือก | 1. ตรวจ `SPREADSHEET_ID` ใน `Code.gs` ให้ตรงกับ ID จริง<br>2. รัน `setupSpreadsheet()` จาก Editor<br>3. เพิ่มคำถามในโหมดนั้น หรือลองโหมดอื่นก่อน |
+| **`setupSpreadsheet()` ขึ้น error: "SPREADSHEET_ID is not configured"** | ยังเป็นค่าเริ่มต้น `'PUT_YOUR_SPREADSHEET_ID_HERE'` | แทนที่ด้วย ID จริงจาก URL ของชีต แล้วบันทึกก่อนรัน |
+| **`setupSpreadsheet()` ขึ้น error: "Cannot read properties of null"** | เปิดไฟล์ที่ไม่มีอยู่จริงด้วย ID ผิด | ตรวจ ID ให้ตรง 100% (44 ตัวอักษร) และเป็นไฟล์ที่บัญชีคุณเปิดได้ |
+| **รัน `setupSpreadsheet()` แต่ไม่เห็นแท็บใหม่** | 1. รันใน Editor แต่ไม่ได้เปิดชีตเพื่อดู<br>2. รันใน Project ผิดอันที่ ID ชี้ไป Sheet อื่น | 1. กด F5 ที่หน้า Sheets เพื่อรีโหลด<br>2. ตรวจว่า `SPREADSHEET_ID` ชี้ไปที่ Sheet ที่ต้องการ |
+| **Spreadsheet ID ไม่ถูกต้อง (Wrong Spreadsheet ID)** | คัดลอก URL ทั้งเส้นแทน ID, มีช่องว่างเกิน, ID เป็นของ Sheet อื่นที่ลบไปแล้ว | คัดลอกเฉพาะส่วนระหว่าง `/d/` และ `/edit` ตรวจไม่ให้มีอักษรพิเศษเช่น `?` หรือ `#gid=0` ติดมา |
+
+### 🟡 ปัญหาเกี่ยวกับสิทธิ์ (Permissions)
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **ขึ้น "Permission denied" หรือ "Authorization required"** | ยังไม่ได้อนุมัติสิทธิ์เข้าถึง Google Sheets | รัน `setupSpreadsheet()` ใน Editor → กดอนุมัติตาม pop-up → ลองอีกครั้ง |
+| **ขึ้น "Google ยังไม่ได้ยืนยันแอปนี้"** | Apps Script ยังไม่ได้ผ่านการยืนยันจาก Google (ปกติของแอปส่วนตัว) | คลิก **ขั้นสูง** → **ไปที่ TOEIC Quest (ไม่ปลอดภัย)** → **อนุญาต** |
+| **เปิด URL Web App แล้วขึ้น "You need permission"** | Who has access ตั้งเป็น "เฉพาะตัวฉัน" แต่เปิดด้วยบัญชีอื่น | เปลี่ยน Who has access ใน Manage deployments ให้เปิดกว้างกว่า หรือเปิดด้วยบัญชีเจ้าของ |
+
+### 🟢 ปัญหาเกี่ยวกับการบันทึกข้อมูล
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **เล่นจบรอบแต่คะแนนไม่ถูกบันทึก (Scores not saved)** | 1. ไม่ได้กรอก `SPREADSHEET_ID`<br>2. ชีต `Scores` ถูกลบหรือเปลี่ยนชื่อ<br>3. `google.script.run` ล้มเหลว | 1. ตรวจ `SPREADSHEET_ID`<br>2. รัน `setupSpreadsheet()` อีกครั้งเพื่อสร้างชีตที่หาย<br>3. ดู Console ของเบราว์เซอร์เพื่อหาข้อความ error |
+| **Toast ขึ้น "บันทึกคะแนนไม่สำเร็จ"** | Server ตอบกลับ error เช่น Invalid mode / accuracy ไม่อยู่ในช่วง 0–1 | เปิด Console (F12) ดู error → ตรวจว่า frontend คำนวณ accuracy ถูกหรือไม่ |
+| **กระดานผู้นำว่างเปล่า (Leaderboard empty)** | ยังไม่มีใครเล่นจบรอบ หรือ Scores ถูกลบ | เล่น 1 รอบให้จบเพื่อสร้างข้อมูลแถวแรก |
+| **กระดานผู้นำไม่แสดงผู้เล่นบางคน** | ผู้เล่นรายนั้นไม่ติด Top 10 (เรียงตามคะแนนสูง) | ดู Sheet `Scores` โดยตรงเพื่อตรวจประวัติทั้งหมด |
+
+### 🔵 ปัญหาเกี่ยวกับการเชื่อมต่อ Frontend ↔ Backend
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **ขึ้น error "google.script.run is not defined"** | เปิดไฟล์ `Index.html` ในเบราว์เซอร์โดยตรง (ไม่ผ่าน URL `/exec`) | ต้องเข้าผ่าน URL ที่ได้จากการ Deploy เท่านั้น |
+| **`google.script.run` เรียกแล้วไม่มีการตอบกลับ** | 1. Server function ไม่มี<br>2. ชื่อ function สะกดผิด<br>3. Deploy ค้างเวอร์ชันเก่า | 1. ตรวจฟังก์ชันใน `Code.gs`<br>2. ตรวจการสะกด<br>3. ใช้ Manage deployments → New version |
+| **ขึ้น "TypeError: Cannot read property '...' of undefined"** | Server return ค่าผิดรูปแบบ | ดู Log ที่ Apps Script Executions และตรวจชนิดข้อมูลที่ return |
+
+### 🟣 ปัญหาเกี่ยวกับการแสดงผลและ HTML
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **ขึ้น error "include is not defined" / template error** | 1. ฟังก์ชัน `include()` ไม่อยู่ใน `Code.gs`<br>2. ใช้ `<?= include(...) ?>` แทน `<?!= include(...) ?>` (ขาดเครื่องหมาย `!`) | 1. ตรวจให้มี `function include(filename)` ใน `Code.gs`<br>2. ใช้ `<?!= include('Style'); ?>` แบบมี `!` เพื่อไม่ escape HTML |
+| **`include('Style')` หรือ `include('Script')` หา file ไม่เจอ** | ชื่อไฟล์สะกดผิด เช่น `style.html` (ตัวเล็ก) | ตั้งชื่อไฟล์ตรงตามที่ระบุ: `Style` และ `Script` (ตัวใหญ่ S) |
+| **CSS ไม่ทำงาน หน้าเว็บดูเป็น HTML เปลือย** | ลืม include ไฟล์ Style.html ใน Index.html | ตรวจให้มี `<?!= include('Style'); ?>` ใน `<head>` |
+| **JavaScript ไม่ทำงาน (กดปุ่มแล้วไม่มีอะไรเกิดขึ้น)** | ลืม include `Script.html` ใน Index.html | ตรวจให้มี `<?!= include('Script'); ?>` ก่อนปิด `</body>` |
+| **ภาษาไทยเป็นสี่เหลี่ยมหรือแสดงผิด** | บันทึกไฟล์ไม่ใช่ UTF-8 | บันทึกใหม่จาก Apps Script Editor (เก็บเป็น UTF-8 อยู่แล้ว) |
+
+### ⚪ ปัญหาเรื่องการอัปเดต
+
+| ปัญหา | สาเหตุที่เป็นไปได้ | วิธีแก้ไข |
+|---|---|---|
+| **แก้โค้ดแล้วเว็บแอปยังเป็นเวอร์ชันเก่า (Web App not updated)** | ยังไม่ได้ Deploy เวอร์ชันใหม่ | คลิก **Deploy** → **Manage deployments** → ✏️ → เปลี่ยน Version เป็น "New version" → Deploy |
+| **Deploy ใหม่แล้วแต่ผู้ใช้ยังเห็นเวอร์ชันเก่า** | เบราว์เซอร์ cache | ขอให้ผู้ใช้รีโหลดแบบ Hard reload (`Ctrl + Shift + R` / `Cmd + Shift + R`) |
+| **Deploy ใหม่ทุกครั้งได้ URL ใหม่** | ใช้ **New deployment** แทน Manage deployments | ใช้ **Manage deployments → ✏️ → New version** เพื่อรักษา URL เดิม |
+| **ลืม Spreadsheet ID เดิม** | — | เปิด `Code.gs` ดูในบรรทัด `var SPREADSHEET_ID = '...'` |
+
+---
+
+### 🛠 วิธีดีบักเบื้องต้น
+
+หากเจอปัญหาที่ไม่ตรงกับตารางด้านบน ให้ทำตามขั้นตอนต่อไปนี้:
+
+1. **เปิด Console ของเบราว์เซอร์** — กด `F12` → แท็บ **Console**
+   จะเห็น error ฝั่ง Client (เช่น `TypeError`, `google.script.run`)
+2. **เปิด Apps Script Executions** — เมนูซ้ายของ Editor → **บันทึกของ
+   ผู้ดำเนินการ** จะเห็น log การเรียกฟังก์ชันทั้งหมด พร้อม error ฝั่ง Server
+3. **เพิ่ม Logger.log()** — เพิ่มใน `Code.gs` ที่จุดที่สงสัย แล้วรันใหม่
+   เพื่อดูค่าตัวแปร
+4. **ทดสอบทีละฟังก์ชัน** — ใน Apps Script Editor เลือกฟังก์ชันจาก
+   ดร็อปดาวน์ → กด ▶ Run → ดูผลใน Log
+5. **เริ่มต้นใหม่** — ถ้าจริง ๆ ติดมาก ลองสร้างโปรเจกต์ใหม่ และวางโค้ด
+   ทั้ง 4 ไฟล์อีกครั้ง บางครั้งง่ายกว่าการตามแก้ทีละจุด
+
+---
+
+> ➡ ส่วนถัดไป (Phase 7F-2 / 7F-3) จะอธิบายไอเดียพัฒนาต่อในอนาคต
+> ข้อควรระวังด้านความปลอดภัย และเช็คลิสต์ก่อนเปิดใช้งานจริง

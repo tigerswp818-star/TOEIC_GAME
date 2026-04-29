@@ -1242,9 +1242,306 @@ function rowToQuestionObject_(row) {
 
 
 /* =====================================================================
- *  End of Phase 2D.
- *  Next phases will add:
- *    - submitGameResult(result)
- *    - saveMistakes(playerName, mistakes)
+ * 13. SCORE SUBMISSION & MISTAKE LOGGING
+ * ===================================================================== */
+
+/**
+ * Allowed target scores the player can choose at the start screen.
+ * Any value outside this list is rejected.
+ */
+var ALLOWED_TARGET_SCORES = [500, 650, 750, 850];
+
+
+/**
+ * submitGameResult – Validates a finished round and appends a row to
+ * the Scores sheet. If the result also carries an array of mistakes,
+ * those rows are forwarded to saveMistakes() in the same call so the
+ * client only needs one round-trip.
+ *
+ * Expected input shape:
+ *   {
+ *     playerName:  string,
+ *     targetScore: number (500 | 650 | 750 | 850),
+ *     mode:        'Vocab Rush' | 'Grammar Sprint' | 'Reading Mission',
+ *     score:       number,
+ *     correct:     number,
+ *     wrong:       number,
+ *     accuracy:    number (0-1, e.g. 0.8 for 80%),
+ *     exp:         number,
+ *     coin:        number,
+ *     level:       number,
+ *     badge:       string ('' if none),
+ *     mistakes:    Array<Object> (optional)
+ *   }
+ *
+ * @param {Object} result The round result payload.
+ * @return {Object} { ok: true, savedAt, mistakesSaved }
+ */
+function submitGameResult(result) {
+  if (!result || typeof result !== 'object') {
+    throw new Error('submitGameResult: missing result payload.');
+  }
+
+  // ---- Validate & sanitize player name ---------------------------------
+  var playerName = sanitizeInput(result.playerName);
+  if (!playerName) {
+    throw new Error('Player name is required.');
+  }
+  if (playerName.length > MAX_INPUT_LENGTH) {
+    // sanitizeInput already truncates, but assert defensively.
+    playerName = playerName.substring(0, MAX_INPUT_LENGTH);
+  }
+
+  // ---- Validate target score ------------------------------------------
+  var targetScore = parseInt(result.targetScore, 10);
+  if (isNaN(targetScore) || ALLOWED_TARGET_SCORES.indexOf(targetScore) === -1) {
+    throw new Error('Invalid target score: ' + result.targetScore);
+  }
+
+  // ---- Validate mode --------------------------------------------------
+  var mode = sanitizeInput(result.mode);
+  if (ALLOWED_MODES.indexOf(mode) === -1) {
+    throw new Error('Invalid mode: ' + mode);
+  }
+
+  // ---- Validate numeric stats -----------------------------------------
+  var score   = toNonNegativeInt_(result.score,   'score');
+  var correct = toNonNegativeInt_(result.correct, 'correct');
+  var wrong   = toNonNegativeInt_(result.wrong,   'wrong');
+  var exp     = toNonNegativeInt_(result.exp,     'exp');
+  var coin    = toNonNegativeInt_(result.coin,    'coin');
+  var level   = toNonNegativeInt_(result.level,   'level');
+
+  // accuracy is a ratio in [0, 1].
+  var accuracy = Number(result.accuracy);
+  if (isNaN(accuracy) || accuracy < 0 || accuracy > 1) {
+    throw new Error('Invalid accuracy: ' + result.accuracy);
+  }
+
+  // Sanity check: correct + wrong must equal at most a reasonable round.
+  if (correct + wrong > 100) {
+    throw new Error('Correct + wrong count exceeds round limit.');
+  }
+
+  // ---- Validate badge -------------------------------------------------
+  // Badge is optional; sanitize if present, default to ''.
+  var badge = result.badge ? sanitizeInput(result.badge) : '';
+
+  // ---- Persist to the Scores sheet ------------------------------------
+  var lock = LockService.getScriptLock();
+  lock.waitLock(LOCK_TIMEOUT_MS);
+
+  var savedAt;
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(SHEETS.SCORES);
+    if (!sheet) {
+      throw new Error(
+        'Scores sheet not found. Run setupSpreadsheet() first.'
+      );
+    }
+
+    var timestamp = new Date();
+    savedAt = timestamp.toISOString();
+
+    // Row order MUST match HEADERS.SCORES exactly.
+    var row = [
+      timestamp,
+      playerName,
+      targetScore,
+      mode,
+      score,
+      correct,
+      wrong,
+      accuracy,
+      exp,
+      coin,
+      level,
+      badge
+    ];
+
+    sheet.appendRow(row);
+  } finally {
+    lock.releaseLock();
+  }
+
+  // ---- Forward mistakes (if any) --------------------------------------
+  var mistakesSaved = 0;
+  if (result.mistakes && result.mistakes.length > 0) {
+    try {
+      mistakesSaved = saveMistakes(playerName, result.mistakes);
+    } catch (mErr) {
+      // Score has already been saved successfully. Log the mistake
+      // failure but do not fail the whole call so the user still
+      // sees their score on the leaderboard.
+      Logger.log('saveMistakes failed inside submitGameResult: ' + mErr);
+    }
+  }
+
+  return {
+    ok: true,
+    savedAt: savedAt,
+    mistakesSaved: mistakesSaved
+  };
+}
+
+
+/**
+ * saveMistakes – Appends one row per wrong-answer entry to the
+ * Mistakes sheet. Used both from submitGameResult() and as a stand-
+ * alone server endpoint should the client need to flush mistakes
+ * separately.
+ *
+ * Expected mistake item shape:
+ *   {
+ *     mode:           string,
+ *     questionId:     string,
+ *     questionText:   string,
+ *     selectedAnswer: string ('' or 'A'/'B'/'C'/'D'),
+ *     correctAnswer:  string ('A'|'B'|'C'|'D'),
+ *     category:       string
+ *   }
+ *
+ * @param {string} playerName            The player who made the mistakes.
+ * @param {Array<Object>} mistakes       The mistake records to save.
+ * @return {number} The number of rows actually written.
+ */
+function saveMistakes(playerName, mistakes) {
+  // ---- Validate inputs ------------------------------------------------
+  var cleanName = sanitizeInput(playerName);
+  if (!cleanName) {
+    throw new Error('saveMistakes: playerName is required.');
+  }
+  if (!mistakes || !mistakes.length) {
+    return 0;
+  }
+
+  // ---- Build the rows in HEADERS.MISTAKES order -----------------------
+  var timestamp = new Date();
+  var rows = [];
+
+  for (var i = 0; i < mistakes.length; i++) {
+    var m = mistakes[i] || {};
+
+    var mode           = sanitizeInput(m.mode);
+    var questionId     = sanitizeInput(m.questionId);
+    var questionText   = sanitizeLong_(m.questionText);
+    var selectedAnswer = sanitizeChoice_(m.selectedAnswer);
+    var correctAnswer  = sanitizeChoice_(m.correctAnswer);
+    var category       = sanitizeInput(m.category);
+
+    // Skip rows with no usable identifying information.
+    if (!questionId && !questionText) {
+      continue;
+    }
+
+    rows.push([
+      timestamp,
+      cleanName,
+      mode,
+      questionId,
+      questionText,
+      selectedAnswer,
+      correctAnswer,
+      category
+    ]);
+  }
+
+  if (rows.length === 0) {
+    return 0;
+  }
+
+  // ---- Write under a script lock --------------------------------------
+  var lock = LockService.getScriptLock();
+  lock.waitLock(LOCK_TIMEOUT_MS);
+
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(SHEETS.MISTAKES);
+    if (!sheet) {
+      throw new Error(
+        'Mistakes sheet not found. Run setupSpreadsheet() first.'
+      );
+    }
+
+    var startRow = sheet.getLastRow() + 1;
+    sheet.getRange(startRow, 1, rows.length, HEADERS.MISTAKES.length)
+      .setValues(rows);
+  } finally {
+    lock.releaseLock();
+  }
+
+  return rows.length;
+}
+
+
+/* ---------------------------------------------------------------------
+ *  Validation helpers private to this section.
+ * ------------------------------------------------------------------- */
+
+/**
+ * toNonNegativeInt_ – Coerces a value to a non-negative integer.
+ * Throws if the value is not parseable or is negative.
+ *
+ * @param {*} value     The raw input.
+ * @param {string} name Field name used in the error message.
+ * @return {number} The validated integer.
+ * @private
+ */
+function toNonNegativeInt_(value, name) {
+  var n = parseInt(value, 10);
+  if (isNaN(n) || n < 0) {
+    throw new Error('Invalid ' + name + ': ' + value);
+  }
+  return n;
+}
+
+
+/**
+ * sanitizeLong_ – Like sanitizeInput but allows longer strings (used
+ * for question text snippets stored in the Mistakes sheet). Strips
+ * control characters and angle brackets, collapses whitespace, and
+ * caps at 500 characters.
+ *
+ * @param {*} value The raw input.
+ * @return {string} The cleaned string.
+ * @private
+ */
+function sanitizeLong_(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  var s = String(value)
+    .replace(/[\x00-\x1F\x7F]/g, '')
+    .replace(/[<>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (s.length > 500) {
+    s = s.substring(0, 500);
+  }
+  return s;
+}
+
+
+/**
+ * sanitizeChoice_ – Normalizes an answer choice. Returns one of
+ * 'A', 'B', 'C', 'D', or '' (for "no answer / timeout").
+ *
+ * @param {*} value The raw input.
+ * @return {string} The normalized choice.
+ * @private
+ */
+function sanitizeChoice_(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  var s = String(value).trim().toUpperCase();
+  return (s === 'A' || s === 'B' || s === 'C' || s === 'D') ? s : '';
+}
+
+
+/* =====================================================================
+ *  End of Phase 2E.
+ *  Next phase will add:
  *    - getLeaderboard()
  * ===================================================================== */

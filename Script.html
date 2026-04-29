@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5B):
+ * Current build (through Phase 5C):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -14,6 +14,7 @@
  *   - resetGame()
  *   - startGame()
  *   - selectMode(mode)
+ *   - loadQuestions(mode)
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -441,14 +442,137 @@
     showScreen('game');
 
     // ---- Hand off to question loader ----------------------------------
-    // loadQuestions() is defined in a later phase; guard with typeof so
-    // running this build in isolation degrades gracefully instead of
-    // throwing a ReferenceError.
-    if (typeof loadQuestions === 'function') {
-      loadQuestions(mode);
-    } else {
-      console.warn('selectMode: loadQuestions() not yet implemented.');
+    loadQuestions(mode);
+  }
+
+
+  /**
+   * loadQuestions – Fetches a fresh batch of questions from the back
+   * end via google.script.run.getQuestions(mode, limit). Manages the
+   * loading overlay, validates the response, resets per-round counters,
+   * and hands control to renderQuestion() on success.
+   *
+   * On any failure (server error, empty result), shows a Thai error
+   * toast and routes the user back to the Mode Selection screen so
+   * they can try again.
+   *
+   * @param {string} mode One of CONSTANTS.ALLOWED_MODES.
+   */
+  function loadQuestions(mode) {
+    // ---- Validate mode (defensive, also guards direct callers) --------
+    if (CONSTANTS.ALLOWED_MODES.indexOf(mode) === -1) {
+      showError('โหมดที่เลือกไม่ถูกต้อง');
+      showScreen('mode');
+      return;
     }
+
+    // ---- Show loading overlay -----------------------------------------
+    showLoading('กำลังโหลดคำถาม...');
+
+    // ---- Reset round counters defensively (selectMode already did,
+    //      but loadQuestions may also be called as a stand-alone retry).
+    state.questions    = [];
+    state.currentIdx   = 0;
+    state.score        = 0;
+    state.correctCount = 0;
+    state.wrongCount   = 0;
+    state.streak       = 0;
+    state.exp          = 0;
+    state.coin         = 0;
+    state.level        = 1;
+    state.badge        = '';
+    state.mistakes     = [];
+
+    // ---- Guard against the google.script.run bridge being missing
+    //      (e.g. when previewing the file outside Apps Script). --------
+    if (!window.google || !google.script || !google.script.run) {
+      hideLoading();
+      showError('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ในขณะนี้');
+      showScreen('mode');
+      return;
+    }
+
+    var limit = CONSTANTS.QUESTIONS_PER_ROUND || 10;
+
+    google.script.run
+      .withSuccessHandler(function (questions) {
+        handleQuestionsLoaded_(questions, mode);
+      })
+      .withFailureHandler(function (err) {
+        handleQuestionsFailed_(err);
+      })
+      .getQuestions(mode, limit);
+  }
+
+
+  /**
+   * handleQuestionsLoaded_ – Success path for loadQuestions().
+   * Validates the payload, stores it on state, and triggers the first
+   * render. Empty arrays are treated as a soft error.
+   *
+   * @param {Array<Object>} questions Array returned by getQuestions().
+   * @param {string} mode             Mode requested (kept for context).
+   * @private
+   */
+  function handleQuestionsLoaded_(questions, mode) {
+    hideLoading();
+
+    // Validate response shape.
+    if (!questions || !questions.length) {
+      showError(
+        'ยังไม่มีคำถามในโหมดนี้ กรุณาเพิ่มคำถามในชีต Questions ' +
+        'หรือเลือกโหมดอื่น'
+      );
+      showScreen('mode');
+      return;
+    }
+
+    // Defensive: ensure each question has the minimum fields. Filter
+    // out malformed rows so renderQuestion never crashes on bad data.
+    var clean = [];
+    for (var i = 0; i < questions.length; i++) {
+      var q = questions[i];
+      if (q && q.questionText && q.choices &&
+          (q.choices.A || q.choices.B || q.choices.C || q.choices.D)) {
+        clean.push(q);
+      }
+    }
+
+    if (clean.length === 0) {
+      showError('ข้อมูลคำถามผิดพลาด กรุณาลองใหม่');
+      showScreen('mode');
+      return;
+    }
+
+    state.questions  = clean;
+    state.currentIdx = 0;
+    state.mode       = mode;
+
+    // Hand off to the renderer (added in a later phase). Guard so the
+    // current build is testable end-to-end without renderQuestion().
+    if (typeof renderQuestion === 'function') {
+      renderQuestion();
+    } else {
+      console.warn('loadQuestions: renderQuestion() not yet implemented.');
+      showToast('โหลดคำถามสำเร็จ ' + clean.length + ' ข้อ', 'success');
+    }
+  }
+
+
+  /**
+   * handleQuestionsFailed_ – Failure path for loadQuestions().
+   * Surfaces a friendly Thai error and returns the user to the Mode
+   * Selection screen so they can retry without restarting the round.
+   *
+   * @param {Error|string} err The failure reason from Apps Script.
+   * @private
+   */
+  function handleQuestionsFailed_(err) {
+    hideLoading();
+    var msg = (err && err.message) ? err.message : String(err || '');
+    console.warn('getQuestions failed: ' + msg);
+    showError('โหลดคำถามไม่สำเร็จ กรุณาลองใหม่');
+    showScreen('mode');
   }
 
 
@@ -585,13 +709,14 @@
    * ===================================================================== */
 
   window.TOEICQuest = {
-    initApp:    initApp,
-    resetGame:  resetGame,
-    startGame:  startGame,
-    selectMode: selectMode,
-    showScreen: showScreen,
-    showToast:  showToast,
-    showError:  showError,
+    initApp:       initApp,
+    resetGame:     resetGame,
+    startGame:     startGame,
+    selectMode:    selectMode,
+    loadQuestions: loadQuestions,
+    showScreen:    showScreen,
+    showToast:     showToast,
+    showError:     showError,
     // Internal hooks exposed for later phases to hang behavior off of:
     _state:     state,
     _const:     CONSTANTS,

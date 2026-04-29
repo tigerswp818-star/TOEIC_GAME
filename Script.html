@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Phase 5A: foundation
+ * Current build (through Phase 5B):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -12,6 +12,8 @@
  *   - Loading and toast helpers
  *   - initApp()
  *   - resetGame()
+ *   - startGame()
+ *   - selectMode(mode)
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -269,8 +271,9 @@
     // Start visible on the Start screen.
     showScreen('start');
 
-    // Wire up the simple, always-safe listeners that exist on Phase 5A.
+    // Wire all listeners that the current build supports.
     wireStartScreenInputs_();
+    wireModeScreenInputs_();
 
     // Attempt to fetch server-side settings (timer, scoring, etc.).
     // Fall back silently to CONSTANTS if the call fails or is slow.
@@ -341,14 +344,122 @@
 
 
   /* =====================================================================
-   * 7. INTERNAL WIRING
+   * 7. GAME FLOW — START & MODE SELECTION
    * ===================================================================== */
 
   /**
-   * wireStartScreenInputs_ – Attaches the small set of listeners that
-   * the start screen needs even before later phases are added: target
-   * chip selection and the "view leaderboard" shortcut. The actual
-   * "Start" button handler lives in startGame() (added in Phase 5B).
+   * startGame – Entry from the Start screen.
+   * Reads the player name and selected target score, validates them,
+   * stores them on state, and transitions to the Mode Selection screen.
+   * Shows clear, Thai validation errors via the toast helper instead
+   * of using browser alerts.
+   */
+  function startGame() {
+    var nameEl = $('#playerNameInput');
+    var rawName = nameEl ? nameEl.value : '';
+
+    // ---- Trim and length-cap the player name ---------------------------
+    var name = (rawName || '').replace(/\s+/g, ' ').trim();
+    if (name.length > CONSTANTS.MAX_NAME_LENGTH) {
+      name = name.substring(0, CONSTANTS.MAX_NAME_LENGTH);
+    }
+
+    // ---- Validate: name not empty -------------------------------------
+    if (!name) {
+      showError('กรุณากรอกชื่อผู้เล่นก่อนเริ่มเกม');
+      if (nameEl) {
+        nameEl.focus();
+      }
+      return;
+    }
+
+    // ---- Validate: target score chosen --------------------------------
+    if (!state.targetScore ||
+        CONSTANTS.ALLOWED_TARGETS.indexOf(state.targetScore) === -1) {
+      showError('กรุณาเลือกคะแนนเป้าหมาย TOEIC ก่อน');
+      return;
+    }
+
+    // ---- Save profile to state ----------------------------------------
+    state.playerName = name;
+
+    // Sync the name back into the input in case we trimmed it.
+    if (nameEl) {
+      nameEl.value = name;
+    }
+
+    // Update the greeting on the Mode screen.
+    setText('#modePlayerName', name);
+
+    // ---- Transition to Mode Selection ---------------------------------
+    showScreen('mode');
+  }
+
+
+  /**
+   * selectMode – Entry from the Mode Selection screen.
+   * Persists the chosen mode, clears any leftover round data, moves to
+   * the Game screen, and hands off to loadQuestions().
+   *
+   * @param {string} mode One of CONSTANTS.ALLOWED_MODES.
+   */
+  function selectMode(mode) {
+    // ---- Validate the mode against the allowlist ----------------------
+    if (CONSTANTS.ALLOWED_MODES.indexOf(mode) === -1) {
+      showError('โหมดที่เลือกไม่ถูกต้อง');
+      return;
+    }
+
+    // ---- Reset per-round game state -----------------------------------
+    // We keep the player profile (name + target) and any cached settings
+    // so the user can play multiple rounds without re-entering details.
+    if (state.timer && state.timer.intervalId) {
+      clearInterval(state.timer.intervalId);
+    }
+    state.mode         = mode;
+    state.questions    = [];
+    state.currentIdx   = 0;
+    state.timer = {
+      intervalId:    null,
+      secondsLeft:   CONSTANTS.TIMER_SECONDS,
+      questionStart: 0,
+      locked:        false
+    };
+    state.score        = 0;
+    state.correctCount = 0;
+    state.wrongCount   = 0;
+    state.streak       = 0;
+    state.exp          = 0;
+    state.coin         = 0;
+    state.level        = 1;
+    state.badge        = '';
+    state.mistakes     = [];
+
+    // ---- Move to the game screen --------------------------------------
+    // The game screen will be fully populated by renderQuestion() in a
+    // later phase. For now it shows a card with the timer/HUD shell.
+    showScreen('game');
+
+    // ---- Hand off to question loader ----------------------------------
+    // loadQuestions() is defined in a later phase; guard with typeof so
+    // running this build in isolation degrades gracefully instead of
+    // throwing a ReferenceError.
+    if (typeof loadQuestions === 'function') {
+      loadQuestions(mode);
+    } else {
+      console.warn('selectMode: loadQuestions() not yet implemented.');
+    }
+  }
+
+
+  /* =====================================================================
+   * 8. INTERNAL WIRING
+   * ===================================================================== */
+
+  /**
+   * wireStartScreenInputs_ – Listeners that belong to the Start screen:
+   * target-score chip selection, name-field length cap, and the two
+   * action buttons (Start, View Leaderboard).
    * @private
    */
   function wireStartScreenInputs_() {
@@ -374,13 +485,63 @@
     }
 
     // Live trim of the player-name field so it never exceeds the
-    // server-side limit.
+    // server-side limit, and Enter-key shortcut.
     var nameEl = $('#playerNameInput');
     if (nameEl) {
       nameEl.addEventListener('input', function () {
         if (nameEl.value.length > CONSTANTS.MAX_NAME_LENGTH) {
           nameEl.value = nameEl.value.substring(0, CONSTANTS.MAX_NAME_LENGTH);
         }
+      });
+      nameEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          startGame();
+        }
+      });
+    }
+
+    // Start button.
+    var startBtn = $('#startButton');
+    if (startBtn) {
+      startBtn.addEventListener('click', startGame);
+    }
+
+    // "View Leaderboard" shortcut from the Start screen. The full
+    // leaderboard loading logic is added in a later phase; for now we
+    // simply switch to the leaderboard screen so the layout is testable.
+    var viewBoardBtn = $('#viewLeaderboardFromStart');
+    if (viewBoardBtn) {
+      viewBoardBtn.addEventListener('click', function () {
+        showScreen('leaderboard');
+        if (typeof loadLeaderboard === 'function') {
+          loadLeaderboard();
+        }
+      });
+    }
+  }
+
+
+  /**
+   * wireModeScreenInputs_ – Listeners that belong to the Mode Selection
+   * screen: the three mode cards and the back-to-start button.
+   * @private
+   */
+  function wireModeScreenInputs_() {
+    var modeCards = $$('#screenMode .mode-card');
+    for (var i = 0; i < modeCards.length; i++) {
+      (function (card) {
+        card.addEventListener('click', function () {
+          var mode = card.getAttribute('data-mode');
+          selectMode(mode);
+        });
+      })(modeCards[i]);
+    }
+
+    var backBtn = $('#backToStart');
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        showScreen('start');
       });
     }
   }
@@ -415,7 +576,7 @@
 
 
   /* =====================================================================
-   * 8. EXPORTS & BOOT
+   * 9. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -426,6 +587,8 @@
   window.TOEICQuest = {
     initApp:    initApp,
     resetGame:  resetGame,
+    startGame:  startGame,
+    selectMode: selectMode,
     showScreen: showScreen,
     showToast:  showToast,
     showError:  showError,

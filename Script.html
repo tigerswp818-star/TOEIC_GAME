@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5E):
+ * Current build (through Phase 5F):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -24,6 +24,11 @@
  *   - stopTimer()
  *   - handleTimeUp()
  *   - updateTimerDisplay()
+ *   - handleAnswer(choice)
+ *   - calculateQuestionScore(isCorrect, responseTime)
+ *   - showExplanation(isCorrect, selectedChoice)
+ *   - disableAnswerButtons()
+ *   - highlightCorrectAndWrongChoices(selectedChoice, correctAnswer)
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -914,7 +919,174 @@
 
 
   /* =====================================================================
-   * 10. INTERNAL WIRING
+   * 10. GAME FLOW — ANSWER HANDLING
+   * ===================================================================== */
+
+  /**
+   * handleAnswer – Runs when the user picks A, B, C, or D.
+   * Stops the timer, locks further input, scores the answer, updates
+   * round counters, and reveals the feedback panel with the correct
+   * answer plus Thai explanation and tip.
+   *
+   * @param {string} choice One of 'A', 'B', 'C', 'D'.
+   */
+  function handleAnswer(choice) {
+    // 1. Guard: ignore double-clicks and answers after timeout/lock.
+    if (state.timer.locked) return;
+
+    // 2. Validate the input letter.
+    if (choice !== 'A' && choice !== 'B' && choice !== 'C' && choice !== 'D') {
+      return;
+    }
+
+    // 3. Lock further input and stop the countdown.
+    state.timer.locked = true;
+    stopTimer();
+
+    var q = state.questions[state.currentIdx];
+    if (!q) return;
+
+    // 4. Compute response time in seconds (used for the speed bonus).
+    var responseTime =
+      (Date.now() - (state.timer.questionStart || Date.now())) / 1000;
+
+    // 5. Determine correctness and update streak / counters BEFORE
+    //    calling calculateQuestionScore, because the streak bonus
+    //    depends on the post-answer streak value.
+    var correctLetter = q.correctAnswer || '';
+    var isCorrect = (choice === correctLetter);
+
+    if (isCorrect) {
+      state.correctCount += 1;
+      state.streak       += 1;
+      state.coin         += CONSTANTS.COIN_PER_CORRECT;
+    } else {
+      state.wrongCount += 1;
+      state.streak     = 0;
+
+      // Log the mistake for the round-end batch save.
+      state.mistakes.push({
+        mode:           state.mode,
+        questionId:     q.questionId || '',
+        questionText:   q.questionText || '',
+        selectedAnswer: choice,
+        correctAnswer:  correctLetter,
+        category:       q.category || ''
+      });
+    }
+
+    // 6. Award points + EXP for this question.
+    var earned = calculateQuestionScore(isCorrect, responseTime);
+    state.score += earned;
+    state.exp   += earned;
+
+    // 7. Visual + textual feedback.
+    disableAnswerButtons();
+    highlightCorrectAndWrongChoices(choice, correctLetter);
+    showExplanation(isCorrect, choice);
+
+    // 8. Refresh the HUD so score and streak update immediately.
+    updateGameHUD();
+  }
+
+
+  /**
+   * calculateQuestionScore – Pure score calculation for one question.
+   * The caller must have already updated state.streak so the streak
+   * bonus is evaluated against the post-answer streak value.
+   *
+   * Rules:
+   *   - Wrong answer:       0 points.
+   *   - Correct answer:    +CONSTANTS.BASE_POINT (10).
+   *   - Within 5 seconds:  +CONSTANTS.SPEED_BONUS (5).
+   *   - Streak ÷ 3 == 0:   +CONSTANTS.STREAK_BONUS (10).
+   *
+   * @param {boolean} isCorrect    Whether the answer was correct.
+   * @param {number}  responseTime Seconds elapsed since the question loaded.
+   * @return {number} Points earned for this question (>= 0).
+   */
+  function calculateQuestionScore(isCorrect, responseTime) {
+    if (!isCorrect) return 0;
+
+    var earned = CONSTANTS.BASE_POINT;
+
+    // Speed bonus.
+    if (typeof responseTime === 'number' &&
+        responseTime <= CONSTANTS.SPEED_BONUS_LIMIT) {
+      earned += CONSTANTS.SPEED_BONUS;
+    }
+
+    // Streak bonus every Nth correct in a row.
+    if (state.streak > 0 &&
+        state.streak % CONSTANTS.STREAK_INTERVAL === 0) {
+      earned += CONSTANTS.STREAK_BONUS;
+    }
+
+    return earned;
+  }
+
+
+  /**
+   * showExplanation – Reveals the feedback panel for the answered
+   * question with the appropriate correct/wrong tone, the Thai
+   * explanation, and the study tip. Delegates the low-level DOM work
+   * to showQuestionFeedback_ so the timeout path stays in sync.
+   *
+   * @param {boolean} isCorrect      Whether the answer was correct.
+   * @param {string}  selectedChoice The letter the user picked.
+   */
+  function showExplanation(isCorrect, selectedChoice) {
+    // selectedChoice is accepted for API compatibility but not needed
+    // by the renderer — showQuestionFeedback_ already includes the
+    // correct answer in the header for wrong responses.
+    showQuestionFeedback_(isCorrect ? 'correct' : 'wrong');
+  }
+
+
+  /**
+   * disableAnswerButtons – Marks every choice button as disabled both
+   * visually and interactively, so further clicks are ignored even if
+   * the timer-locked flag is bypassed.
+   */
+  function disableAnswerButtons() {
+    var btns = $$('#choicesBox .choice-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      btns[i].setAttribute('aria-disabled', 'true');
+      btns[i].classList.add('disabled');
+    }
+  }
+
+
+  /**
+   * highlightCorrectAndWrongChoices – Applies tone classes to the four
+   * choice buttons after an answer is registered:
+   *   - The correct letter gets .correct (green pulse).
+   *   - The user's wrong pick (if any) gets .wrong (red shake).
+   *   - Every other letter gets .muted to recede visually.
+   *
+   * @param {string} selectedChoice The letter the user picked.
+   * @param {string} correctAnswer  The correct letter for the question.
+   */
+  function highlightCorrectAndWrongChoices(selectedChoice, correctAnswer) {
+    var btns = $$('#choicesBox .choice-btn');
+    for (var i = 0; i < btns.length; i++) {
+      var btn = btns[i];
+      var letter = btn.getAttribute('data-choice');
+
+      if (letter === correctAnswer) {
+        btn.classList.add('correct');
+      } else if (letter === selectedChoice) {
+        btn.classList.add('wrong');
+      } else {
+        btn.classList.add('muted');
+      }
+    }
+  }
+
+
+  /* =====================================================================
+   * 11. INTERNAL WIRING
    * ===================================================================== */
 
   /**
@@ -1087,7 +1259,7 @@
 
 
   /* =====================================================================
-   * 11. EXPORTS & BOOT
+   * 12. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -1104,6 +1276,8 @@
     renderQuestion: renderQuestion,
     startTimer:     startTimer,
     stopTimer:      stopTimer,
+    handleAnswer:   handleAnswer,
+    showExplanation: showExplanation,
     showScreen:     showScreen,
     showToast:      showToast,
     showError:      showError,

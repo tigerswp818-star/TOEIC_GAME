@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5F):
+ * Current build (through Phase 5G):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -29,6 +29,10 @@
  *   - showExplanation(isCorrect, selectedChoice)
  *   - disableAnswerButtons()
  *   - highlightCorrectAndWrongChoices(selectedChoice, correctAnswer)
+ *   - nextQuestion()
+ *   - finishGame()
+ *   - calculateFinalStats()
+ *   - renderResult(stats)
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -290,6 +294,7 @@
     wireStartScreenInputs_();
     wireModeScreenInputs_();
     wireGameScreenInputs_();
+    wireResultScreenInputs_();
 
     // Attempt to fetch server-side settings (timer, scoring, etc.).
     // Fall back silently to CONSTANTS if the call fails or is slow.
@@ -1086,7 +1091,227 @@
 
 
   /* =====================================================================
-   * 11. INTERNAL WIRING
+   * 11. GAME FLOW — ADVANCING & FINISHING
+   * ===================================================================== */
+
+  /**
+   * nextQuestion – Stops the timer and moves to the next question in
+   * the queue. When there are no more questions left, hands off to
+   * finishGame() instead of trying to render.
+   */
+  function nextQuestion() {
+    stopTimer();
+    state.currentIdx += 1;
+
+    if (state.currentIdx >= state.questions.length) {
+      finishGame();
+    } else {
+      renderQuestion();
+    }
+  }
+
+
+  /**
+   * finishGame – Closes out the round.
+   * Adds the per-round EXP completion bonus, computes final stats,
+   * persists them on state, switches to the result screen, and kicks
+   * off the score submission to the back end.
+   */
+  function finishGame() {
+    stopTimer();
+
+    // Completion bonus.
+    state.exp += CONSTANTS.EXP_PER_ROUND;
+
+    // Compute final stats and apply derived fields to state.
+    var stats = calculateFinalStats();
+    state.level = stats.level;
+    state.badge = stats.badge;
+
+    // Render the result screen.
+    renderResult(stats);
+
+    // Submit to the back end (added in Phase 5H).
+    if (typeof submitScore === 'function') {
+      submitScore();
+    } else {
+      console.warn('finishGame: submitScore() not yet implemented.');
+    }
+  }
+
+
+  /**
+   * calculateFinalStats – Derives accuracy, level, badge, and a "weak
+   * area" suggestion from the current state. Pure: does not mutate.
+   *
+   * @return {Object} { accuracy, level, badge, weakArea }
+   */
+  function calculateFinalStats() {
+    var totalAnswered = state.correctCount + state.wrongCount;
+    var accuracy = totalAnswered > 0
+      ? (state.correctCount / totalAnswered)
+      : 0;
+
+    // Every EXP_PER_LEVEL EXP earns a level. Floor + 1 keeps the
+    // minimum at level 1 even with 0 EXP.
+    var perLevel = CONSTANTS.EXP_PER_LEVEL || 100;
+    var level = Math.max(1, Math.floor(state.exp / perLevel) + 1);
+
+    // Badge: awarded only when accuracy meets the threshold.
+    var badge = '';
+    if (accuracy >= CONSTANTS.BADGE_THRESHOLD) {
+      badge = CONSTANTS.BADGE_NAME;
+    }
+
+    // Weak area: most-frequent mistake category for the round.
+    var weakArea = computeWeakArea_();
+
+    return {
+      accuracy: accuracy,
+      level:    level,
+      badge:    badge,
+      weakArea: weakArea
+    };
+  }
+
+
+  /**
+   * computeWeakArea_ – Returns the category name with the highest
+   * mistake count for this round, or '' if there were no mistakes
+   * (or no usable category labels).
+   * @return {string}
+   * @private
+   */
+  function computeWeakArea_() {
+    if (!state.mistakes || state.mistakes.length === 0) {
+      return '';
+    }
+
+    var counts = {};
+    for (var i = 0; i < state.mistakes.length; i++) {
+      var cat = (state.mistakes[i] && state.mistakes[i].category) || '';
+      cat = cat.toString().trim();
+      if (!cat) continue;
+      counts[cat] = (counts[cat] || 0) + 1;
+    }
+
+    var topName = '';
+    var topCount = 0;
+    for (var key in counts) {
+      if (counts.hasOwnProperty(key) && counts[key] > topCount) {
+        topName  = key;
+        topCount = counts[key];
+      }
+    }
+    return topName;
+  }
+
+
+  /**
+   * renderResult – Paints the Result screen using the player profile,
+   * round counters, and the stats object from calculateFinalStats().
+   * Switches to the result screen as the first step so any animations
+   * trigger from the visible screen.
+   *
+   * @param {Object} [stats] Optional — falls back to recomputing if absent.
+   */
+  function renderResult(stats) {
+    if (!stats) {
+      stats = calculateFinalStats();
+    }
+
+    showScreen('result');
+
+    // Emoji tone reflects performance band.
+    var emoji;
+    if (stats.accuracy >= CONSTANTS.BADGE_THRESHOLD) {
+      emoji = '🏆';
+    } else if (stats.accuracy >= 0.5) {
+      emoji = '🎯';
+    } else {
+      emoji = '💪';
+    }
+    setText('#resultEmoji', emoji);
+
+    // Subtitle: player name • mode • target score.
+    var subtitle =
+      'ผู้เล่น: ' + (state.playerName || '—') +
+      ' • โหมด: ' + (state.mode || '—') +
+      ' • เป้าหมาย: ' + (state.targetScore || '—');
+    setText('#resultSubtitle', subtitle);
+
+    // Stat cards.
+    setText('#statScore',    state.score);
+    setText('#statAccuracy', Math.round(stats.accuracy * 100) + '%');
+    setText('#statCorrect',  state.correctCount);
+    setText('#statWrong',    state.wrongCount);
+    setText('#statExp',      state.exp);
+    setText('#statCoin',     state.coin);
+    setText('#statLevel',    stats.level);
+    setText('#statBadge',    stats.badge ? stats.badge : '—');
+
+    // Weak area recommendation (rendered into a dynamically created
+    // panel so we don't need to extend Index.html).
+    renderWeakArea_(stats.weakArea);
+  }
+
+
+  /**
+   * renderWeakArea_ – Adds (or updates) a small recommendation panel
+   * inside the Result card pointing the user at the category they
+   * missed most often. Hidden when there is no weak area.
+   *
+   * @param {string} weakArea Category label, or empty string.
+   * @private
+   */
+  function renderWeakArea_(weakArea) {
+    var card = $('#screenResult .card');
+    if (!card) return;
+
+    var panel = $('#resultWeakArea');
+
+    // No weak area → ensure the panel is gone / hidden.
+    if (!weakArea) {
+      if (panel) panel.classList.add('hidden');
+      return;
+    }
+
+    // Lazily create the panel on the first round that needs it.
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'resultWeakArea';
+      panel.className = 'feedback';
+      panel.style.marginTop = '16px';
+
+      var label = document.createElement('div');
+      label.className = 'feedback-label';
+      label.textContent = 'จุดที่ควรพัฒนา';
+
+      var text = document.createElement('div');
+      text.className = 'feedback-text';
+      text.id = 'resultWeakAreaText';
+
+      panel.appendChild(label);
+      panel.appendChild(text);
+
+      // Insert just before the action row so it stays above the buttons.
+      var actionRow = $('#screenResult .action-row');
+      if (actionRow && actionRow.parentNode === card) {
+        card.insertBefore(panel, actionRow);
+      } else {
+        card.appendChild(panel);
+      }
+    }
+
+    panel.classList.remove('hidden');
+    setText('#resultWeakAreaText',
+      'หมวดที่คุณตอบผิดบ่อยที่สุด: ' + weakArea +
+      ' — ลองฝึกเพิ่มในหมวดนี้เพื่อเก็บคะแนน!');
+  }
+
+
+  /* =====================================================================
+   * 12. INTERNAL WIRING
    * ===================================================================== */
 
   /**
@@ -1206,6 +1431,40 @@
 
 
   /**
+   * wireResultScreenInputs_ – Listeners for the three Result-screen
+   * buttons: play again (back to mode selection), view leaderboard,
+   * and back to start.
+   * @private
+   */
+  function wireResultScreenInputs_() {
+    var playAgain = $('#resultPlayAgain');
+    if (playAgain) {
+      playAgain.addEventListener('click', function () {
+        // Keep the player profile; let the user pick a (possibly new) mode.
+        showScreen('mode');
+      });
+    }
+
+    var viewBoard = $('#resultViewBoard');
+    if (viewBoard) {
+      viewBoard.addEventListener('click', function () {
+        showScreen('leaderboard');
+        if (typeof loadLeaderboard === 'function') {
+          loadLeaderboard();
+        }
+      });
+    }
+
+    var resetBtn = $('#resultReset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        resetGame();
+      });
+    }
+  }
+
+
+  /**
    * wireModeScreenInputs_ – Listeners that belong to the Mode Selection
    * screen: the three mode cards and the back-to-start button.
    * @private
@@ -1259,7 +1518,7 @@
 
 
   /* =====================================================================
-   * 12. EXPORTS & BOOT
+   * 13. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -1268,19 +1527,22 @@
    * ===================================================================== */
 
   window.TOEICQuest = {
-    initApp:        initApp,
-    resetGame:      resetGame,
-    startGame:      startGame,
-    selectMode:     selectMode,
-    loadQuestions:  loadQuestions,
-    renderQuestion: renderQuestion,
-    startTimer:     startTimer,
-    stopTimer:      stopTimer,
-    handleAnswer:   handleAnswer,
+    initApp:         initApp,
+    resetGame:       resetGame,
+    startGame:       startGame,
+    selectMode:      selectMode,
+    loadQuestions:   loadQuestions,
+    renderQuestion:  renderQuestion,
+    startTimer:      startTimer,
+    stopTimer:       stopTimer,
+    handleAnswer:    handleAnswer,
     showExplanation: showExplanation,
-    showScreen:     showScreen,
-    showToast:      showToast,
-    showError:      showError,
+    nextQuestion:    nextQuestion,
+    finishGame:      finishGame,
+    renderResult:    renderResult,
+    showScreen:      showScreen,
+    showToast:       showToast,
+    showError:       showError,
     // Internal hooks exposed for later phases to hang behavior off of:
     _state:     state,
     _const:     CONSTANTS,

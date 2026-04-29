@@ -1031,5 +1031,127 @@ https://docs.google.com/spreadsheets/d/1aBcD2EfGhIjK3LmNoPqRsT4UvWxYzAbCdEfGhIjK
 
 ---
 
-> ➡ ส่วนถัดไป (Phase 7E-3) จะแสดงตัวอย่างคำถามจริงสำหรับทั้ง 3 โหมด
-> และวิธีใช้ข้อมูลในชีต Scores / Mistakes เพื่อพัฒนาทักษะ TOEIC
+## 13. ตัวอย่างการเพิ่มข้อสอบ
+
+ส่วนนี้แสดงตัวอย่างการเขียนคำถามสำหรับทั้ง 3 โหมด คำถามทั้งหมดในส่วนนี้
+**เป็นต้นฉบับที่เขียนขึ้นใหม่โดยเฉพาะ** ไม่ได้คัดลอกมาจากข้อสอบ TOEIC จริง
+คุณสามารถใช้เป็นแม่แบบได้เลย
+
+> 💡 ตารางด้านล่างจัดเรียงเป็น **คอลัมน์ → ค่า** เพื่อให้อ่านง่ายบนมือถือ
+> เมื่อคัดลอกลงชีต ให้ใส่ทีละช่องตามลำดับคอลัมน์ในแถวเดียวกัน
+
+---
+
+### ตัวอย่างที่ 1 — Vocab Rush
+
+ทดสอบคำที่คนไทยมักสับสน: `affect` (กริยา) vs `effect` (นาม)
+
+| คอลัมน์ | ค่า |
+|---|---|
+| Question_ID | `V101` |
+| Mode | `Vocab Rush` |
+| Part | `Part 5` |
+| Category | `Office` |
+| Level | `Medium` |
+| Passage | (ว่าง) |
+| Question_Text | `The new policy will ______ all employees starting next month.` |
+| Choice_A | `affect` |
+| Choice_B | `effect` |
+| Choice_C | `infect` |
+| Choice_D | `defect` |
+| Correct_Answer | `A` |
+| Explanation_TH | คำว่า "affect" เป็นกริยา แปลว่า "ส่งผลกระทบต่อ" จึงเหมาะกับนโยบายที่ส่งผลต่อพนักงาน ส่วน effect เป็นคำนาม (ผลที่เกิดขึ้น), infect = ทำให้ติดเชื้อ, defect = บกพร่อง |
+| Tip | จำคู่ affect (กริยา) vs effect (นาม) ที่มักออกข้อสอบเป็นประจำ |
+| Point | `10` |
+
+---
+
+### ตัวอย่างที่ 2 — Grammar Sprint
+
+ทดสอบ Modal Verb ที่ใช้แสดงความจำเป็นในกฎระเบียบ
+
+| คอลัมน์ | ค่า |
+|---|---|
+| Question_ID | `G101` |
+| Mode | `Grammar Sprint` |
+| Part | `Part 5` |
+| Category | `Modal Verbs` |
+| Level | `Medium` |
+| Passage | (ว่าง) |
+| Question_Text | `All visitors ______ wear a name badge while in the building.` |
+| Choice_A | `must` |
+| Choice_B | `would` |
+| Choice_C | `did` |
+| Choice_D | `been` |
+| Correct_Answer | `A` |
+| Explanation_TH | "must" เป็น modal verb ที่บอกความจำเป็นหรือกฎบังคับ จึงเหมาะกับการที่อาคารกำหนดให้ทุกคนต้องติดป้ายชื่อ ส่วน would ใช้กับเงื่อนไข, did เป็นอดีต, been ไม่ใช้เดี่ยว ๆ |
+| Tip | กลุ่มคำบอกความจำเป็น: must, have to, should — จำให้ครบ 3 ตัวสำหรับสอบ TOEIC |
+| Point | `10` |
+
+---
+
+### ตัวอย่างที่ 3 — Reading Mission
+
+ทดสอบการอ่านบันทึก (Memo) ที่ระบุกำหนดเวลาในการทำงาน
+
+| คอลัมน์ | ค่า |
+|---|---|
+| Question_ID | `R101` |
+| Mode | `Reading Mission` |
+| Part | `Part 7` |
+| Category | `Memo` |
+| Level | `Medium` |
+| Passage | (ดูบทอ่านด้านล่าง — ใช้ `Alt + Enter` ขึ้นบรรทัดในเซลล์เดียว) |
+| Question_Text | `When are sales team members required to submit their weekly reports?` |
+| Choice_A | `Every Friday by 5 p.m.` |
+| Choice_B | `Every Monday morning.` |
+| Choice_C | `At the end of each quarter.` |
+| Choice_D | `Whenever a deal is closed.` |
+| Correct_Answer | `A` |
+| Explanation_TH | เอกสารระบุว่า "submit weekly progress reports every Friday by 5 p.m." จึงตอบข้อ A ตัวเลือกอื่นไม่ตรงกับเนื้อหาของบันทึก |
+| Tip | คำถาม When ในเอกสารธุรกิจ ให้มองหาประโยคที่มีคำบ่งบอกเวลา เช่น every, by, at, on |
+| Point | `10` |
+
+**เนื้อหาในช่อง Passage:**
+
+```
+MEMO
+To: Sales Department
+From: Daniel Park, Director
+Date: April 5
+Subject: Quarterly Sales Targets
+
+Starting next quarter, all sales team members will be expected to submit
+weekly progress reports every Friday by 5 p.m. The reports should
+include client meetings held that week, deals closed, and any obstacles
+encountered. Please use the new template available in the shared drive.
+```
+
+> 📝 **เคล็ดลับการพิมพ์ Passage**:
+> 1. คลิกที่เซลล์ Passage ของแถวนั้น
+> 2. พิมพ์บรรทัดแรก
+> 3. กด `Alt + Enter` (Windows) หรือ `Option + Enter` (Mac) เพื่อขึ้นบรรทัดใหม่
+> 4. พิมพ์บรรทัดถัดไปจนครบ
+> 5. กด `Enter` (ไม่มี Alt) เพื่อยืนยันและออกจากเซลล์
+
+---
+
+### 📌 หลักการเขียนคำถามให้ดี
+
+หลังดูตัวอย่างทั้ง 3 ข้อแล้ว เคล็ดลับสำหรับเขียนคำถามใหม่ของคุณเอง:
+
+1. **โจทย์ต้องชัดเจน** — ใช้ภาษาตรงไปตรงมา ไม่กำกวม
+2. **ตัวลวงต้องสมเหตุสมผล** — เลือกคำที่ใกล้เคียงคำตอบ ไม่ใช่คำที่ผิดชัดเจน
+3. **คำอธิบายต้องอธิบายทั้งคำตอบและคำลวง** — บอกว่าทำไมข้อนี้ถูก และทำไม
+   ข้ออื่นถึงไม่ใช่
+4. **เคล็ดลับต้องจำง่าย** — ใช้กฎสั้น ๆ ที่นักเรียนนำไปใช้กับข้อสอบจริงได้
+5. **อย่าลอกข้อสอบ TOEIC ของจริง** — เขียนใหม่ในสไตล์เดียวกันแทน เพื่อ
+   หลีกเลี่ยงปัญหาลิขสิทธิ์
+6. **ใช้ Category ให้สอดคล้องกัน** — เพื่อให้ระบบวิเคราะห์ "จุดที่ควรพัฒนา"
+   ได้แม่นยำ
+
+---
+
+> ➡ ส่วนถัดไป (Phase 7E-4) จะอธิบายวิธีใช้ข้อมูลในชีต Scores และ
+> Mistakes เพื่อวิเคราะห์ผลและพัฒนาทักษะ TOEIC ตลอดจนการแก้ปัญหา
+> ที่พบบ่อย และไอเดียพัฒนาต่อในอนาคต

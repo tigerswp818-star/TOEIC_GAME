@@ -588,9 +588,151 @@ function getVocabRushSamples() {
 
 
 /* =====================================================================
- *  End of Phase 2C-1.
+ * 9. SAMPLE QUESTION DATA — GRAMMAR SPRINT
+ * ---------------------------------------------------------------------
+ *  Original TOEIC Part 5 style grammar items. Each row follows the
+ *  HEADERS.QUESTIONS column order. No real TOEIC content is reused.
+ * ===================================================================== */
+
+/**
+ * getGrammarSprintSamples – Returns 10 original Grammar Sprint questions.
+ * Mode is "Grammar Sprint" and Part is "Part 5" for every row.
+ * Passage is empty because grammar items are single-sentence cloze.
+ *
+ * Grammar points covered:
+ *   G001 subject–verb agreement
+ *   G002 verb tense (present perfect)
+ *   G003 preposition of time
+ *   G004 relative pronoun
+ *   G005 gerund vs. infinitive after verb
+ *   G006 passive voice
+ *   G007 comparative form
+ *   G008 conditional (type 1)
+ *   G009 word form (adjective vs. adverb)
+ *   G010 conjunction (although vs. because)
+ *
+ * @return {Array<Array>} 2D array ready for Sheets insertion.
+ */
+function getGrammarSprintSamples() {
+  return [
+
+    // G001 – subject-verb agreement
+    [
+      'G001', 'Grammar Sprint', 'Part 5', 'Subject-Verb Agreement', 'Easy', '',
+      'Each of the new employees ______ required to attend the orientation.',
+      'is', 'are', 'were', 'have',
+      'A',
+      'ประธาน "Each of + นามพหูพจน์" ถือเป็นเอกพจน์เสมอ จึงต้องใช้กริยาเอกพจน์ "is" ห้ามให้คำพหูพจน์หลัง "of" หลอกให้เลือก are',
+      'จำว่า Each / Every / One of + นามพหูพจน์ → กริยาเอกพจน์',
+      10
+    ],
+
+    // G002 – present perfect with "since"
+    [
+      'G002', 'Grammar Sprint', 'Part 5', 'Verb Tense', 'Medium', '',
+      'Mr. Lopez ______ for our company since 2015.',
+      'has worked', 'is working', 'worked', 'will work',
+      'A',
+      'เมื่อมีคำว่า "since + จุดเวลา" ต้องใช้ Present Perfect (has/have + V3) เพื่อบอกว่าเริ่มทำในอดีตและยังคงทำอยู่จนถึงปัจจุบัน',
+      'สังเกตคำชี้นำเวลา: since, for, already, yet, ever, never → Present Perfect',
+      10
+    ],
+
+    // G003 – preposition of time
+    [
+      'G003', 'Grammar Sprint', 'Part 5', 'Prepositions', 'Easy', '',
+      'The annual conference will be held ______ October 14th.',
+      'on', 'in', 'at', 'by',
+      'A',
+      'ใช้ "on" กับวันที่หรือวันในสัปดาห์เสมอ ส่วน in ใช้กับเดือน/ปี และ at ใช้กับเวลาเฉพาะเจาะจง',
+      'เคล็ดลับ: at เวลานาฬิกา / on วัน-วันที่ / in เดือน-ปี-ฤดูกาล',
+      10
+    ],
+
+    // G004 – relative pronoun
+    [
+      'G004', 'Grammar Sprint', 'Part 5', 'Relative Clauses', 'Medium', '',
+      'The candidate ______ we interviewed yesterday accepted the offer.',
+      'whom', 'which', 'whose', 'what',
+      'A',
+      '"whom" ใช้แทนกรรมที่เป็นบุคคล ในประโยคนี้ผู้สมัคร (the candidate) คือกรรมของกริยา interviewed จึงต้องใช้ whom (หรือ who/that ในภาษาพูด)',
+      'จำว่า whom = บุคคล (กรรม), which = สิ่งของ, whose = แสดงความเป็นเจ้าของ',
+      10
+    ],
+
+    // G005 – gerund vs infinitive after verb
+    [
+      'G005', 'Grammar Sprint', 'Part 5', 'Gerund / Infinitive', 'Medium', '',
+      'The board has decided ______ the meeting until next Monday.',
+      'to postpone', 'postponing', 'postpone', 'postponed',
+      'A',
+      'กริยา "decide" ตามด้วย to + V1 (infinitive) เสมอ ตัวเลือก postponing ใช้กับกริยา เช่น avoid, suggest, consider เท่านั้น',
+      'กลุ่มกริยาที่ตามด้วย to + V1: decide, plan, agree, hope, promise, refuse',
+      10
+    ],
+
+    // G006 – passive voice
+    [
+      'G006', 'Grammar Sprint', 'Part 5', 'Passive Voice', 'Medium', '',
+      'The report ______ by the assistant before the deadline.',
+      'was completed', 'completed', 'has completing', 'is completing',
+      'A',
+      'รายงานเป็นสิ่งที่ "ถูก" ทำให้เสร็จ จึงต้องใช้ passive voice รูป was/were + V3 และ "before the deadline" ชี้ว่าเป็นอดีต',
+      'โครงสร้าง passive: be + V3 ดูประธานว่า "ทำเอง" หรือ "ถูกกระทำ"',
+      10
+    ],
+
+    // G007 – comparative form
+    [
+      'G007', 'Grammar Sprint', 'Part 5', 'Comparison', 'Easy', '',
+      'This year\'s sales report is ______ than last year\'s.',
+      'more detailed', 'detailed', 'most detailed', 'detailing',
+      'A',
+      'คำคุณศัพท์ที่มี 2 พยางค์ขึ้นไปจะใช้ "more + adj." ในขั้นกว่า และตามด้วย than เสมอ',
+      'จำกฎ: 1 พยางค์เติม -er / 2 พยางค์ขึ้นไปใช้ more + adj. เช่น more efficient, more expensive',
+      10
+    ],
+
+    // G008 – first conditional (if + present, will)
+    [
+      'G008', 'Grammar Sprint', 'Part 5', 'Conditionals', 'Medium', '',
+      'If the client confirms the order today, we ______ the goods tomorrow.',
+      'will ship', 'shipped', 'would ship', 'have shipped',
+      'A',
+      'ประโยคเงื่อนไขแบบที่ 1 (สิ่งที่อาจเกิดขึ้นจริง) ใช้สูตร If + Present Simple, S + will + V1 จึงต้องตอบ "will ship"',
+      'แยกให้ออก: Type 1 = will, Type 2 = would, Type 3 = would have + V3',
+      10
+    ],
+
+    // G009 – adjective vs adverb (word form)
+    [
+      'G009', 'Grammar Sprint', 'Part 5', 'Word Forms', 'Hard', '',
+      'The new manager handled the negotiation ______.',
+      'professionally', 'professional', 'profession', 'professionalism',
+      'A',
+      'ช่องว่างขยายกริยา "handled" จึงต้องใช้คำกริยาวิเศษณ์ (adverb) คือ "professionally" ส่วน professional เป็น adj. และอีกสองตัวเป็นคำนาม',
+      'ดูตำแหน่ง: ขยายกริยา/คุณศัพท์ → adverb มักลงท้ายด้วย -ly',
+      10
+    ],
+
+    // G010 – conjunction although vs because
+    [
+      'G010', 'Grammar Sprint', 'Part 5', 'Conjunctions', 'Hard', '',
+      '______ the weather was bad, the outdoor event continued as planned.',
+      'Although', 'Because', 'So', 'Therefore',
+      'A',
+      'ประโยคแสดงความขัดแย้งระหว่างสองส่วน (อากาศไม่ดี vs งานยังดำเนินต่อ) ต้องใช้คำเชื่อมแบบให้เหตุขัดแย้งคือ "Although" ส่วน Because ใช้บอกเหตุผล',
+      'จำคู่: Although/Even though = แม้ว่า, Because = เพราะว่า, So/Therefore = ดังนั้น',
+      10
+    ]
+
+  ];
+}
+
+
+/* =====================================================================
+ *  End of Phase 2C-2.
  *  Next sub-phases will add:
- *    - getGrammarSprintSamples()
  *    - getReadingMissionSamples()
  *    - getSampleQuestions() aggregator
  *    - insertSampleQuestionsIfEmpty_(ss)

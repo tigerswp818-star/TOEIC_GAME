@@ -1,0 +1,451 @@
+<script>
+/* =====================================================================
+ * TOEIC Quest: Conquer 990
+ * Script.html – Front-end controller
+ * ---------------------------------------------------------------------
+ * Phase 5A: foundation
+ *   - IIFE wrapper
+ *   - Global app state object
+ *   - Game constants
+ *   - DOM helpers ($, $$)
+ *   - Screen helpers (showScreen)
+ *   - Loading and toast helpers
+ *   - initApp()
+ *   - resetGame()
+ *
+ * All server calls go through google.script.run.
+ * ===================================================================== */
+
+(function () {
+  'use strict';
+
+
+  /* =====================================================================
+   * 1. GAME CONSTANTS
+   * ---------------------------------------------------------------------
+   *  Initial defaults. Real values are overlaid by getSettings() once
+   *  the back-end responds.
+   * ===================================================================== */
+
+  var CONSTANTS = {
+    QUESTIONS_PER_ROUND: 10,
+    TIMER_SECONDS:       15,
+    BASE_POINT:          10,
+    SPEED_BONUS:         5,
+    SPEED_BONUS_LIMIT:   5,    // seconds — answer within this for bonus
+    STREAK_BONUS:        10,
+    STREAK_INTERVAL:     3,    // every Nth correct in a row earns streak
+    EXP_PER_ROUND:       20,
+    COIN_PER_CORRECT:    5,
+    EXP_PER_LEVEL:       100,
+    BADGE_THRESHOLD:     0.8,
+    BADGE_NAME:          'TOEIC Warrior',
+    MAX_NAME_LENGTH:     30,
+    ALLOWED_TARGETS:     [500, 650, 750, 850],
+    ALLOWED_MODES:       ['Vocab Rush', 'Grammar Sprint', 'Reading Mission']
+  };
+
+  /** Mapping of logical screen names to DOM IDs. */
+  var SCREENS = {
+    start:       'screenStart',
+    mode:        'screenMode',
+    game:        'screenGame',
+    result:      'screenResult',
+    leaderboard: 'screenLeaderboard'
+  };
+
+
+  /* =====================================================================
+   * 2. APP STATE
+   * ---------------------------------------------------------------------
+   *  Single source of truth for the running session. Mutated by the
+   *  controller functions; never read directly by the DOM helpers.
+   * ===================================================================== */
+
+  var state = {
+    // Player profile (set on the start screen).
+    playerName:  '',
+    targetScore: null,
+
+    // Current round.
+    mode:        '',
+    questions:   [],
+    currentIdx:  0,
+
+    // Per-question runtime.
+    timer: {
+      intervalId:    null,
+      secondsLeft:   CONSTANTS.TIMER_SECONDS,
+      questionStart: 0,
+      locked:        false   // true once an answer has been registered
+    },
+
+    // Round totals.
+    score:        0,
+    correctCount: 0,
+    wrongCount:   0,
+    streak:       0,
+    exp:          0,
+    coin:         0,
+    level:        1,
+    badge:        '',
+    mistakes:     [],
+
+    // Cached settings from the server (overlaid in initApp).
+    settings: null,
+
+    // The most recent screen (for the back button).
+    activeScreen: 'start'
+  };
+
+
+  /* =====================================================================
+   * 3. DOM HELPERS
+   * ===================================================================== */
+
+  /**
+   * $ – querySelector shortcut.
+   * @param {string} sel CSS selector.
+   * @param {Element} [root] Optional root (defaults to document).
+   * @return {Element|null}
+   */
+  function $(sel, root) {
+    return (root || document).querySelector(sel);
+  }
+
+  /**
+   * $$ – querySelectorAll shortcut returning a real Array.
+   * @param {string} sel CSS selector.
+   * @param {Element} [root] Optional root (defaults to document).
+   * @return {Array<Element>}
+   */
+  function $$(sel, root) {
+    var list = (root || document).querySelectorAll(sel);
+    var out = [];
+    for (var i = 0; i < list.length; i++) {
+      out.push(list[i]);
+    }
+    return out;
+  }
+
+  /**
+   * setText – Sets textContent on an element if it exists.
+   * Silently no-ops if the element is missing so optional UI slots
+   * never throw.
+   * @param {string} sel CSS selector.
+   * @param {string} text New text.
+   */
+  function setText(sel, text) {
+    var el = $(sel);
+    if (el) {
+      el.textContent = (text === null || text === undefined) ? '' : String(text);
+    }
+  }
+
+  /**
+   * setHidden – Toggles the `hidden` utility class.
+   * @param {string} sel CSS selector.
+   * @param {boolean} hidden Whether the element should be hidden.
+   */
+  function setHidden(sel, hidden) {
+    var el = $(sel);
+    if (!el) return;
+    if (hidden) {
+      el.classList.add('hidden');
+    } else {
+      el.classList.remove('hidden');
+    }
+  }
+
+
+  /* =====================================================================
+   * 4. SCREEN MANAGEMENT
+   * ===================================================================== */
+
+  /**
+   * showScreen – Activates exactly one screen, hides all the others.
+   * Updates state.activeScreen so other code can branch on it.
+   * @param {string} name One of the keys in SCREENS.
+   */
+  function showScreen(name) {
+    var targetId = SCREENS[name];
+    if (!targetId) {
+      console.warn('showScreen: unknown screen name "' + name + '"');
+      return;
+    }
+
+    // Toggle .active on every screen.
+    var screens = $$('.screen');
+    for (var i = 0; i < screens.length; i++) {
+      var el = screens[i];
+      if (el.id === targetId) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+
+    state.activeScreen = name;
+
+    // Bring the new screen into view (helps when the previous screen
+    // was scrolled).
+    if (window.scrollTo) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+
+  /* =====================================================================
+   * 5. LOADING & TOAST HELPERS
+   * ===================================================================== */
+
+  /**
+   * showLoading – Displays the global overlay with an optional message.
+   * @param {string} [message] Thai message shown under the spinner.
+   */
+  function showLoading(message) {
+    var overlay = $('#loadingOverlay');
+    if (!overlay) return;
+    setText('#loadingText', message || 'กำลังโหลด...');
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+
+  /** Hides the loading overlay. */
+  function hideLoading() {
+    var overlay = $('#loadingOverlay');
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  /** Internal handle for the toast auto-dismiss timer. */
+  var toastTimerId = null;
+
+  /**
+   * showToast – Briefly displays a status message at the bottom of the
+   * viewport. Tone selects styling: 'info' (default), 'success', 'error'.
+   * @param {string} message Body text (Thai is fine).
+   * @param {string} [tone]  'info' | 'success' | 'error'.
+   * @param {number} [ms]    Auto-dismiss delay in ms (default 3200).
+   */
+  function showToast(message, tone, ms) {
+    var el = $('#toast');
+    if (!el) return;
+
+    el.classList.remove('error', 'success');
+    if (tone === 'error')   el.classList.add('error');
+    if (tone === 'success') el.classList.add('success');
+
+    el.textContent = message || '';
+    el.classList.remove('hidden');
+
+    if (toastTimerId) {
+      clearTimeout(toastTimerId);
+    }
+    toastTimerId = setTimeout(function () {
+      el.classList.add('hidden');
+      toastTimerId = null;
+    }, typeof ms === 'number' ? ms : 3200);
+  }
+
+  /** Convenience: display an error toast (reddish). */
+  function showError(message) {
+    showToast(message || 'เกิดข้อผิดพลาด กรุณาลองใหม่', 'error', 4500);
+  }
+
+
+  /* =====================================================================
+   * 6. APP BOOT & RESET
+   * ===================================================================== */
+
+  /**
+   * initApp – Wires up the start screen, fetches server settings, and
+   * attaches the minimum set of listeners needed before any game flow
+   * is created. The full set of game-flow listeners (mode, choices,
+   * next, leaderboard, etc.) will be added in later phases.
+   */
+  function initApp() {
+    // Start visible on the Start screen.
+    showScreen('start');
+
+    // Wire up the simple, always-safe listeners that exist on Phase 5A.
+    wireStartScreenInputs_();
+
+    // Attempt to fetch server-side settings (timer, scoring, etc.).
+    // Fall back silently to CONSTANTS if the call fails or is slow.
+    if (window.google && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(function (settings) {
+          applySettings_(settings);
+        })
+        .withFailureHandler(function (err) {
+          console.warn('getSettings failed, using defaults: ' + err);
+        })
+        .getSettings();
+    }
+  }
+
+  /**
+   * resetGame – Clears every per-round field in state, removes any
+   * selection from the start screen, and returns the user to the
+   * Start screen.
+   *
+   * Used both at app boot (defensive) and from the "Home" buttons on
+   * later screens.
+   */
+  function resetGame() {
+    // Stop any running timer (later phases may have started one).
+    if (state.timer && state.timer.intervalId) {
+      clearInterval(state.timer.intervalId);
+    }
+
+    // Reset everything except the cached settings, which we keep so
+    // we don't need to re-fetch on every round.
+    var keepSettings = state.settings;
+    state.playerName  = '';
+    state.targetScore = null;
+    state.mode        = '';
+    state.questions   = [];
+    state.currentIdx  = 0;
+    state.timer = {
+      intervalId:    null,
+      secondsLeft:   CONSTANTS.TIMER_SECONDS,
+      questionStart: 0,
+      locked:        false
+    };
+    state.score        = 0;
+    state.correctCount = 0;
+    state.wrongCount   = 0;
+    state.streak       = 0;
+    state.exp          = 0;
+    state.coin         = 0;
+    state.level        = 1;
+    state.badge        = '';
+    state.mistakes     = [];
+    state.settings     = keepSettings;
+
+    // Clear the start screen inputs.
+    var nameEl = $('#playerNameInput');
+    if (nameEl) nameEl.value = '';
+
+    var chips = $$('#targetScoreOptions .option-chip');
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].classList.remove('selected');
+      chips[i].setAttribute('aria-checked', 'false');
+    }
+
+    // Re-show the start screen.
+    showScreen('start');
+  }
+
+
+  /* =====================================================================
+   * 7. INTERNAL WIRING
+   * ===================================================================== */
+
+  /**
+   * wireStartScreenInputs_ – Attaches the small set of listeners that
+   * the start screen needs even before later phases are added: target
+   * chip selection and the "view leaderboard" shortcut. The actual
+   * "Start" button handler lives in startGame() (added in Phase 5B).
+   * @private
+   */
+  function wireStartScreenInputs_() {
+    // Target score chip selection (single-select radiogroup).
+    var chips = $$('#targetScoreOptions .option-chip');
+    for (var i = 0; i < chips.length; i++) {
+      (function (chip) {
+        chip.addEventListener('click', function () {
+          for (var j = 0; j < chips.length; j++) {
+            chips[j].classList.remove('selected');
+            chips[j].setAttribute('aria-checked', 'false');
+          }
+          chip.classList.add('selected');
+          chip.setAttribute('aria-checked', 'true');
+
+          var raw = chip.getAttribute('data-target');
+          var val = parseInt(raw, 10);
+          if (CONSTANTS.ALLOWED_TARGETS.indexOf(val) !== -1) {
+            state.targetScore = val;
+          }
+        });
+      })(chips[i]);
+    }
+
+    // Live trim of the player-name field so it never exceeds the
+    // server-side limit.
+    var nameEl = $('#playerNameInput');
+    if (nameEl) {
+      nameEl.addEventListener('input', function () {
+        if (nameEl.value.length > CONSTANTS.MAX_NAME_LENGTH) {
+          nameEl.value = nameEl.value.substring(0, CONSTANTS.MAX_NAME_LENGTH);
+        }
+      });
+    }
+  }
+
+  /**
+   * applySettings_ – Overlays values returned from the server onto
+   * CONSTANTS so the rest of the app uses sheet-driven configuration.
+   * Unknown keys are ignored.
+   * @param {Object} settings Key/value object from getSettings().
+   * @private
+   */
+  function applySettings_(settings) {
+    if (!settings || typeof settings !== 'object') return;
+
+    state.settings = settings;
+
+    if (typeof settings.TimerSeconds === 'number' && settings.TimerSeconds > 0) {
+      CONSTANTS.TIMER_SECONDS = settings.TimerSeconds;
+      state.timer.secondsLeft = settings.TimerSeconds;
+    }
+    if (typeof settings.QuestionsPerRound === 'number' && settings.QuestionsPerRound > 0) {
+      CONSTANTS.QUESTIONS_PER_ROUND = settings.QuestionsPerRound;
+    }
+    if (typeof settings.BasePoint === 'number')      CONSTANTS.BASE_POINT       = settings.BasePoint;
+    if (typeof settings.SpeedBonus === 'number')     CONSTANTS.SPEED_BONUS      = settings.SpeedBonus;
+    if (typeof settings.StreakBonus === 'number')    CONSTANTS.STREAK_BONUS     = settings.StreakBonus;
+    if (typeof settings.BadgeThreshold === 'number') CONSTANTS.BADGE_THRESHOLD  = settings.BadgeThreshold;
+    if (typeof settings.ExpPerRound === 'number')    CONSTANTS.EXP_PER_ROUND    = settings.ExpPerRound;
+    if (typeof settings.CoinPerCorrect === 'number') CONSTANTS.COIN_PER_CORRECT = settings.CoinPerCorrect;
+    if (typeof settings.ExpPerLevel === 'number')    CONSTANTS.EXP_PER_LEVEL    = settings.ExpPerLevel;
+  }
+
+
+  /* =====================================================================
+   * 8. EXPORTS & BOOT
+   * ---------------------------------------------------------------------
+   *  Expose a small namespace so later phases (and inline handlers, if
+   *  any) can call the controller without polluting the global scope.
+   *  Public API will grow as later phases add startGame, selectMode,
+   *  loadQuestions, etc.
+   * ===================================================================== */
+
+  window.TOEICQuest = {
+    initApp:    initApp,
+    resetGame:  resetGame,
+    showScreen: showScreen,
+    showToast:  showToast,
+    showError:  showError,
+    // Internal hooks exposed for later phases to hang behavior off of:
+    _state:     state,
+    _const:     CONSTANTS,
+    _$:         $,
+    _$$:        $$,
+    _setText:   setText,
+    _setHidden: setHidden,
+    _showLoading: showLoading,
+    _hideLoading: hideLoading
+  };
+
+  // Boot when the DOM is ready.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
+
+})();
+</script>

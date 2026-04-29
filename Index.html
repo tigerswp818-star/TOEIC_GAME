@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC Quest: Conquer 990</title>
+
+    <!-- Google Fonts: Noto Sans Thai for Thai UI text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&family=Poppins:wght@500;700&display=swap"
+      rel="stylesheet">
+
+    <!-- Inject Style.html (CSS) at server-render time. -->
+    <?!= include('Style'); ?>
+  </head>
+
+  <body>
+
+    <!-- ======================================================
+         APP SHELL
+         All screens live inside the same shell. JavaScript adds
+         the "active" class to exactly one .screen at a time.
+         ====================================================== -->
+    <main id="app" class="app">
+
+      <!-- ============== Loading overlay ============== -->
+      <div id="loadingOverlay" class="overlay hidden" aria-hidden="true">
+        <div class="overlay-card">
+          <div class="spinner"></div>
+          <p id="loadingText" class="overlay-text">กำลังโหลด...</p>
+        </div>
+      </div>
+
+      <!-- ============== Toast notifications ============== -->
+      <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+
+
+      <!-- ====================================================
+           SCREEN 1: START
+           Player enters their name and selects a target score.
+           ==================================================== -->
+      <section id="screenStart" class="screen active" aria-labelledby="startTitle">
+        <div class="card hero">
+          <div class="badge-tag">RPG Practice</div>
+          <h1 id="startTitle" class="title">
+            TOEIC Quest<br>
+            <span class="title-accent">Conquer 990</span>
+          </h1>
+          <p class="subtitle">
+            ฝึก TOEIC สไตล์เกม RPG สะสม EXP เหรียญ และเหรียญตรา
+            พิชิตคะแนนเป้าหมายของคุณ!
+          </p>
+
+          <div class="form-group">
+            <label for="playerNameInput" class="form-label">ชื่อผู้เล่น</label>
+            <input
+              id="playerNameInput"
+              type="text"
+              class="form-input"
+              maxlength="30"
+              autocomplete="off"
+              placeholder="กรอกชื่อเล่นของคุณ (สูงสุด 30 ตัวอักษร)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">คะแนนเป้าหมาย TOEIC</label>
+            <div id="targetScoreOptions" class="option-grid" role="radiogroup">
+              <button type="button" class="option-chip" data-target="500" role="radio" aria-checked="false">500</button>
+              <button type="button" class="option-chip" data-target="650" role="radio" aria-checked="false">650</button>
+              <button type="button" class="option-chip" data-target="750" role="radio" aria-checked="false">750</button>
+              <button type="button" class="option-chip" data-target="850" role="radio" aria-checked="false">850+</button>
+            </div>
+          </div>
+
+          <button id="startButton" type="button" class="btn btn-primary btn-block">
+            เริ่มผจญภัย
+          </button>
+
+          <button id="viewLeaderboardFromStart" type="button" class="btn btn-ghost btn-block">
+            ดูกระดานผู้นำ
+          </button>
+        </div>
+      </section>
+
+
+      <!-- ====================================================
+           SCREEN 2: MODE SELECTION
+           Player chooses one of three practice modes.
+           ==================================================== -->
+      <section id="screenMode" class="screen" aria-labelledby="modeTitle">
+        <div class="card">
+          <div class="topbar">
+            <button id="backToStart" type="button" class="btn-icon" aria-label="กลับ">←</button>
+            <span class="topbar-title">เลือกโหมดการฝึก</span>
+            <span class="topbar-spacer"></span>
+          </div>
+
+          <h2 id="modeTitle" class="section-title">สวัสดี <span id="modePlayerName">นักผจญภัย</span> 👋</h2>
+          <p class="muted">เลือกภารกิจที่อยากฝึกในรอบนี้</p>
+
+          <div class="mode-list">
+            <button type="button" class="mode-card" data-mode="Vocab Rush">
+              <div class="mode-icon">📚</div>
+              <div class="mode-body">
+                <div class="mode-title">Vocab Rush</div>
+                <div class="mode-desc">ฝึกคำศัพท์ธุรกิจสไตล์ TOEIC แบบเร็ว ๆ</div>
+              </div>
+              <div class="mode-arrow">›</div>
+            </button>
+
+            <button type="button" class="mode-card" data-mode="Grammar Sprint">
+              <div class="mode-icon">📝</div>
+              <div class="mode-body">
+                <div class="mode-title">Grammar Sprint</div>
+                <div class="mode-desc">เติมคำในประโยค Part 5 ฝึกไวยากรณ์ให้แม่น</div>
+              </div>
+              <div class="mode-arrow">›</div>
+            </button>
+
+            <button type="button" class="mode-card" data-mode="Reading Mission">
+              <div class="mode-icon">📰</div>
+              <div class="mode-body">
+                <div class="mode-title">Reading Mission</div>
+                <div class="mode-desc">อ่านบทความธุรกิจสั้น ๆ และตอบคำถามจับใจความ</div>
+              </div>
+              <div class="mode-arrow">›</div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ====================================================
+           SCREEN 3: GAME
+           Question runner with timer, progress, and feedback.
+           ==================================================== -->
+      <section id="screenGame" class="screen" aria-labelledby="gameTitle">
+        <div class="card">
+
+          <!-- HUD: progress + score + timer -->
+          <div class="hud">
+            <div class="hud-row">
+              <span class="hud-label">ข้อที่ <span id="hudIndex">1</span> / <span id="hudTotal">10</span></span>
+              <span class="hud-label">คะแนน: <span id="hudScore">0</span></span>
+            </div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="timer-bar">
+              <div id="timerFill" class="timer-fill"></div>
+            </div>
+            <div class="hud-row hud-row-small">
+              <span class="hud-pill">⏱ <span id="timerSeconds">15</span>s</span>
+              <span class="hud-pill">🔥 streak: <span id="hudStreak">0</span></span>
+            </div>
+          </div>
+
+          <h2 id="gameTitle" class="visually-hidden">คำถามปัจจุบัน</h2>
+
+          <!-- Optional reading passage (Reading Mission only) -->
+          <div id="passageBox" class="passage hidden"></div>
+
+          <!-- Question text -->
+          <div id="questionText" class="question-text"></div>
+
+          <!-- Choice buttons -->
+          <div id="choicesBox" class="choices">
+            <button type="button" class="choice-btn" data-choice="A">
+              <span class="choice-letter">A</span>
+              <span class="choice-text" data-slot="A"></span>
+            </button>
+            <button type="button" class="choice-btn" data-choice="B">
+              <span class="choice-letter">B</span>
+              <span class="choice-text" data-slot="B"></span>
+            </button>
+            <button type="button" class="choice-btn" data-choice="C">
+              <span class="choice-letter">C</span>
+              <span class="choice-text" data-slot="C"></span>
+            </button>
+            <button type="button" class="choice-btn" data-choice="D">
+              <span class="choice-letter">D</span>
+              <span class="choice-text" data-slot="D"></span>
+            </button>
+          </div>
+
+          <!-- Feedback panel (correct / wrong + Thai explanation) -->
+          <div id="feedbackBox" class="feedback hidden">
+            <div id="feedbackHeader" class="feedback-header"></div>
+            <div class="feedback-section">
+              <div class="feedback-label">คำอธิบาย</div>
+              <div id="feedbackExplanation" class="feedback-text"></div>
+            </div>
+            <div class="feedback-section">
+              <div class="feedback-label">เคล็ดลับ</div>
+              <div id="feedbackTip" class="feedback-text"></div>
+            </div>
+            <button id="nextButton" type="button" class="btn btn-primary btn-block">
+              ข้อต่อไป →
+            </button>
+          </div>
+
+          <!-- Quit confirmation -->
+          <button id="quitButton" type="button" class="btn-link">ออกจากเกม</button>
+        </div>
+      </section>
+
+
+      <!-- ====================================================
+           SCREEN 4: RESULT
+           Round summary + EXP/coins/level/badge.
+           ==================================================== -->
+      <section id="screenResult" class="screen" aria-labelledby="resultTitle">
+        <div class="card">
+          <div class="result-hero">
+            <div id="resultEmoji" class="result-emoji">🏆</div>
+            <h2 id="resultTitle" class="title">สรุปผลการเล่น</h2>
+            <p id="resultSubtitle" class="muted"></p>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-label">คะแนนรวม</div>
+              <div id="statScore" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">ความแม่นยำ</div>
+              <div id="statAccuracy" class="stat-value">0%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">ตอบถูก</div>
+              <div id="statCorrect" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">ตอบผิด</div>
+              <div id="statWrong" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">EXP ที่ได้</div>
+              <div id="statExp" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">เหรียญ</div>
+              <div id="statCoin" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">เลเวล</div>
+              <div id="statLevel" class="stat-value">1</div>
+            </div>
+            <div class="stat-card stat-card-wide">
+              <div class="stat-label">เหรียญตรา</div>
+              <div id="statBadge" class="stat-value stat-badge">—</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="resultPlayAgain" type="button" class="btn btn-primary btn-block">
+              เล่นอีกรอบ
+            </button>
+            <button id="resultViewBoard" type="button" class="btn btn-ghost btn-block">
+              ดูกระดานผู้นำ
+            </button>
+            <button id="resultReset" type="button" class="btn-link">กลับหน้าเริ่มต้น</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ====================================================
+           SCREEN 5: LEADERBOARD
+           Top 10 ranked players.
+           ==================================================== -->
+      <section id="screenLeaderboard" class="screen" aria-labelledby="leaderboardTitle">
+        <div class="card">
+          <div class="topbar">
+            <button id="leaderboardBack" type="button" class="btn-icon" aria-label="กลับ">←</button>
+            <span class="topbar-title">กระดานผู้นำ Top 10</span>
+            <button id="leaderboardRefresh" type="button" class="btn-icon" aria-label="รีเฟรช">⟳</button>
+          </div>
+
+          <h2 id="leaderboardTitle" class="visually-hidden">กระดานผู้นำ</h2>
+
+          <div class="table-wrap">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th class="col-rank">#</th>
+                  <th class="col-name">ผู้เล่น</th>
+                  <th class="col-mode">โหมด</th>
+                  <th class="col-score">คะแนน</th>
+                  <th class="col-acc">แม่นยำ</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody">
+                <!-- Rows injected by Script.html -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="leaderboardEmpty" class="empty-state hidden">
+            ยังไม่มีคะแนน เป็นคนแรกที่ขึ้นกระดานสิ!
+          </div>
+
+          <div class="action-row">
+            <button id="leaderboardPlay" type="button" class="btn btn-primary btn-block">
+              เล่นอีกรอบ
+            </button>
+            <button id="leaderboardHome" type="button" class="btn-link">กลับหน้าเริ่มต้น</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Inject Script.html (JavaScript) at the end of body. -->
+    <?!= include('Script'); ?>
+  </body>
+</html>

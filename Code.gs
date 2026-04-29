@@ -731,9 +731,222 @@ function getGrammarSprintSamples() {
 
 
 /* =====================================================================
- *  End of Phase 2C-2.
+ * 10. SAMPLE QUESTION DATA — READING MISSION
+ * ---------------------------------------------------------------------
+ *  Original TOEIC Part 7 style reading items. Each entry pairs a short
+ *  business-style passage with one comprehension question. Passages
+ *  are written specifically for this project. Names of people and
+ *  companies are fictional.
+ * ===================================================================== */
+
+/**
+ * getReadingMissionSamples – Returns 10 original Reading Mission items.
+ * Mode is "Reading Mission" and Part is "Part 7" for every row.
+ * The Passage field contains the source text and Question_Text holds
+ * the comprehension prompt.
+ *
+ * Passage formats covered:
+ *   R001 internal email  – schedule change
+ *   R002 office notice   – maintenance announcement
+ *   R003 advertisement   – grand opening
+ *   R004 memo            – policy update
+ *   R005 customer email  – delivery delay
+ *   R006 job posting     – position requirements
+ *   R007 announcement    – company merger
+ *   R008 invitation      – networking event
+ *   R009 product review  – customer feedback
+ *   R010 confirmation    – hotel reservation
+ *
+ * @return {Array<Array>} 2D array ready for Sheets insertion.
+ */
+function getReadingMissionSamples() {
+  return [
+
+    // R001 – internal email about a schedule change
+    [
+      'R001', 'Reading Mission', 'Part 7', 'Email', 'Easy',
+      'From: Anna Becker, Project Manager\n' +
+      'To: Design Team\n' +
+      'Subject: Friday Review Postponed\n\n' +
+      'Hi everyone,\n' +
+      'Due to the client visit on Friday afternoon, the weekly design review will be moved from 3:00 p.m. Friday to 10:00 a.m. Monday. Please bring your updated mockups and prepare a five-minute summary of your progress. Let me know if this new time does not work for you.\n' +
+      'Thanks,\nAnna',
+      'Why is the meeting being rescheduled?',
+      'A client will visit the office on Friday.',
+      'The project manager is on vacation.',
+      'The design team needs more time.',
+      'The meeting room is unavailable.',
+      'A',
+      'ในอีเมลระบุชัดเจนว่า "Due to the client visit on Friday afternoon" ซึ่งหมายถึงเหตุผลที่ต้องเลื่อนการประชุม จึงตอบข้อ A',
+      'มองหา keyword ที่บอกเหตุผล เช่น due to, because of, since เพื่อตอบคำถาม Why',
+      10
+    ],
+
+    // R002 – office notice about maintenance
+    [
+      'R002', 'Reading Mission', 'Part 7', 'Notice', 'Easy',
+      'NOTICE TO ALL STAFF\n\n' +
+      'The 4th-floor elevator will be out of service from Saturday, March 9, to Sunday, March 10, for routine maintenance. During this period, please use the elevators on the east side of the building or the central staircase. We apologize for any inconvenience.\n' +
+      'Building Management',
+      'What should employees do during the maintenance period?',
+      'Use a different elevator or the staircase.',
+      'Work from home for two days.',
+      'Avoid entering the 4th floor.',
+      'Contact building management directly.',
+      'A',
+      'ประกาศบอกชัดว่า "please use the elevators on the east side of the building or the central staircase" จึงเลือกข้อ A',
+      'ประกาศ (notice) มักมีคำสั่งหรือคำแนะนำตรง ๆ ให้สังเกตคำว่า please, must, should',
+      10
+    ],
+
+    // R003 – advertisement for a grand opening
+    [
+      'R003', 'Reading Mission', 'Part 7', 'Advertisement', 'Medium',
+      'GRAND OPENING – Bloom Café\n\n' +
+      'Join us this Saturday, May 4, for the grand opening of Bloom Café in downtown Riverton! The first 50 customers will receive a free signature latte, and all pastries will be 20% off throughout the weekend. Open daily from 7 a.m. to 8 p.m. Bring this flyer for an additional 10% discount on your first purchase.',
+      'How can a customer get an additional 10% discount?',
+      'By bringing the flyer to the café.',
+      'By being one of the first 50 customers.',
+      'By visiting on a weekday.',
+      'By ordering a signature latte.',
+      'A',
+      'ในโฆษณาระบุว่า "Bring this flyer for an additional 10% discount" จึงตอบข้อ A ส่วนข้อ B เป็นเงื่อนไขเพื่อรับลาเต้ฟรี ไม่ใช่ส่วนลด 10%',
+      'อ่านโฆษณาให้แยก "ของแถม" กับ "ส่วนลด" ออกจากกันให้ดี เพราะข้อสอบมักหลอก',
+      10
+    ],
+
+    // R004 – internal memo about a policy update
+    [
+      'R004', 'Reading Mission', 'Part 7', 'Memo', 'Medium',
+      'MEMO\n' +
+      'To: All Employees\n' +
+      'From: Human Resources\n' +
+      'Date: June 1\n' +
+      'Subject: Updated Remote Work Policy\n\n' +
+      'Starting July 1, employees may work from home up to two days per week with prior approval from their direct supervisor. Requests must be submitted at least one week in advance through the HR portal. This policy does not apply to roles that require on-site presence, such as warehouse and reception staff.',
+      'According to the memo, what must employees do before working from home?',
+      'Get approval from their supervisor.',
+      'Inform the HR director.',
+      'Update their job description.',
+      'Reduce their workload.',
+      'A',
+      'ข้อความระบุว่า "with prior approval from their direct supervisor" และ "Requests must be submitted at least one week in advance" จึงเลือกข้อ A',
+      'memo ทางการงานมักมีเงื่อนไขก่อน-หลัง สังเกตคำว่า prior, before, in advance',
+      10
+    ],
+
+    // R005 – customer service email about delivery delay
+    [
+      'R005', 'Reading Mission', 'Part 7', 'Email', 'Medium',
+      'Dear Mr. Patel,\n\n' +
+      'Thank you for your recent order #88421. We regret to inform you that your shipment has been delayed by three business days due to severe weather affecting our logistics partner. Your package is now expected to arrive on Thursday, October 17. As an apology for the inconvenience, we have added a $10 store credit to your account, which can be used on your next purchase.\n' +
+      'Sincerely,\nSunrise Online Store',
+      'What did the company offer Mr. Patel?',
+      'A $10 store credit.',
+      'A full refund.',
+      'A free upgrade to express shipping.',
+      'A discount on a future purchase of 10%.',
+      'A',
+      'ในอีเมลเขียนว่า "we have added a $10 store credit to your account" จึงตอบข้อ A ไม่ใช่ส่วนลด 10% และไม่มีการคืนเงินเต็มจำนวน',
+      'ข้อสอบ Part 7 มักมีตัวเลือกที่ใกล้เคียงกัน เช่น store credit vs discount จำให้แม่นว่าใช้คำไหน',
+      10
+    ],
+
+    // R006 – job posting
+    [
+      'R006', 'Reading Mission', 'Part 7', 'Job Posting', 'Medium',
+      'Position: Marketing Coordinator\n' +
+      'Location: Vienna Office\n\n' +
+      'Sterling Group is seeking a Marketing Coordinator to support campaign planning and content creation. The ideal candidate has at least two years of experience in digital marketing, strong written communication skills in English, and proficiency with spreadsheet software. A bachelor\'s degree in marketing or a related field is required. Knowledge of German is a plus but not required.',
+      'Which qualification is NOT required for the position?',
+      'Knowledge of German.',
+      'A bachelor\'s degree.',
+      'Two years of digital marketing experience.',
+      'Strong English writing skills.',
+      'A',
+      'ประกาศระบุว่า "Knowledge of German is a plus but not required" จึงไม่ใช่คุณสมบัติที่ต้องมี ส่วนข้อ B, C, D เป็นคุณสมบัติที่ต้องมีทั้งหมด',
+      'คำถามที่มีคำว่า NOT ต้องอ่านทุกตัวเลือก แล้วเลือกตัวเดียวที่ "ไม่ตรง" กับเนื้อหา',
+      10
+    ],
+
+    // R007 – announcement about a merger
+    [
+      'R007', 'Reading Mission', 'Part 7', 'Announcement', 'Hard',
+      'PRESS RELEASE – November 12\n\n' +
+      'Northwind Logistics today announced its merger with Cedar Freight Solutions, effective January 1 of next year. The combined company will operate under the new name NorthCedar Logistics and will serve more than 40 countries across Asia and Europe. All current contracts and customer accounts will be honored without interruption, and existing staff will retain their positions during the transition period.',
+      'What will happen to current customer contracts after the merger?',
+      'They will continue without changes.',
+      'They will be renegotiated immediately.',
+      'They will be transferred to a partner company.',
+      'They will be canceled and refunded.',
+      'A',
+      'ข้อความบอกว่า "All current contracts and customer accounts will be honored without interruption" หมายความว่าสัญญาเดิมยังมีผลตามเดิม จึงตอบข้อ A',
+      'คำว่า "honored without interruption" = "ดำเนินต่อโดยไม่หยุดชะงัก" ห้ามแปลตรงตัวว่า "ให้เกียรติ"',
+      10
+    ],
+
+    // R008 – invitation to a networking event
+    [
+      'R008', 'Reading Mission', 'Part 7', 'Invitation', 'Medium',
+      'You are invited to the Annual Tech Networking Night!\n\n' +
+      'Date: Friday, September 20\n' +
+      'Time: 6:30 p.m. – 9:30 p.m.\n' +
+      'Venue: Skyline Hotel, Grand Ballroom\n\n' +
+      'Enjoy an evening of light dinner, live music, and the chance to connect with over 200 professionals from the technology industry. Admission is free, but registration is required by September 15 at events@techlink.org. Business attire is recommended.',
+      'What is required to attend the event?',
+      'Registering before September 15.',
+      'Paying an admission fee.',
+      'Bringing a business card.',
+      'Working in the technology industry.',
+      'A',
+      'ข้อความเขียนว่า "Admission is free, but registration is required by September 15" จึงต้องลงทะเบียนล่วงหน้า ตอบข้อ A และเข้างานฟรีไม่ต้องจ่ายเงิน',
+      'อ่านคำว่า "free" และ "required" แยกกันให้ชัด ค่าเข้าฟรีไม่ได้แปลว่าไม่ต้องลงทะเบียน',
+      10
+    ],
+
+    // R009 – online product review
+    [
+      'R009', 'Reading Mission', 'Part 7', 'Review', 'Hard',
+      'Customer Review – HomePro Air Purifier X3\n' +
+      'Rating: 4 out of 5 stars\n\n' +
+      'I bought this air purifier two months ago for my small apartment, and overall I am satisfied. The unit is quiet enough to run while I sleep, and the air feels noticeably fresher within an hour. My only complaint is that the replacement filters are quite expensive and can only be ordered directly from the manufacturer. The mobile app, however, is well-designed and easy to use.',
+      'What does the reviewer dislike about the product?',
+      'The cost of the replacement filters.',
+      'The noise level at night.',
+      'The size of the unit.',
+      'The quality of the mobile app.',
+      'A',
+      'ผู้รีวิวบอกว่า "My only complaint is that the replacement filters are quite expensive" หมายความว่าข้อตำหนิเดียวคือไส้กรองราคาแพง ตอบข้อ A',
+      'คำว่า complaint, downside, drawback มักจะเป็น keyword บอกข้อเสียในรีวิว',
+      10
+    ],
+
+    // R010 – hotel reservation confirmation
+    [
+      'R010', 'Reading Mission', 'Part 7', 'Confirmation', 'Easy',
+      'Reservation Confirmation\n\n' +
+      'Guest: Ms. Hannah Liu\n' +
+      'Hotel: Greenleaf Resort, Chiang Mai\n' +
+      'Check-in: December 22\n' +
+      'Check-out: December 26\n' +
+      'Room Type: Deluxe Garden View, 1 King Bed\n' +
+      'Total: $480 (taxes included)\n\n' +
+      'A complimentary breakfast is served daily from 6:30 a.m. to 10:00 a.m. Free cancellation is available up to 48 hours before the check-in date.',
+      'How many nights will Ms. Liu stay at the hotel?',
+      'Four', 'Three', 'Five', 'Six',
+      'A',
+      'check-in วันที่ 22 และ check-out วันที่ 26 ธันวาคม จำนวนคืนคือ 26 - 22 = 4 คืน จึงตอบ Four',
+      'การคำนวณคืนพักให้เอาวัน check-out ลบ check-in ห้ามรวมวัน check-out เป็นคืนพัก',
+      10
+    ]
+
+  ];
+}
+
+
+/* =====================================================================
+ *  End of Phase 2C-3.
  *  Next sub-phases will add:
- *    - getReadingMissionSamples()
  *    - getSampleQuestions() aggregator
  *    - insertSampleQuestionsIfEmpty_(ss)
  *    - Hook into setupSpreadsheet()

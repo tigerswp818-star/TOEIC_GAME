@@ -3,15 +3,21 @@
  *  TOEIC Quest: Conquer 990
  *  Google Apps Script Web App – Backend (Code.gs)
  * ---------------------------------------------------------------------
- *  Phase 2A: Skeleton
- *  Contains:
- *    - Global constants
- *    - Sheet names
- *    - Sheet header definitions
- *    - doGet()
+ *  Public API (called from the front-end via google.script.run):
+ *    - doGet(e)
  *    - include(filename)
- *    - sanitizeInput(value)
+ *    - setupSpreadsheet()
+ *    - getQuestions(mode, limit)
+ *    - submitGameResult(result)
+ *    - saveMistakes(playerName, mistakes)
+ *    - getLeaderboard()
  *    - getSettings()
+ *    - sanitizeInput(value)
+ *
+ *  How to use:
+ *    1. Set SPREADSHEET_ID below to your Google Sheets ID.
+ *    2. From the Apps Script editor, run setupSpreadsheet() once.
+ *    3. Deploy as a Web App (Execute as: Me, Access: Anyone with link).
  * =====================================================================
  */
 
@@ -1541,7 +1547,203 @@ function sanitizeChoice_(value) {
 
 
 /* =====================================================================
- *  End of Phase 2E.
- *  Next phase will add:
+ * 14. LEADERBOARD
+ * ===================================================================== */
+
+/** Maximum number of leaderboard entries returned to the client. */
+var LEADERBOARD_LIMIT = 10;
+
+
+/**
+ * getLeaderboard – Reads every row from the Scores sheet and returns
+ * the top entries to the client.
+ *
+ * Sort order:
+ *   1. Score          (descending)
+ *   2. Accuracy       (descending, used as a tiebreaker)
+ *   3. Timestamp      (ascending, so the earlier achiever wins ties)
+ *
+ * @return {Array<Object>} Up to LEADERBOARD_LIMIT ranked entries.
+ */
+function getLeaderboard() {
+  // Defensive: never throw on a missing or unconfigured spreadsheet.
+  // A missing leaderboard should render an empty table on the client.
+  try {
+    if (!SPREADSHEET_ID || SPREADSHEET_ID === 'PUT_YOUR_SPREADSHEET_ID_HERE') {
+      return [];
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(SHEETS.SCORES);
+    if (!sheet) {
+      return [];
+    }
+
+    var lastRow = sheet.getLastRow();
+    var lastCol = HEADERS.SCORES.length;
+    if (lastRow < 2) {
+      return [];
+    }
+
+    // Read all data rows (skip header).
+    var rows = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+
+    // Convert every row to a normalized in-memory object so sorting
+    // and mapping use predictable types.
+    var entries = [];
+    for (var i = 0; i < rows.length; i++) {
+      entries.push(scoreRowToObject_(rows[i]));
+    }
+
+    // Primary sort: Score desc; tiebreak 1: Accuracy desc; tiebreak 2:
+    // Timestamp asc (earlier achiever wins).
+    entries.sort(function (a, b) {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      if (b.accuracy !== a.accuracy) {
+        return b.accuracy - a.accuracy;
+      }
+      // Fall back to timestamp (ms since epoch).
+      return a._timestampMs - b._timestampMs;
+    });
+
+    // Trim to the leaderboard size limit.
+    var top = entries.slice(0, LEADERBOARD_LIMIT);
+
+    // Attach 1-based rank and strip internal-only fields.
+    var output = [];
+    for (var j = 0; j < top.length; j++) {
+      var e = top[j];
+      output.push({
+        rank:         j + 1,
+        playerName:   e.playerName,
+        targetScore:  e.targetScore,
+        mode:         e.mode,
+        score:        e.score,
+        correctCount: e.correctCount,
+        wrongCount:   e.wrongCount,
+        accuracy:     e.accuracy,
+        exp:          e.exp,
+        coin:         e.coin,
+        level:        e.level,
+        badge:        e.badge,
+        timestamp:    e.timestamp
+      });
+    }
+    return output;
+
+  } catch (err) {
+    Logger.log('getLeaderboard error: ' + err);
+    return [];
+  }
+}
+
+
+/**
+ * scoreRowToObject_ – Converts a raw Scores row into a normalized
+ * object. The Scores column order is the source of truth here.
+ *
+ * Sheet column order (from HEADERS.SCORES):
+ *   0  Timestamp
+ *   1  Player_Name
+ *   2  Target_Score
+ *   3  Mode
+ *   4  Score
+ *   5  Correct_Count
+ *   6  Wrong_Count
+ *   7  Accuracy
+ *   8  EXP
+ *   9  Coin
+ *   10 Level
+ *   11 Badge
+ *
+ * @param {Array} row A row from the Scores sheet.
+ * @return {Object} The normalized score object (with internal fields).
+ * @private
+ */
+function scoreRowToObject_(row) {
+  // Robust timestamp conversion: cells written via appendRow with a
+  // Date value come back as Date; CSV-imported rows may come back as
+  // strings. Always normalize to ISO string + numeric ms for sorting.
+  var rawTs = row[0];
+  var tsMs;
+  var tsIso;
+
+  if (rawTs instanceof Date) {
+    tsMs = rawTs.getTime();
+    tsIso = rawTs.toISOString();
+  } else if (rawTs && !isNaN(new Date(rawTs).getTime())) {
+    var d = new Date(rawTs);
+    tsMs = d.getTime();
+    tsIso = d.toISOString();
+  } else {
+    tsMs = 0;
+    tsIso = '';
+  }
+
+  return {
+    timestamp:    tsIso,
+    _timestampMs: tsMs,
+    playerName:   String(row[1]  || ''),
+    targetScore:  toFiniteNumber_(row[2],  0),
+    mode:         String(row[3]  || ''),
+    score:        toFiniteNumber_(row[4],  0),
+    correctCount: toFiniteNumber_(row[5],  0),
+    wrongCount:   toFiniteNumber_(row[6],  0),
+    accuracy:     toFiniteNumber_(row[7],  0),
+    exp:          toFiniteNumber_(row[8],  0),
+    coin:         toFiniteNumber_(row[9],  0),
+    level:        toFiniteNumber_(row[10], 0),
+    badge:        String(row[11] || '')
+  };
+}
+
+
+/**
+ * toFiniteNumber_ – Coerces a cell value to a finite Number, falling
+ * back to a default when the value is missing or unparseable. Used
+ * inside getLeaderboard so sorting and arithmetic always succeed.
+ *
+ * @param {*} value          The raw cell value.
+ * @param {number} fallback  The value to use when coercion fails.
+ * @return {number} A finite number.
+ * @private
+ */
+function toFiniteNumber_(value, fallback) {
+  if (value === '' || value === null || value === undefined) {
+    return fallback;
+  }
+  var n = Number(value);
+  if (isNaN(n) || !isFinite(n)) {
+    return fallback;
+  }
+  return n;
+}
+
+
+/* =====================================================================
+ *  End of Code.gs
+ *
+ *  Public API exposed to google.script.run:
+ *    - doGet(e)
+ *    - include(filename)
+ *    - setupSpreadsheet()
+ *    - getQuestions(mode, limit)
+ *    - submitGameResult(result)
+ *    - saveMistakes(playerName, mistakes)
  *    - getLeaderboard()
+ *    - getSettings()
+ *    - sanitizeInput(value)
+ *
+ *  Internal helpers (suffix "_") are not exposed to the client:
+ *    - ensureSheet_, insertDefaultSettings_, insertSampleQuestionsIfEmpty_
+ *    - readQuestionRowsFromSheet_, filterQuestionRowsByMode_
+ *    - shuffleInPlace_, rowToQuestionObject_
+ *    - toNonNegativeInt_, sanitizeLong_, sanitizeChoice_
+ *    - scoreRowToObject_, toFiniteNumber_
+ *
+ *  Sample question providers:
+ *    - getVocabRushSamples(), getGrammarSprintSamples(),
+ *      getReadingMissionSamples(), getSampleQuestions()
  * ===================================================================== */

@@ -1019,9 +1019,231 @@ function insertSampleQuestionsIfEmpty_(ss) {
 
 
 /* =====================================================================
- *  End of Phase 2C-4.
+ * 12. QUESTION FETCHING
+ * ===================================================================== */
+
+/**
+ * Allowed game modes. Any value coming from the client must match one
+ * of these exactly (case-sensitive) to be accepted.
+ */
+var ALLOWED_MODES = ['Vocab Rush', 'Grammar Sprint', 'Reading Mission'];
+
+
+/**
+ * getQuestions – Returns a randomized, non-repeating set of questions
+ * for the requested game mode. Used by the front-end at the start of
+ * every round.
+ *
+ * Steps:
+ *   1. Validate and sanitize the mode input.
+ *   2. Validate and clamp the limit input.
+ *   3. Load all rows from the Questions sheet.
+ *   4. Filter rows by Mode.
+ *   5. Shuffle (Fisher-Yates).
+ *   6. Slice to the requested limit (never exceeding what is available).
+ *   7. Map each row to a client-friendly object literal.
+ *   8. Fall back to getSampleQuestions() when the sheet is empty or has
+ *      no matching rows for the requested mode.
+ *
+ * SECURITY NOTE:
+ *   This MVP returns correctAnswer to the client because answer
+ *   checking happens client-side for instant feedback. A future
+ *   version SHOULD keep correctAnswer on the server, expose only
+ *   a question token to the client, and validate the user's choice
+ *   in submitGameResult() to prevent score tampering.
+ *
+ * @param {string} mode  The requested game mode.
+ * @param {number} limit Maximum number of questions to return (default 10).
+ * @return {Array<Object>} The question set, each shaped for the front-end.
+ */
+function getQuestions(mode, limit) {
+  // ---- 1. Sanitize and validate mode ------------------------------------
+  var cleanMode = sanitizeInput(mode);
+  if (ALLOWED_MODES.indexOf(cleanMode) === -1) {
+    throw new Error('Invalid mode: ' + cleanMode);
+  }
+
+  // ---- 2. Sanitize and validate limit -----------------------------------
+  var requested = parseInt(limit, 10);
+  if (isNaN(requested) || requested <= 0) {
+    requested = DEFAULT_QUESTIONS_PER_ROUND;
+  }
+  // Hard upper bound to protect the server from absurd requests.
+  if (requested > 100) {
+    requested = 100;
+  }
+
+  // ---- 3. Load rows from the sheet --------------------------------------
+  var rows = readQuestionRowsFromSheet_();
+
+  // ---- 4. Filter by mode ------------------------------------------------
+  var filtered = filterQuestionRowsByMode_(rows, cleanMode);
+
+  // ---- 5. Fallback: if nothing was loaded or matched, use samples -------
+  if (!filtered || filtered.length === 0) {
+    Logger.log(
+      'getQuestions: no rows matched mode "' + cleanMode +
+      '" in the sheet. Falling back to sample questions.'
+    );
+    var samples = getSampleQuestions();
+    filtered = filterQuestionRowsByMode_(samples, cleanMode);
+  }
+
+  // No data anywhere — return an empty array rather than throwing so
+  // the front-end can render a friendly message.
+  if (!filtered || filtered.length === 0) {
+    return [];
+  }
+
+  // ---- 6. Shuffle (Fisher-Yates) ---------------------------------------
+  shuffleInPlace_(filtered);
+
+  // ---- 7. Trim to limit (never exceeding what is available) -------------
+  var take = Math.min(requested, filtered.length);
+  var picked = filtered.slice(0, take);
+
+  // ---- 8. Map to client-friendly objects -------------------------------
+  var result = [];
+  for (var i = 0; i < picked.length; i++) {
+    result.push(rowToQuestionObject_(picked[i]));
+  }
+  return result;
+}
+
+
+/**
+ * readQuestionRowsFromSheet_ – Reads every data row from the Questions
+ * sheet and returns it as a 2D array (no header row).
+ *
+ * @return {Array<Array>} Question rows, possibly empty.
+ * @private
+ */
+function readQuestionRowsFromSheet_() {
+  // Defensive try/catch so a missing or unreadable sheet does not crash
+  // the entire request — the caller will handle the fallback path.
+  try {
+    if (!SPREADSHEET_ID || SPREADSHEET_ID === 'PUT_YOUR_SPREADSHEET_ID_HERE') {
+      return [];
+    }
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName(SHEETS.QUESTIONS);
+    if (!sheet) {
+      return [];
+    }
+    var lastRow = sheet.getLastRow();
+    var lastCol = HEADERS.QUESTIONS.length;
+    if (lastRow < 2) {
+      return [];
+    }
+    return sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
+  } catch (err) {
+    Logger.log('readQuestionRowsFromSheet_ error: ' + err);
+    return [];
+  }
+}
+
+
+/**
+ * filterQuestionRowsByMode_ – Keeps only rows whose Mode column matches
+ * the requested mode exactly. Mode is column index 1 in HEADERS.QUESTIONS.
+ *
+ * @param {Array<Array>} rows All candidate rows.
+ * @param {string} mode       Target mode.
+ * @return {Array<Array>}     Filtered rows.
+ * @private
+ */
+function filterQuestionRowsByMode_(rows, mode) {
+  if (!rows || rows.length === 0) {
+    return [];
+  }
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][1]) === mode) {
+      out.push(rows[i]);
+    }
+  }
+  return out;
+}
+
+
+/**
+ * shuffleInPlace_ – Standard Fisher-Yates shuffle. Mutates the array
+ * given so the caller can use the same reference afterwards.
+ *
+ * @param {Array} arr The array to shuffle.
+ * @private
+ */
+function shuffleInPlace_(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+}
+
+
+/**
+ * rowToQuestionObject_ – Converts a raw row from the Questions sheet
+ * into the camelCase shape consumed by the front-end.
+ *
+ * Sheet column order (from HEADERS.QUESTIONS):
+ *   0  Question_ID
+ *   1  Mode
+ *   2  Part
+ *   3  Category
+ *   4  Level
+ *   5  Passage
+ *   6  Question_Text
+ *   7  Choice_A
+ *   8  Choice_B
+ *   9  Choice_C
+ *   10 Choice_D
+ *   11 Correct_Answer
+ *   12 Explanation_TH
+ *   13 Tip
+ *   14 Point
+ *
+ * @param {Array} row One question row.
+ * @return {Object} The client-friendly question object.
+ * @private
+ */
+function rowToQuestionObject_(row) {
+  // Coerce point to a number with a sensible fallback.
+  var pt = Number(row[14]);
+  if (isNaN(pt) || pt <= 0) {
+    pt = 10;
+  }
+
+  return {
+    questionId:    String(row[0]  || ''),
+    mode:          String(row[1]  || ''),
+    part:          String(row[2]  || ''),
+    category:      String(row[3]  || ''),
+    level:         String(row[4]  || ''),
+    passage:       String(row[5]  || ''),
+    questionText:  String(row[6]  || ''),
+    choices: {
+      A: String(row[7]  || ''),
+      B: String(row[8]  || ''),
+      C: String(row[9]  || ''),
+      D: String(row[10] || '')
+    },
+    // SECURITY NOTE: returned to the client only because the MVP
+    // performs answer checking client-side for instant feedback.
+    // A future version should remove this field and validate the
+    // user's choice on the server inside submitGameResult().
+    correctAnswer: String(row[11] || '').toUpperCase(),
+    explanationTH: String(row[12] || ''),
+    tip:           String(row[13] || ''),
+    point:         pt
+  };
+}
+
+
+/* =====================================================================
+ *  End of Phase 2D.
  *  Next phases will add:
- *    - getQuestions(mode, limit)
  *    - submitGameResult(result)
  *    - saveMistakes(playerName, mistakes)
  *    - getLeaderboard()

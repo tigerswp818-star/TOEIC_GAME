@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5C):
+ * Current build (through Phase 5D):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -15,6 +15,11 @@
  *   - startGame()
  *   - selectMode(mode)
  *   - loadQuestions(mode)
+ *   - renderQuestion()
+ *   - updateGameHUD()
+ *   - renderChoices(question)
+ *   - clearQuestionFeedback()
+ *   - updateProgressBar()
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -275,6 +280,7 @@
     // Wire all listeners that the current build supports.
     wireStartScreenInputs_();
     wireModeScreenInputs_();
+    wireGameScreenInputs_();
 
     // Attempt to fetch server-side settings (timer, scoring, etc.).
     // Fall back silently to CONSTANTS if the call fails or is slow.
@@ -548,14 +554,8 @@
     state.currentIdx = 0;
     state.mode       = mode;
 
-    // Hand off to the renderer (added in a later phase). Guard so the
-    // current build is testable end-to-end without renderQuestion().
-    if (typeof renderQuestion === 'function') {
-      renderQuestion();
-    } else {
-      console.warn('loadQuestions: renderQuestion() not yet implemented.');
-      showToast('โหลดคำถามสำเร็จ ' + clean.length + ' ข้อ', 'success');
-    }
+    // Render the first question.
+    renderQuestion();
   }
 
 
@@ -577,7 +577,167 @@
 
 
   /* =====================================================================
-   * 8. INTERNAL WIRING
+   * 8. GAME FLOW — RENDERING
+   * ===================================================================== */
+
+  /**
+   * renderQuestion – Paints the current question on the Game screen.
+   * Pulls the question pointed to by state.currentIdx, updates the HUD
+   * and progress bar, shows the optional passage, fills the choice
+   * buttons, clears any leftover feedback, unlocks the timer, and
+   * hands off to startTimer().
+   *
+   * If currentIdx has run past the end of the queue, this delegates to
+   * finishGame() (added in a later phase) instead.
+   */
+  function renderQuestion() {
+    // ---- Out-of-range → end of round ---------------------------------
+    if (state.currentIdx >= state.questions.length) {
+      if (typeof finishGame === 'function') {
+        finishGame();
+      }
+      return;
+    }
+
+    var q = state.questions[state.currentIdx];
+    if (!q) {
+      showError('ไม่พบคำถาม กรุณาลองใหม่');
+      showScreen('mode');
+      return;
+    }
+
+    // ---- HUD + progress bar ------------------------------------------
+    updateGameHUD();
+    updateProgressBar();
+
+    // ---- Passage (Reading Mission) -----------------------------------
+    var passageEl = $('#passageBox');
+    if (passageEl) {
+      var passage = (q.passage || '').toString();
+      if (passage && passage.trim() !== '') {
+        passageEl.textContent = passage;
+        passageEl.classList.remove('hidden');
+        passageEl.scrollTop = 0;
+      } else {
+        passageEl.textContent = '';
+        passageEl.classList.add('hidden');
+      }
+    }
+
+    // ---- Question text ------------------------------------------------
+    setText('#questionText', q.questionText || '');
+
+    // ---- Choices ------------------------------------------------------
+    renderChoices(q);
+
+    // ---- Clear any prior feedback / answer state ---------------------
+    clearQuestionFeedback();
+
+    // ---- Unlock answers, record start time ---------------------------
+    state.timer.locked        = false;
+    state.timer.questionStart = Date.now();
+    state.timer.secondsLeft   = CONSTANTS.TIMER_SECONDS;
+    setText('#timerSeconds', CONSTANTS.TIMER_SECONDS);
+    var timerFill = $('#timerFill');
+    if (timerFill) {
+      timerFill.style.width = '100%';
+      timerFill.classList.remove('warning');
+    }
+
+    // ---- Hand off to timer (added in Phase 5E) -----------------------
+    if (typeof startTimer === 'function') {
+      startTimer();
+    }
+  }
+
+
+  /**
+   * updateGameHUD – Refreshes every dynamic field in the game header:
+   * current question index, total count, score, and streak. Falls back
+   * to safe defaults when the round is not fully initialised yet.
+   */
+  function updateGameHUD() {
+    var total = state.questions.length || CONSTANTS.QUESTIONS_PER_ROUND;
+    var index = Math.min(state.currentIdx + 1, total);
+
+    setText('#hudIndex', index);
+    setText('#hudTotal', total);
+    setText('#hudScore', state.score);
+    setText('#hudStreak', state.streak);
+  }
+
+
+  /**
+   * renderChoices – Fills the four choice buttons with the values from
+   * the supplied question and re-enables them. Letters are A, B, C, D.
+   * The click-to-handleAnswer wiring is attached once in
+   * wireGameScreenInputs_(); each render only refreshes the visible
+   * text and resets visual state.
+   *
+   * @param {Object} question The question object from getQuestions().
+   */
+  function renderChoices(question) {
+    var letters = ['A', 'B', 'C', 'D'];
+    var choices = (question && question.choices) || {};
+
+    for (var i = 0; i < letters.length; i++) {
+      var L = letters[i];
+      var btn = $('#choicesBox .choice-btn[data-choice="' + L + '"]');
+      if (!btn) continue;
+
+      // Update the visible answer text.
+      var textEl = $('[data-slot="' + L + '"]', btn);
+      if (textEl) {
+        textEl.textContent = choices[L] || '';
+      }
+
+      // Reset visual + interactive state for this round of rendering.
+      btn.disabled = false;
+      btn.classList.remove('correct', 'wrong', 'muted', 'disabled');
+      btn.setAttribute('aria-disabled', 'false');
+    }
+  }
+
+
+  /**
+   * clearQuestionFeedback – Hides the feedback panel and empties any
+   * leftover tone classes / text from the previous question, so each
+   * render starts visually clean.
+   */
+  function clearQuestionFeedback() {
+    var fb = $('#feedbackBox');
+    if (fb) fb.classList.add('hidden');
+
+    var hdr = $('#feedbackHeader');
+    if (hdr) {
+      hdr.classList.remove('correct', 'wrong', 'timeout');
+      hdr.textContent = '';
+    }
+
+    setText('#feedbackExplanation', '');
+    setText('#feedbackTip', '');
+  }
+
+
+  /**
+   * updateProgressBar – Sets the progress-bar fill width to the
+   * percentage of questions completed BEFORE the current one. Run at
+   * the start of each render so the bar grows step by step.
+   */
+  function updateProgressBar() {
+    var total = state.questions.length || CONSTANTS.QUESTIONS_PER_ROUND;
+    var current = Math.max(0, Math.min(state.currentIdx, total));
+    var pct = total > 0 ? Math.round((current / total) * 100) : 0;
+
+    var fill = $('#progressFill');
+    if (fill) {
+      fill.style.width = pct + '%';
+    }
+  }
+
+
+  /* =====================================================================
+   * 9. INTERNAL WIRING
    * ===================================================================== */
 
   /**
@@ -647,6 +807,56 @@
 
 
   /**
+   * wireGameScreenInputs_ – Listeners that belong to the Game screen.
+   * Choice buttons forward to handleAnswer(); the Next and Quit
+   * buttons are wired once and stay live for every question.
+   * @private
+   */
+  function wireGameScreenInputs_() {
+    // Choice A/B/C/D – delegate via the data-choice attribute.
+    var choiceBtns = $$('#choicesBox .choice-btn');
+    for (var i = 0; i < choiceBtns.length; i++) {
+      (function (btn) {
+        btn.addEventListener('click', function () {
+          // Ignore clicks once the question has been answered or timed out.
+          if (state.timer.locked) return;
+          var letter = btn.getAttribute('data-choice');
+          if (letter !== 'A' && letter !== 'B' && letter !== 'C' && letter !== 'D') {
+            return;
+          }
+          if (typeof handleAnswer === 'function') {
+            handleAnswer(letter);
+          } else {
+            console.warn('handleAnswer() not yet implemented.');
+          }
+        });
+      })(choiceBtns[i]);
+    }
+
+    // Next button (revealed inside the feedback panel).
+    var nextBtn = $('#nextButton');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        if (typeof nextQuestion === 'function') {
+          nextQuestion();
+        }
+      });
+    }
+
+    // Quit button (returns to Start).
+    var quitBtn = $('#quitButton');
+    if (quitBtn) {
+      quitBtn.addEventListener('click', function () {
+        var ok = window.confirm('ต้องการออกจากเกมนี้และกลับหน้าเริ่มต้นใช่หรือไม่?');
+        if (ok) {
+          resetGame();
+        }
+      });
+    }
+  }
+
+
+  /**
    * wireModeScreenInputs_ – Listeners that belong to the Mode Selection
    * screen: the three mode cards and the back-to-start button.
    * @private
@@ -700,7 +910,7 @@
 
 
   /* =====================================================================
-   * 9. EXPORTS & BOOT
+   * 10. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -709,14 +919,15 @@
    * ===================================================================== */
 
   window.TOEICQuest = {
-    initApp:       initApp,
-    resetGame:     resetGame,
-    startGame:     startGame,
-    selectMode:    selectMode,
-    loadQuestions: loadQuestions,
-    showScreen:    showScreen,
-    showToast:     showToast,
-    showError:     showError,
+    initApp:        initApp,
+    resetGame:      resetGame,
+    startGame:      startGame,
+    selectMode:     selectMode,
+    loadQuestions:  loadQuestions,
+    renderQuestion: renderQuestion,
+    showScreen:     showScreen,
+    showToast:      showToast,
+    showError:      showError,
     // Internal hooks exposed for later phases to hang behavior off of:
     _state:     state,
     _const:     CONSTANTS,

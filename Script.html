@@ -3,7 +3,7 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5D):
+ * Current build (through Phase 5E):
  *   - IIFE wrapper
  *   - Global app state object
  *   - Game constants
@@ -20,6 +20,10 @@
  *   - renderChoices(question)
  *   - clearQuestionFeedback()
  *   - updateProgressBar()
+ *   - startTimer()
+ *   - stopTimer()
+ *   - handleTimeUp()
+ *   - updateTimerDisplay()
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -305,9 +309,12 @@
    * later screens.
    */
   function resetGame() {
-    // Stop any running timer (later phases may have started one).
-    if (state.timer && state.timer.intervalId) {
+    // Stop any running timer through the canonical path.
+    if (typeof stopTimer === 'function') {
+      stopTimer();
+    } else if (state.timer && state.timer.intervalId) {
       clearInterval(state.timer.intervalId);
+      state.timer.intervalId = null;
     }
 
     // Reset everything except the cached settings, which we keep so
@@ -420,9 +427,7 @@
     // ---- Reset per-round game state -----------------------------------
     // We keep the player profile (name + target) and any cached settings
     // so the user can play multiple rounds without re-entering details.
-    if (state.timer && state.timer.intervalId) {
-      clearInterval(state.timer.intervalId);
-    }
+    stopTimer();
     state.mode         = mode;
     state.questions    = [];
     state.currentIdx   = 0;
@@ -737,7 +742,179 @@
 
 
   /* =====================================================================
-   * 9. INTERNAL WIRING
+   * 9. GAME FLOW — TIMER
+   * ===================================================================== */
+
+  /**
+   * startTimer – Begins the per-question countdown.
+   * Always stops any existing timer first, so only one interval is
+   * active at a time. Records the question start time so handleAnswer()
+   * can later award a speed bonus.
+   */
+  function startTimer() {
+    // Defensive: never run two intervals in parallel.
+    stopTimer();
+
+    state.timer.secondsLeft   = CONSTANTS.TIMER_SECONDS;
+    state.timer.questionStart = Date.now();
+    state.timer.locked        = false;
+
+    // Paint the initial state immediately (so the UI reflects the
+    // starting value before the first 1s tick).
+    updateTimerDisplay();
+
+    // Tick every second. We use setInterval (rather than chained
+    // setTimeouts) so the cadence is steady even under load.
+    state.timer.intervalId = setInterval(function () {
+      // If the user has already answered, stop ticking.
+      if (state.timer.locked) {
+        stopTimer();
+        return;
+      }
+
+      state.timer.secondsLeft -= 1;
+      updateTimerDisplay();
+
+      if (state.timer.secondsLeft <= 0) {
+        handleTimeUp();
+      }
+    }, 1000);
+  }
+
+
+  /**
+   * stopTimer – Cancels the running interval (if any) and clears the
+   * stored handle. Safe to call repeatedly.
+   */
+  function stopTimer() {
+    if (state.timer && state.timer.intervalId) {
+      clearInterval(state.timer.intervalId);
+      state.timer.intervalId = null;
+    }
+  }
+
+
+  /**
+   * updateTimerDisplay – Refreshes the seconds-remaining label and the
+   * timer-bar fill. Adds the .warning class to the bar in the last
+   * five seconds so the CSS pulse animation kicks in.
+   */
+  function updateTimerDisplay() {
+    var sec = Math.max(0, state.timer.secondsLeft);
+    setText('#timerSeconds', sec);
+
+    var total = CONSTANTS.TIMER_SECONDS || 1;
+    var pct = Math.max(0, Math.min(100, (sec / total) * 100));
+
+    var fill = $('#timerFill');
+    if (fill) {
+      fill.style.width = pct + '%';
+      if (sec <= 5) {
+        fill.classList.add('warning');
+      } else {
+        fill.classList.remove('warning');
+      }
+    }
+  }
+
+
+  /**
+   * handleTimeUp – Runs when the countdown hits zero with no answer.
+   * Treated as a wrong answer with an empty selection:
+   *   - Lock further input and stop the timer.
+   *   - Disable every choice button and highlight the correct one.
+   *   - Increment wrong count, reset streak.
+   *   - Push a mistake row (selectedAnswer = '') to state.mistakes.
+   *   - Reveal the feedback panel with explanation + tip.
+   *   - Refresh the HUD.
+   */
+  function handleTimeUp() {
+    // 1. Lock answers and stop ticking.
+    state.timer.locked = true;
+    stopTimer();
+
+    var q = state.questions[state.currentIdx];
+    var correctLetter = q && q.correctAnswer ? q.correctAnswer : '';
+
+    // 2. Disable every choice button visually + interactively.
+    var choiceBtns = $$('#choicesBox .choice-btn');
+    for (var i = 0; i < choiceBtns.length; i++) {
+      var btn = choiceBtns[i];
+      btn.disabled = true;
+      btn.setAttribute('aria-disabled', 'true');
+      btn.classList.add('disabled');
+
+      // Highlight the correct answer; mute the others.
+      var letter = btn.getAttribute('data-choice');
+      if (correctLetter && letter === correctLetter) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('muted');
+      }
+    }
+
+    // 3. Update round counters: wrong + reset streak.
+    state.wrongCount += 1;
+    state.streak = 0;
+
+    // 4. Log the mistake (selectedAnswer empty = timed out).
+    if (q) {
+      state.mistakes.push({
+        mode:           state.mode,
+        questionId:     q.questionId || '',
+        questionText:   q.questionText || '',
+        selectedAnswer: '',
+        correctAnswer:  correctLetter,
+        category:       q.category || ''
+      });
+    }
+
+    // 5. Reveal feedback panel with timeout tone.
+    showQuestionFeedback_('timeout');
+
+    // 6. Refresh the HUD so the streak chip updates immediately.
+    updateGameHUD();
+  }
+
+
+  /**
+   * showQuestionFeedback_ – Shared helper that reveals the feedback
+   * panel for the current question. Used by handleTimeUp now and by
+   * handleAnswer in the next phase.
+   *
+   * @param {string} tone One of 'correct', 'wrong', 'timeout'.
+   * @private
+   */
+  function showQuestionFeedback_(tone) {
+    var q = state.questions[state.currentIdx];
+    if (!q) return;
+
+    var hdr = $('#feedbackHeader');
+    if (hdr) {
+      hdr.classList.remove('correct', 'wrong', 'timeout');
+
+      if (tone === 'correct') {
+        hdr.classList.add('correct');
+        hdr.textContent = '✓ ถูกต้อง! เก่งมาก';
+      } else if (tone === 'timeout') {
+        hdr.classList.add('timeout');
+        hdr.textContent = '⏰ หมดเวลา! คำตอบที่ถูกคือ ' + (q.correctAnswer || '');
+      } else {
+        hdr.classList.add('wrong');
+        hdr.textContent = '✗ ไม่ถูกต้อง คำตอบที่ถูกคือ ' + (q.correctAnswer || '');
+      }
+    }
+
+    setText('#feedbackExplanation', q.explanationTH || '—');
+    setText('#feedbackTip',         q.tip           || '—');
+
+    var fb = $('#feedbackBox');
+    if (fb) fb.classList.remove('hidden');
+  }
+
+
+  /* =====================================================================
+   * 10. INTERNAL WIRING
    * ===================================================================== */
 
   /**
@@ -910,7 +1087,7 @@
 
 
   /* =====================================================================
-   * 10. EXPORTS & BOOT
+   * 11. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -925,6 +1102,8 @@
     selectMode:     selectMode,
     loadQuestions:  loadQuestions,
     renderQuestion: renderQuestion,
+    startTimer:     startTimer,
+    stopTimer:      stopTimer,
     showScreen:     showScreen,
     showToast:      showToast,
     showError:      showError,

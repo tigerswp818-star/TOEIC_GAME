@@ -332,7 +332,8 @@ function setupSpreadsheet() {
       spreadsheet: ss.getName(),
       created: [],
       headersWritten: [],
-      settingsInserted: 0
+      settingsInserted: 0,
+      questionsInserted: 0
     };
 
     // Ordered list of sheets to ensure, paired with their header rows.
@@ -353,6 +354,9 @@ function setupSpreadsheet() {
     if (settingsSheet && settingsSheet.getLastRow() < 2) {
       report.settingsInserted = insertDefaultSettings_(settingsSheet);
     }
+
+    // Seed sample questions only if the Questions sheet is otherwise empty.
+    report.questionsInserted = insertSampleQuestionsIfEmpty_(ss);
 
     Logger.log('setupSpreadsheet completed: ' + JSON.stringify(report));
     return report;
@@ -945,12 +949,78 @@ function getReadingMissionSamples() {
 
 
 /* =====================================================================
- *  End of Phase 2C-3.
- *  Next sub-phases will add:
- *    - getSampleQuestions() aggregator
- *    - insertSampleQuestionsIfEmpty_(ss)
- *    - Hook into setupSpreadsheet()
- *  Followed by:
+ * 11. SAMPLE QUESTION AGGREGATION & SEEDING
+ * ===================================================================== */
+
+/**
+ * getSampleQuestions – Aggregates every sample question set into a
+ * single 2D array, in the column order defined by HEADERS.QUESTIONS.
+ *
+ * The order of concatenation is intentional: Vocab → Grammar → Reading.
+ * It does not affect game play because getQuestions() will shuffle the
+ * rows, but it keeps the spreadsheet visually grouped after seeding.
+ *
+ * @return {Array<Array>} All sample question rows combined.
+ */
+function getSampleQuestions() {
+  var vocab   = getVocabRushSamples();
+  var grammar = getGrammarSprintSamples();
+  var reading = getReadingMissionSamples();
+
+  // Use Array.concat to join the three sets without mutating originals.
+  return vocab.concat(grammar).concat(reading);
+}
+
+
+/**
+ * insertSampleQuestionsIfEmpty_ – Internal helper that seeds the
+ * Questions sheet ONLY when it currently contains nothing more than
+ * the header row. This makes the seeding step idempotent: re-running
+ * setupSpreadsheet() never duplicates rows, and any custom questions
+ * added by the user are preserved.
+ *
+ * @param {Spreadsheet} ss The target spreadsheet.
+ * @return {number} The number of question rows inserted (0 if skipped).
+ * @private
+ */
+function insertSampleQuestionsIfEmpty_(ss) {
+  var sheet = ss.getSheetByName(SHEETS.QUESTIONS);
+
+  // Should not happen because setupSpreadsheet ensures the sheet first,
+  // but guard defensively.
+  if (!sheet) {
+    return 0;
+  }
+
+  // Only seed when there is no data beyond the header row.
+  // getLastRow() returns 0 for a brand-new sheet, or 1 if only the
+  // header row is present.
+  if (sheet.getLastRow() > 1) {
+    return 0;
+  }
+
+  var rows = getSampleQuestions();
+  if (!rows || rows.length === 0) {
+    return 0;
+  }
+
+  // Write all rows in a single batch starting at row 2, column 1.
+  // Column count is taken from the headers definition for safety.
+  var numCols = HEADERS.QUESTIONS.length;
+  sheet.getRange(2, 1, rows.length, numCols).setValues(rows);
+
+  // Re-fit columns now that real content exists.
+  for (var c = 1; c <= numCols; c++) {
+    sheet.autoResizeColumn(c);
+  }
+
+  return rows.length;
+}
+
+
+/* =====================================================================
+ *  End of Phase 2C-4.
+ *  Next phases will add:
  *    - getQuestions(mode, limit)
  *    - submitGameResult(result)
  *    - saveMistakes(playerName, mistakes)

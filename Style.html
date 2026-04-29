@@ -1,0 +1,1012 @@
+<style>
+/* =====================================================================
+ * TOEIC Quest: Conquer 990
+ * Style.html – RPG-style theme, mobile first
+ * ===================================================================== */
+
+
+/* =====================================================================
+ * 1. CSS RESET & DESIGN TOKENS
+ * ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Color palette – deep indigo background with gold/violet accents */
+  --bg-1:           #170b32;
+  --bg-2:           #2a1656;
+  --bg-3:           #3b1f7a;
+
+  --card-bg:        rgba(255, 255, 255, 0.06);
+  --card-bg-strong: rgba(255, 255, 255, 0.10);
+  --card-border:    rgba(255, 255, 255, 0.12);
+
+  --text-1:         #f6f2ff;
+  --text-2:         #cdc1f5;
+  --text-3:         #9d92c9;
+
+  --primary:        #8b5cff;
+  --primary-2:      #c66bff;
+  --primary-soft:   rgba(139, 92, 255, 0.18);
+
+  --gold:           #ffd166;
+  --gold-2:         #ffb347;
+
+  --success:        #28d97a;
+  --success-bg:     rgba(40, 217, 122, 0.18);
+  --danger:         #ff5b6e;
+  --danger-bg:      rgba(255, 91, 110, 0.18);
+  --warn:           #ffb347;
+
+  /* Layout */
+  --radius-sm:      10px;
+  --radius:         16px;
+  --radius-lg:      22px;
+  --shadow-1:       0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-2:       0 18px 50px rgba(0, 0, 0, 0.35);
+
+  --space-1:        6px;
+  --space-2:        10px;
+  --space-3:        16px;
+  --space-4:        22px;
+  --space-5:        32px;
+
+  /* Typography */
+  --font-th:        'Noto Sans Thai', 'Sarabun', system-ui, sans-serif;
+  --font-en:        'Poppins', system-ui, -apple-system, sans-serif;
+}
+
+
+/* =====================================================================
+ * 2. GLOBAL CANVAS
+ * ===================================================================== */
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-th);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-1);
+  /* Layered radial highlights over a deep indigo gradient. */
+  background:
+    radial-gradient(circle at 15% 10%, rgba(198, 107, 255, 0.30), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(139, 92, 255, 0.30), transparent 45%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 60%, var(--bg-3) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input,
+button {
+  font-size: 1rem;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+/* =====================================================================
+ * 3. APP SHELL & SCREEN SYSTEM
+ * ===================================================================== */
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-4) var(--space-3);
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 520px;
+  animation: fadeIn 0.35s ease;
+}
+
+.screen.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =====================================================================
+ * 4. CARDS
+ * ===================================================================== */
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  padding: var(--space-5) var(--space-4);
+}
+
+.card.hero {
+  text-align: center;
+}
+
+.badge-tag {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(255, 209, 102, 0.12);
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-en);
+  font-size: clamp(1.6rem, 5vw + 1rem, 2.4rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--text-1);
+}
+
+.title-accent {
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.subtitle {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.muted {
+  color: var(--text-3);
+  font-size: 0.9rem;
+}
+
+
+/* =====================================================================
+ * 5. FORMS & OPTION CHIPS
+ * ===================================================================== */
+
+.form-group {
+  margin-top: var(--space-3);
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-1);
+  font-size: 1rem;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.form-input::placeholder {
+  color: var(--text-3);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(139, 92, 255, 0.10);
+  box-shadow: 0 0 0 3px rgba(139, 92, 255, 0.25);
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.option-chip {
+  padding: 12px 0;
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  transition: transform 0.12s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.option-chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.option-chip.selected {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(139, 92, 255, 0.45);
+  color: #fff;
+}
+
+
+/* =====================================================================
+ * 6. BUTTONS
+ * ===================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 22px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  transition: transform 0.12s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(139, 92, 255, 0.45);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 32px rgba(139, 92, 255, 0.55);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text-1);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: var(--space-3);
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-1);
+  font-size: 1.2rem;
+  border: 1px solid var(--card-border);
+  transition: background 0.15s;
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.btn-link {
+  display: block;
+  margin: var(--space-3) auto 0;
+  text-align: center;
+  background: none;
+  color: var(--text-3);
+  font-size: 0.9rem;
+  padding: 8px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-link:hover {
+  color: var(--text-1);
+}
+
+
+/* =====================================================================
+ * 7. TOPBAR (used on Mode + Leaderboard screens)
+ * ===================================================================== */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.topbar-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-1);
+}
+
+.topbar-spacer {
+  width: 38px;
+  height: 38px;
+}
+
+
+/* =====================================================================
+ * 8. MODE SELECTION
+ * ===================================================================== */
+
+.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: var(--space-3);
+}
+
+.mode-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  text-align: left;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.mode-card:hover {
+  transform: translateY(-2px);
+  background: rgba(139, 92, 255, 0.14);
+  border-color: rgba(139, 92, 255, 0.55);
+  box-shadow: 0 12px 28px rgba(139, 92, 255, 0.30);
+}
+
+.mode-icon {
+  font-size: 1.8rem;
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(139, 92, 255, 0.55), rgba(198, 107, 255, 0.55));
+  flex-shrink: 0;
+}
+
+.mode-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mode-title {
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-1);
+}
+
+.mode-desc {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+.mode-arrow {
+  color: var(--text-3);
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+
+/* =====================================================================
+ * 9. GAME HUD (progress + timer)
+ * ===================================================================== */
+
+.hud {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--space-3);
+}
+
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.hud-row-small {
+  font-size: 0.8rem;
+}
+
+.hud-label {
+  font-family: var(--font-en);
+  font-weight: 600;
+}
+
+.hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  color: var(--text-1);
+}
+
+.progress-bar,
+.timer-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.timer-bar {
+  height: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-2) 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.timer-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--success) 0%, var(--gold) 60%, var(--danger) 100%);
+  border-radius: 999px;
+  /* Width transition is driven from JS each second so it animates linearly. */
+  transition: width 1s linear;
+}
+
+.timer-fill.warning {
+  background: var(--danger);
+  animation: pulseWarn 0.8s ease-in-out infinite;
+}
+
+@keyframes pulseWarn {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+
+/* =====================================================================
+ * 10. QUESTION & PASSAGE
+ * ===================================================================== */
+
+.passage {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: var(--space-3);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.question-text {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--text-1);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 16px;
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+  font-weight: 500;
+}
+
+
+/* =====================================================================
+ * 11. CHOICES
+ * ===================================================================== */
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  text-align: left;
+  color: var(--text-1);
+  font-size: 0.98rem;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s;
+}
+
+.choice-btn:hover:not(:disabled) {
+  background: rgba(139, 92, 255, 0.12);
+  border-color: rgba(139, 92, 255, 0.55);
+  transform: translateX(2px);
+}
+
+.choice-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.choice-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.choice-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.choice-btn.correct {
+  background: var(--success-bg);
+  border-color: var(--success);
+  animation: correctPulse 0.6s ease;
+}
+
+.choice-btn.correct .choice-letter {
+  background: var(--success);
+  color: #082b16;
+}
+
+.choice-btn.wrong {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  animation: wrongShake 0.45s ease;
+}
+
+.choice-btn.wrong .choice-letter {
+  background: var(--danger);
+  color: #2b0710;
+}
+
+.choice-btn.muted {
+  opacity: 0.45;
+}
+
+@keyframes correctPulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(40, 217, 122, 0.18); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 217, 122, 0); }
+}
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+
+/* =====================================================================
+ * 12. FEEDBACK PANEL
+ * ===================================================================== */
+
+.feedback {
+  margin-top: var(--space-3);
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback-header {
+  font-family: var(--font-en);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-header.correct { color: var(--success); }
+.feedback-header.wrong   { color: var(--danger); }
+.feedback-header.timeout { color: var(--warn); }
+
+.feedback-section {
+  margin-top: 10px;
+}
+
+.feedback-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.feedback-text {
+  color: var(--text-2);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+
+/* =====================================================================
+ * 13. RESULT SCREEN
+ * ===================================================================== */
+
+.result-hero {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.result-emoji {
+  font-size: 3.4rem;
+  line-height: 1;
+  margin-bottom: var(--space-2);
+  animation: popIn 0.5s ease;
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.4); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-card-wide {
+  grid-column: span 2;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-family: var(--font-en);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.stat-badge {
+  font-family: var(--font-th);
+  font-size: 1rem;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+.action-row {
+  margin-top: var(--space-4);
+}
+
+
+/* =====================================================================
+ * 14. LEADERBOARD
+ * ===================================================================== */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.leaderboard-table thead th {
+  background: rgba(139, 92, 255, 0.18);
+  color: var(--text-1);
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.leaderboard-table tbody tr {
+  border-top: 1px solid var(--card-border);
+  transition: background 0.15s;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: rgba(139, 92, 255, 0.10);
+}
+
+.leaderboard-table td {
+  padding: 12px;
+  color: var(--text-2);
+  vertical-align: middle;
+}
+
+.leaderboard-table .col-rank,
+.leaderboard-table .rank {
+  width: 44px;
+  font-family: var(--font-en);
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.leaderboard-table .rank-medal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  font-family: var(--font-en);
+  font-weight: 800;
+}
+
+.leaderboard-table .rank-1 .rank-medal { background: linear-gradient(135deg, #ffd166, #ffb347); color: #2a1656; }
+.leaderboard-table .rank-2 .rank-medal { background: linear-gradient(135deg, #d8d8d8, #a9a9a9); color: #1a1a1a; }
+.leaderboard-table .rank-3 .rank-medal { background: linear-gradient(135deg, #d28b5e, #a05a32); color: #fff; }
+
+.leaderboard-table .col-score,
+.leaderboard-table .col-acc {
+  text-align: right;
+  font-family: var(--font-en);
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.empty-state {
+  margin-top: var(--space-3);
+  text-align: center;
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius);
+  color: var(--text-3);
+  font-size: 0.95rem;
+}
+
+
+/* =====================================================================
+ * 15. LOADING OVERLAY
+ * ===================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 6, 32, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease;
+}
+
+.overlay-card {
+  background: rgba(34, 18, 70, 0.92);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-2);
+}
+
+.overlay-text {
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--primary-2);
+  animation: spin 0.85s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* =====================================================================
+ * 16. TOAST / ERROR STATE
+ * ===================================================================== */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 200;
+  min-width: 220px;
+  max-width: 90vw;
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  background: rgba(20, 10, 45, 0.95);
+  border: 1px solid var(--card-border);
+  color: var(--text-1);
+  box-shadow: var(--shadow-2);
+  font-size: 0.92rem;
+  text-align: center;
+  animation: toastIn 0.25s ease;
+}
+
+.toast.error {
+  border-color: var(--danger);
+  background: rgba(70, 14, 26, 0.95);
+}
+
+.toast.success {
+  border-color: var(--success);
+  background: rgba(14, 70, 38, 0.95);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+
+/* =====================================================================
+ * 17. RESPONSIVE TWEAKS
+ * ===================================================================== */
+
+/* Small phones */
+@media (max-width: 360px) {
+  .card {
+    padding: var(--space-4) var(--space-3);
+  }
+  .option-grid {
+    gap: 6px;
+  }
+  .option-chip {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+  .stat-value {
+    font-size: 1.2rem;
+  }
+}
+
+/* Tablet & up – widen container slightly and grow type a touch */
+@media (min-width: 720px) {
+  .screen {
+    max-width: 600px;
+  }
+  .card {
+    padding: 36px 32px;
+  }
+  .question-text {
+    font-size: 1.1rem;
+  }
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .timer-fill {
+    transition: none !important;
+  }
+}
+</style>

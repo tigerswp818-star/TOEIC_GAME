@@ -3,36 +3,27 @@
  * TOEIC Quest: Conquer 990
  * Script.html – Front-end controller
  * ---------------------------------------------------------------------
- * Current build (through Phase 5G):
- *   - IIFE wrapper
- *   - Global app state object
- *   - Game constants
- *   - DOM helpers ($, $$)
- *   - Screen helpers (showScreen)
- *   - Loading and toast helpers
- *   - initApp()
- *   - resetGame()
- *   - startGame()
- *   - selectMode(mode)
- *   - loadQuestions(mode)
- *   - renderQuestion()
- *   - updateGameHUD()
- *   - renderChoices(question)
- *   - clearQuestionFeedback()
- *   - updateProgressBar()
- *   - startTimer()
- *   - stopTimer()
- *   - handleTimeUp()
- *   - updateTimerDisplay()
- *   - handleAnswer(choice)
- *   - calculateQuestionScore(isCorrect, responseTime)
- *   - showExplanation(isCorrect, selectedChoice)
- *   - disableAnswerButtons()
- *   - highlightCorrectAndWrongChoices(selectedChoice, correctAnswer)
- *   - nextQuestion()
- *   - finishGame()
- *   - calculateFinalStats()
- *   - renderResult(stats)
+ * Final build (Phase 5H):
+ *   Public API (window.TOEICQuest):
+ *     - initApp()              app boot
+ *     - resetGame()            full state reset → Start screen
+ *     - startGame()            Start screen → Mode screen (validates inputs)
+ *     - selectMode(mode)       Mode screen → Game screen (loads questions)
+ *     - loadQuestions(mode)    Server fetch via getQuestions
+ *     - renderQuestion()       Paint current question card
+ *     - startTimer()           Begin per-question countdown
+ *     - stopTimer()            Cancel countdown
+ *     - handleAnswer(choice)   Score + reveal feedback
+ *     - showExplanation()      Reveal Thai explanation + tip
+ *     - nextQuestion()         Advance or finishGame
+ *     - finishGame()           End round + submit + render result
+ *     - submitScore()          Server save via submitGameResult
+ *     - renderResult(stats)    Paint result screen
+ *     - loadLeaderboard()      Server fetch via getLeaderboard
+ *     - renderLeaderboard(d)   Paint leaderboard table
+ *     - goToStartScreen()      Navigation helper
+ *     - goToModeSelection()    Navigation helper
+ *     - showScreen / showToast / showError
  *
  * All server calls go through google.script.run.
  * ===================================================================== */
@@ -295,6 +286,7 @@
     wireModeScreenInputs_();
     wireGameScreenInputs_();
     wireResultScreenInputs_();
+    wireLeaderboardScreenInputs_();
 
     // Attempt to fetch server-side settings (timer, scoring, etc.).
     // Fall back silently to CONSTANTS if the call fails or is slow.
@@ -1311,7 +1303,221 @@
 
 
   /* =====================================================================
-   * 12. INTERNAL WIRING
+   * 12. GAME FLOW — SUBMIT, LEADERBOARD & NAVIGATION
+   * ===================================================================== */
+
+  /**
+   * submitScore – Persists the finished round to the back end via
+   * google.script.run.submitGameResult(result).
+   *
+   * Payload shape (matches Code.gs/submitGameResult):
+   *   { playerName, targetScore, mode, score,
+   *     correct, wrong, accuracy, exp, coin, level, badge, mistakes }
+   *
+   * Note: the back end expects `correct` / `wrong` (not the front-end's
+   * `correctCount` / `wrongCount`), so we map field names here.
+   */
+  function submitScore() {
+    if (!window.google || !google.script || !google.script.run) {
+      // Off-line preview fallback — we still want the user to see the
+      // result and leaderboard buttons even though no row is saved.
+      console.warn('submitScore: google.script.run unavailable.');
+      showToast('โหมดดูตัวอย่างเท่านั้น คะแนนจะไม่ถูกบันทึก', 'info', 3500);
+      return;
+    }
+
+    var totalAnswered = state.correctCount + state.wrongCount;
+    var accuracy = totalAnswered > 0
+      ? (state.correctCount / totalAnswered)
+      : 0;
+
+    var payload = {
+      playerName:  state.playerName || '',
+      targetScore: state.targetScore || 0,
+      mode:        state.mode || '',
+      score:       state.score || 0,
+      correct:     state.correctCount || 0,
+      wrong:       state.wrongCount || 0,
+      accuracy:    accuracy,
+      exp:         state.exp || 0,
+      coin:        state.coin || 0,
+      level:       state.level || 1,
+      badge:       state.badge || '',
+      mistakes:    state.mistakes || []
+    };
+
+    showToast('กำลังบันทึกคะแนน...', 'info', 1500);
+
+    google.script.run
+      .withSuccessHandler(function (response) {
+        // Backend returns { ok, savedAt, mistakesSaved } on success.
+        var saved = (response && response.mistakesSaved) || 0;
+        var msg = 'บันทึกคะแนนสำเร็จ' +
+          (saved > 0 ? ' (เก็บข้อผิด ' + saved + ' ข้อไว้ทบทวน)' : '');
+        showToast(msg, 'success', 3200);
+      })
+      .withFailureHandler(function (err) {
+        var detail = (err && err.message) ? err.message : String(err || '');
+        console.warn('submitGameResult failed: ' + detail);
+        showError('บันทึกคะแนนไม่สำเร็จ กรุณาลองใหม่ภายหลัง');
+      })
+      .submitGameResult(payload);
+  }
+
+
+  /**
+   * loadLeaderboard – Pulls the latest top-10 entries from the back
+   * end and hands the result to renderLeaderboard().
+   */
+  function loadLeaderboard() {
+    showLoading('กำลังโหลดกระดานผู้นำ...');
+
+    if (!window.google || !google.script || !google.script.run) {
+      hideLoading();
+      // Render an empty state so the screen still shows something useful.
+      renderLeaderboard([]);
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function (data) {
+        hideLoading();
+        renderLeaderboard(Array.isArray(data) ? data : []);
+      })
+      .withFailureHandler(function (err) {
+        hideLoading();
+        var detail = (err && err.message) ? err.message : String(err || '');
+        console.warn('getLeaderboard failed: ' + detail);
+        showError('โหลดกระดานผู้นำไม่สำเร็จ');
+        renderLeaderboard([]);
+      })
+      .getLeaderboard();
+  }
+
+
+  /**
+   * renderLeaderboard – Paints the top-10 table.
+   * Falls back to an empty state when the array is empty.
+   *
+   * Each entry is shaped by Code.gs/getLeaderboard:
+   *   { rank, playerName, targetScore, mode, score,
+   *     correctCount, wrongCount, accuracy, exp, coin, level, badge, timestamp }
+   *
+   * The visible columns in Index.html are:
+   *   # | ผู้เล่น (with Lv./badge sub-line) | โหมด | คะแนน | แม่นยำ
+   *
+   * @param {Array<Object>} data
+   */
+  function renderLeaderboard(data) {
+    showScreen('leaderboard');
+
+    var body = $('#leaderboardBody');
+    var empty = $('#leaderboardEmpty');
+
+    if (!body) return;
+
+    // Empty-state branch.
+    if (!data || data.length === 0) {
+      body.innerHTML = '';
+      if (empty) empty.classList.remove('hidden');
+      return;
+    }
+    if (empty) empty.classList.add('hidden');
+
+    // Build rows.
+    var rows = [];
+    for (var i = 0; i < data.length && i < 10; i++) {
+      var e = data[i] || {};
+      var rank        = e.rank || (i + 1);
+      var playerName  = String(e.playerName || '—');
+      var mode        = String(e.mode || '—');
+      var score       = (typeof e.score === 'number') ? e.score : 0;
+      var accuracyPct = Math.round(((typeof e.accuracy === 'number') ? e.accuracy : 0) * 100);
+      var level       = (typeof e.level === 'number') ? e.level : 1;
+      var badge       = String(e.badge || '');
+
+      // Medal for the top three.
+      var medal;
+      if (rank === 1)      medal = '🥇';
+      else if (rank === 2) medal = '🥈';
+      else if (rank === 3) medal = '🥉';
+      else                 medal = String(rank);
+
+      // Player cell with Lv./badge sub-line.
+      var subline = 'Lv. ' + level;
+      if (badge) {
+        subline += ' · 🏅 ' + badge;
+      }
+
+      rows.push(
+        '<tr class="rank-' + rank + '">' +
+          '<td class="col-rank rank">' +
+            '<span class="rank-medal">' + escapeHtml_(medal) + '</span>' +
+          '</td>' +
+          '<td class="col-name">' +
+            '<div>' + escapeHtml_(playerName) + '</div>' +
+            '<div class="muted" style="font-size:0.78rem;margin-top:2px;">' +
+              escapeHtml_(subline) +
+            '</div>' +
+          '</td>' +
+          '<td class="col-mode">' + escapeHtml_(mode) + '</td>' +
+          '<td class="col-score">' + score + '</td>' +
+          '<td class="col-acc">' + accuracyPct + '%</td>' +
+        '</tr>'
+      );
+    }
+
+    body.innerHTML = rows.join('');
+  }
+
+
+  /**
+   * escapeHtml_ – Minimal HTML escaper for the few places where we
+   * build markup as strings (the leaderboard rows above). Keeps the
+   * UI safe even if a player name slipped past server sanitization.
+   * @param {string} s
+   * @return {string}
+   * @private
+   */
+  function escapeHtml_(s) {
+    if (s === null || s === undefined) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+
+  /**
+   * goToStartScreen – Navigation helper. Used by toolbar buttons that
+   * just want to flip to the start screen without resetting state.
+   */
+  function goToStartScreen() {
+    showScreen('start');
+  }
+
+
+  /**
+   * goToModeSelection – Navigation helper. Used by toolbar buttons
+   * that flip to the mode-selection screen, preserving the player
+   * profile (name + target score).
+   */
+  function goToModeSelection() {
+    if (!state.playerName || !state.targetScore) {
+      // Player profile missing — bounce them back to the start screen
+      // instead of showing an empty greeting.
+      showScreen('start');
+      return;
+    }
+    setText('#modePlayerName', state.playerName);
+    showScreen('mode');
+  }
+
+
+  /* =====================================================================
+   * 13. INTERNAL WIRING
    * ===================================================================== */
 
   /**
@@ -1431,6 +1637,52 @@
 
 
   /**
+   * wireLeaderboardScreenInputs_ – Listeners for the leaderboard
+   * topbar (back, refresh) and footer (play again, home) buttons.
+   * @private
+   */
+  function wireLeaderboardScreenInputs_() {
+    var backBtn = $('#leaderboardBack');
+    if (backBtn) {
+      backBtn.addEventListener('click', function () {
+        // If the user has a profile, send them to mode selection;
+        // otherwise back to start.
+        if (state.playerName && state.targetScore) {
+          goToModeSelection();
+        } else {
+          goToStartScreen();
+        }
+      });
+    }
+
+    var refreshBtn = $('#leaderboardRefresh');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        loadLeaderboard();
+      });
+    }
+
+    var playBtn = $('#leaderboardPlay');
+    if (playBtn) {
+      playBtn.addEventListener('click', function () {
+        if (state.playerName && state.targetScore) {
+          goToModeSelection();
+        } else {
+          goToStartScreen();
+        }
+      });
+    }
+
+    var homeBtn = $('#leaderboardHome');
+    if (homeBtn) {
+      homeBtn.addEventListener('click', function () {
+        resetGame();
+      });
+    }
+  }
+
+
+  /**
    * wireResultScreenInputs_ – Listeners for the three Result-screen
    * buttons: play again (back to mode selection), view leaderboard,
    * and back to start.
@@ -1518,7 +1770,7 @@
 
 
   /* =====================================================================
-   * 13. EXPORTS & BOOT
+   * 14. EXPORTS & BOOT
    * ---------------------------------------------------------------------
    *  Expose a small namespace so later phases (and inline handlers, if
    *  any) can call the controller without polluting the global scope.
@@ -1527,22 +1779,27 @@
    * ===================================================================== */
 
   window.TOEICQuest = {
-    initApp:         initApp,
-    resetGame:       resetGame,
-    startGame:       startGame,
-    selectMode:      selectMode,
-    loadQuestions:   loadQuestions,
-    renderQuestion:  renderQuestion,
-    startTimer:      startTimer,
-    stopTimer:       stopTimer,
-    handleAnswer:    handleAnswer,
-    showExplanation: showExplanation,
-    nextQuestion:    nextQuestion,
-    finishGame:      finishGame,
-    renderResult:    renderResult,
-    showScreen:      showScreen,
-    showToast:       showToast,
-    showError:       showError,
+    initApp:           initApp,
+    resetGame:         resetGame,
+    startGame:         startGame,
+    selectMode:        selectMode,
+    loadQuestions:     loadQuestions,
+    renderQuestion:    renderQuestion,
+    startTimer:        startTimer,
+    stopTimer:         stopTimer,
+    handleAnswer:      handleAnswer,
+    showExplanation:   showExplanation,
+    nextQuestion:      nextQuestion,
+    finishGame:        finishGame,
+    submitScore:       submitScore,
+    renderResult:      renderResult,
+    loadLeaderboard:   loadLeaderboard,
+    renderLeaderboard: renderLeaderboard,
+    goToStartScreen:   goToStartScreen,
+    goToModeSelection: goToModeSelection,
+    showScreen:        showScreen,
+    showToast:         showToast,
+    showError:         showError,
     // Internal hooks exposed for later phases to hang behavior off of:
     _state:     state,
     _const:     CONSTANTS,

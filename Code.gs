@@ -288,9 +288,172 @@ function getSettings() {
 
 
 /* =====================================================================
- *  End of Phase 2A skeleton.
+ * 7. SPREADSHEET SETUP
+ * ===================================================================== */
+
+/**
+ * setupSpreadsheet – One-time (idempotent) initialization routine.
+ *
+ * Run this manually from the Apps Script editor after configuring
+ * SPREADSHEET_ID. It guarantees that the database is in a valid state
+ * for the rest of the application:
+ *
+ *   1. Opens the target spreadsheet by ID.
+ *   2. Creates any of the four required sheets that are missing
+ *      (Questions, Scores, Mistakes, Settings).
+ *   3. Writes the correct header row on each sheet (only when the
+ *      sheet is brand new or has no header yet).
+ *   4. Freezes the first row on every sheet.
+ *   5. Auto-resizes columns so headers are readable.
+ *   6. Inserts the default key/value rows into Settings (only when
+ *      Settings is empty, so existing customizations are preserved).
+ *
+ * NOTE: Sample question seeding will be added in a later phase.
+ *
+ * @return {Object} A summary report describing what was created.
+ */
+function setupSpreadsheet() {
+  // Guard against running with the placeholder ID still in place.
+  if (!SPREADSHEET_ID || SPREADSHEET_ID === 'PUT_YOUR_SPREADSHEET_ID_HERE') {
+    throw new Error(
+      'SPREADSHEET_ID is not configured. ' +
+      'Open Code.gs and set SPREADSHEET_ID to your Google Sheet ID.'
+    );
+  }
+
+  // Acquire a script lock so concurrent setup attempts cannot collide.
+  var lock = LockService.getScriptLock();
+  lock.waitLock(LOCK_TIMEOUT_MS);
+
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    var report = {
+      spreadsheet: ss.getName(),
+      created: [],
+      headersWritten: [],
+      settingsInserted: 0
+    };
+
+    // Ordered list of sheets to ensure, paired with their header rows.
+    var plan = [
+      { name: SHEETS.QUESTIONS, headers: HEADERS.QUESTIONS },
+      { name: SHEETS.SCORES,    headers: HEADERS.SCORES   },
+      { name: SHEETS.MISTAKES,  headers: HEADERS.MISTAKES },
+      { name: SHEETS.SETTINGS,  headers: HEADERS.SETTINGS }
+    ];
+
+    for (var i = 0; i < plan.length; i++) {
+      var spec = plan[i];
+      ensureSheet_(ss, spec.name, spec.headers, report);
+    }
+
+    // Seed default settings only if the Settings sheet is otherwise empty.
+    var settingsSheet = ss.getSheetByName(SHEETS.SETTINGS);
+    if (settingsSheet && settingsSheet.getLastRow() < 2) {
+      report.settingsInserted = insertDefaultSettings_(settingsSheet);
+    }
+
+    Logger.log('setupSpreadsheet completed: ' + JSON.stringify(report));
+    return report;
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * ensureSheet_ – Internal helper. Creates the sheet if missing and
+ * writes the header row if the sheet has no data yet. Also freezes
+ * row 1 and auto-resizes columns.
+ *
+ * @param {Spreadsheet} ss      The parent spreadsheet.
+ * @param {string} name         The sheet name to ensure.
+ * @param {Array<string>} headers Header labels in column order.
+ * @param {Object} report       The accumulating setup report.
+ * @private
+ */
+function ensureSheet_(ss, name, headers, report) {
+  var sheet = ss.getSheetByName(name);
+
+  // Create the sheet if it does not exist.
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    report.created.push(name);
+  }
+
+  // Write the header row when the sheet is empty.
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    report.headersWritten.push(name);
+  }
+
+  // Style the header row: bold, centered, light background.
+  var headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center')
+    .setBackground('#E8EAF6');
+
+  // Freeze the first row so headers stay visible while scrolling.
+  if (sheet.getFrozenRows() < 1) {
+    sheet.setFrozenRows(1);
+  }
+
+  // Auto-resize all header columns for readability.
+  for (var c = 1; c <= headers.length; c++) {
+    sheet.autoResizeColumn(c);
+  }
+}
+
+
+/**
+ * insertDefaultSettings_ – Internal helper. Writes the default
+ * configuration rows into an empty Settings sheet.
+ *
+ * @param {Sheet} sheet The Settings sheet (must already have headers).
+ * @return {number} The number of setting rows inserted.
+ * @private
+ */
+function insertDefaultSettings_(sheet) {
+  // [Key, Value, Description] rows.
+  var defaults = [
+    ['TimerSeconds',      DEFAULT_TIMER_SECONDS,
+      'Per-question countdown timer in seconds.'],
+    ['QuestionsPerRound', DEFAULT_QUESTIONS_PER_ROUND,
+      'Number of questions delivered per round.'],
+    ['BasePoint',         10,
+      'Points awarded for each correct answer.'],
+    ['SpeedBonus',        5,
+      'Bonus points for correct answers within 5 seconds.'],
+    ['StreakBonus',       10,
+      'Bonus points awarded every 3 correct answers in a row.'],
+    ['BadgeThreshold',    0.8,
+      'Accuracy ratio (0-1) required to earn the TOEIC Warrior badge.'],
+    ['ExpPerRound',       20,
+      'EXP awarded for completing a full round.'],
+    ['CoinPerCorrect',    5,
+      'Coins awarded for each correct answer.'],
+    ['ExpPerLevel',       100,
+      'EXP required to reach the next player level.']
+  ];
+
+  sheet.getRange(2, 1, defaults.length, 3).setValues(defaults);
+
+  // Re-fit columns now that real values have been written.
+  for (var c = 1; c <= 3; c++) {
+    sheet.autoResizeColumn(c);
+  }
+
+  return defaults.length;
+}
+
+
+/* =====================================================================
+ *  End of Phase 2B.
  *  Next phases will add:
- *    - setupSpreadsheet() with 30+ original sample questions
+ *    - Sample question seeding inside setupSpreadsheet()
  *    - getQuestions(mode, limit)
  *    - submitGameResult(result)
  *    - saveMistakes(playerName, mistakes)

@@ -28,6 +28,22 @@ import MoodySim from "./moody/MoodySim";
 import MoodyPreview from "./moody/MoodyPreview";
 import PumpCurveSim from "./pumpCurve/PumpCurveSim";
 import PumpCurvePreview from "./pumpCurve/PumpCurvePreview";
+import ViscosityRaceSim from "./viscosityRace/ViscosityRaceSim";
+import ViscosityRacePreview from "./viscosityRace/ViscosityRacePreview";
+import CapillarySim from "./capillary/CapillarySim";
+import CapillaryPreview from "./capillary/CapillaryPreview";
+import StreamlinesSim from "./streamlines/StreamlinesSim";
+import StreamlinesPreview from "./streamlines/StreamlinesPreview";
+import RotationalSim from "./rotational/RotationalSim";
+import RotationalPreview from "./rotational/RotationalPreview";
+import OpenChannelSim from "./openChannel/OpenChannelSim";
+import OpenChannelPreview from "./openChannel/OpenChannelPreview";
+import HydraulicJumpSim from "./hydraulicJump/HydraulicJumpSim";
+import HydraulicJumpPreview from "./hydraulicJump/HydraulicJumpPreview";
+import MachSim from "./mach/MachSim";
+import MachPreview from "./mach/MachPreview";
+import FlowMeterSim from "./flowMeter/FlowMeterSim";
+import FlowMeterPreview from "./flowMeter/FlowMeterPreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -201,6 +217,102 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: PumpCurveSim,
     Preview: PumpCurvePreview,
+  },
+  {
+    id: "viscosity-race",
+    title: "แข่งความหนืด",
+    titleEn: "Viscosity Flow Race",
+    tagline: "ของไหลหนืดมากไหลช้ากว่า — แข่งกันไหลลงรางเอียง",
+    icon: "🍯",
+    accent: "from-amber-400 to-yellow-600",
+    formula: "v ∝ ρg·sinθ/μ",
+    status: "ready",
+    Sim: ViscosityRaceSim,
+    Preview: ViscosityRacePreview,
+  },
+  {
+    id: "capillary",
+    title: "แรงตึงผิว & หลอดเล็ก",
+    titleEn: "Surface Tension & Capillary",
+    tagline: "น้ำไต่ขึ้นหลอดเล็กจากแรงตึงผิว ยิ่งเล็กยิ่งสูง",
+    icon: "💧",
+    accent: "from-sky-400 to-cyan-600",
+    formula: "h = 2σcosθ/(ρgr)",
+    status: "ready",
+    Sim: CapillarySim,
+    Preview: CapillaryPreview,
+  },
+  {
+    id: "streamlines",
+    title: "Streamline · Pathline · Streakline",
+    titleEn: "Flow Lines Comparator",
+    tagline: "ความต่างของเส้นการไหล 3 แบบในการไหลไม่คงตัว",
+    icon: "🧭",
+    accent: "from-indigo-400 to-violet-600",
+    formula: "tangent · trajectory · dye",
+    status: "ready",
+    Sim: StreamlinesSim,
+    Preview: StreamlinesPreview,
+  },
+  {
+    id: "rotational",
+    title: "Rotational vs Irrotational",
+    titleEn: "Vorticity & Paddle Wheels",
+    tagline: "ใบพัดหมุน = rotational, ไม่หมุน = irrotational",
+    icon: "🔄",
+    accent: "from-fuchsia-400 to-purple-600",
+    formula: "ω = ∂v/∂x − ∂u/∂y",
+    status: "ready",
+    Sim: RotationalSim,
+    Preview: RotationalPreview,
+  },
+  {
+    id: "open-channel",
+    title: "การไหลในรางเปิด",
+    titleEn: "Open Channel Flow",
+    tagline: "Manning equation และ Froude number ในรางเปิด",
+    icon: "🌊",
+    accent: "from-teal-400 to-cyan-600",
+    formula: "V = (1/n)R^⅔√S",
+    status: "ready",
+    Sim: OpenChannelSim,
+    Preview: OpenChannelPreview,
+  },
+  {
+    id: "hydraulic-jump",
+    title: "การกระโดดของน้ำ",
+    titleEn: "Hydraulic Jump",
+    tagline: "น้ำเร็วตื้น → ลึกช้า พร้อมการสลายพลังงาน",
+    icon: "💦",
+    accent: "from-blue-400 to-indigo-600",
+    formula: "y₂/y₁ = ½(√(1+8Fr₁²)−1)",
+    status: "ready",
+    Sim: HydraulicJumpSim,
+    Preview: HydraulicJumpPreview,
+  },
+  {
+    id: "mach",
+    title: "เลขมัค",
+    titleEn: "Mach Number",
+    tagline: "subsonic → supersonic และกรวยมัค (Mach cone)",
+    icon: "🚀",
+    accent: "from-rose-400 to-orange-600",
+    formula: "M = V/a",
+    status: "ready",
+    Sim: MachSim,
+    Preview: MachPreview,
+  },
+  {
+    id: "flow-meter",
+    title: "เครื่องวัดอัตราการไหล",
+    titleEn: "Flow Meter Comparison",
+    tagline: "เทียบ Pitot · Venturi · Orifice",
+    icon: "📟",
+    accent: "from-emerald-400 to-teal-600",
+    formula: "Q = Cd·A₂√(2ΔP/ρ(1−β⁴))",
+    status: "ready",
+    Sim: FlowMeterSim,
+    Preview: FlowMeterPreview,
   },
 ];
 

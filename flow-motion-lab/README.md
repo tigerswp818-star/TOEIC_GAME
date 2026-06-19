@@ -1,7 +1,7 @@
 # 🌊 Flow Motion Lab: Complete Interactive Fluid Mechanics
 
 > หลักสูตร Fluid Mechanics **15 บท · 3 ระดับ** (พื้นฐาน → วิศวกรรม → ขั้นสูง) พร้อม
-> **simulation 14 ตัว** ที่เห็นการไหลจริง, แผนที่การเรียน + เส้นทางการเรียน (Learning Path),
+> **simulation 22 ตัว** ที่เห็นการไหลจริง, แผนที่การเรียน + เส้นทางการเรียน (Learning Path),
 > ระบบติดตามความก้าวหน้า (Progress), Mini Quiz, Challenge, Formula Sheet,
 > Unit Converter และ Glossary — เห็นการเคลื่อนที่ก่อน แล้วจึงเชื่อมกับสูตร
 

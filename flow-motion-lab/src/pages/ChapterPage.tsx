@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getChapter, LEVELS } from "@/data/curriculum";
+import { getChapterContent } from "@/data/chapterContent";
 import { getSim } from "@/sims/registry";
 import { useProgress } from "@/hooks/useProgress";
+import AssumptionBox from "@/components/sim/AssumptionBox";
+import WorkedExampleCard from "@/components/sim/WorkedExampleCard";
+import KeyTakeaway from "@/components/sim/KeyTakeaway";
 
 export default function ChapterPage() {
   const { id } = useParams();
@@ -26,6 +30,7 @@ export default function ChapterPage() {
   }
 
   const meta = LEVELS[chapter.level];
+  const content = getChapterContent(chapter.id);
   const sims = chapter.simIds.map(getSim).filter((s): s is NonNullable<typeof s> => Boolean(s));
   const readySims = sims.filter((s) => s.status === "ready");
 
@@ -50,7 +55,18 @@ export default function ChapterPage() {
         </div>
       </div>
 
-      <p className="mb-6 text-sm text-ink-soft">{chapter.summary}</p>
+      <p className="mb-4 text-sm text-ink-soft">{chapter.summary}</p>
+
+      {content && (
+        <section className="lab-card mb-6 p-4 sm:p-5">
+          <h2 className="flex items-center gap-1.5 text-sm font-bold text-ink">
+            <span aria-hidden>💡</span> แนวคิดหลัก (Core Concept)
+          </h2>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">
+            {content.coreConcept}
+          </p>
+        </section>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* objectives + topics */}
@@ -76,6 +92,8 @@ export default function ChapterPage() {
               ))}
             </div>
           </div>
+          {content && <KeyTakeaway text={content.keyTakeaway} />}
+          {content && <AssumptionBox assumptions={content.assumptions} />}
         </div>
 
         {/* simulations */}
@@ -142,6 +160,24 @@ export default function ChapterPage() {
           )}
         </div>
       </div>
+
+      {content && (
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <WorkedExampleCard example={content.workedExample} />
+          <section className="lab-card p-4 sm:p-5">
+            <h2 className="flex items-center gap-1.5 text-sm font-bold text-ink">
+              <span aria-hidden>🌍</span> ตัวอย่างในงานวิศวกรรมจริง
+            </h2>
+            <h3 className="mt-2 text-sm font-semibold text-flow-600 dark:text-flow-300">
+              {content.realWorld.title}
+            </h3>
+            <p className="mt-1 text-sm leading-relaxed text-ink-soft">{content.realWorld.body}</p>
+            <Link to="/real-world" className="mt-3 inline-block text-xs font-semibold text-flow-600 hover:underline dark:text-flow-300">
+              ดูตัวอย่างเคลื่อนไหวเพิ่มเติม →
+            </Link>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

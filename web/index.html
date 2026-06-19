@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TOEIC Quest — Game-based TOEIC Practice</title>
+    <meta
+      name="description"
+      content="A fun, gamified way to practice TOEIC: Vocabulary, Grammar, Reading and Listening with timed quizzes, streaks and XP."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Thai:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Animated background blobs -->
+    <div class="bg-decor" aria-hidden="true">
+      <span class="blob blob--1"></span>
+      <span class="blob blob--2"></span>
+      <span class="blob blob--3"></span>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <main class="app">
+      <!-- ============================ HOME ============================ -->
+      <section id="screen-home" class="screen screen--active">
+        <header class="hero">
+          <div class="hero__badge">🏆 TOEIC Quest</div>
+          <h1 class="hero__title">
+            Level up your <span class="grad-text">TOEIC</span> score,<br />
+            one quest at a time.
+          </h1>
+          <p class="hero__sub">
+            Timed quizzes across four skills. Build streaks, earn XP, and watch
+            your level climb. <span class="th">เล่นเพื่อฝึก TOEIC แบบสนุก ๆ</span>
+          </p>
+        </header>
+
+        <!-- Player stat strip -->
+        <div class="statstrip" id="statStrip">
+          <div class="statstrip__item">
+            <span class="statstrip__num" id="statLevel">1</span>
+            <span class="statstrip__label">Level</span>
+          </div>
+          <div class="statstrip__divider"></div>
+          <div class="statstrip__item">
+            <span class="statstrip__num" id="statXp">0</span>
+            <span class="statstrip__label">Total XP</span>
+          </div>
+          <div class="statstrip__divider"></div>
+          <div class="statstrip__item">
+            <span class="statstrip__num" id="statGames">0</span>
+            <span class="statstrip__label">Games</span>
+          </div>
+          <div class="statstrip__divider"></div>
+          <div class="statstrip__item">
+            <span class="statstrip__num" id="statBest">0</span>
+            <span class="statstrip__label">Best score</span>
+          </div>
+        </div>
+
+        <!-- XP progress to next level -->
+        <div class="levelbar">
+          <div class="levelbar__track">
+            <div class="levelbar__fill" id="levelbarFill"></div>
+          </div>
+          <span class="levelbar__caption" id="levelbarCaption">0 / 100 XP to Level 2</span>
+        </div>
+
+        <h2 class="section-title">Choose a quest</h2>
+        <div class="modes" id="modeGrid"><!-- mode cards injected by JS --></div>
+
+        <!-- Round settings -->
+        <div class="settings">
+          <label class="settings__field">
+            <span>Questions / round</span>
+            <select id="setCount">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+          <label class="settings__field">
+            <span>Time / question</span>
+            <select id="setTimer">
+              <option value="10">10s</option>
+              <option value="15" selected>15s</option>
+              <option value="20">20s</option>
+              <option value="0">Off</option>
+            </select>
+          </label>
+          <button class="btn btn--ghost" id="btnReset" type="button">Reset progress</button>
+        </div>
+
+        <footer class="foot">
+          Built as a static site — no login, progress saved on this device.
+        </footer>
+      </section>
+
+      <!-- ============================ QUIZ ============================ -->
+      <section id="screen-quiz" class="screen">
+        <div class="quizbar">
+          <button class="iconbtn" id="btnQuit" type="button" aria-label="Quit">✕</button>
+          <div class="progress">
+            <div class="progress__fill" id="progressFill"></div>
+          </div>
+          <div class="quizbar__meta">
+            <span class="chip chip--streak" id="streakChip">🔥 0</span>
+            <span class="chip chip--score" id="liveScore">0</span>
+          </div>
+        </div>
+
+        <div class="timer" id="timerWrap">
+          <div class="timer__bar" id="timerBar"></div>
+        </div>
+
+        <div class="qcard">
+          <div class="qcard__head">
+            <span class="qcard__mode" id="qMode">Mode</span>
+            <span class="qcard__count" id="qCount">1 / 10</span>
+          </div>
+
+          <!-- Reading passage (shown only for reading mode) -->
+          <div class="passage" id="passage" hidden></div>
+
+          <!-- Listening control (shown only for listening mode) -->
+          <div class="listen" id="listen" hidden>
+            <button class="btn btn--audio" id="btnPlayAudio" type="button">
+              🔊 Play audio
+            </button>
+            <span class="listen__hint">Tap to listen. You can replay it.</span>
+          </div>
+
+          <p class="qcard__question" id="qText">Question goes here…</p>
+
+          <div class="choices" id="choices"><!-- choice buttons injected by JS --></div>
+        </div>
+      </section>
+
+      <!-- =========================== RESULTS ========================== -->
+      <section id="screen-result" class="screen">
+        <div class="result">
+          <div class="result__emoji" id="resultEmoji">🎉</div>
+          <h2 class="result__title" id="resultTitle">Quest complete!</h2>
+          <p class="result__sub" id="resultSub">Nice work.</p>
+
+          <div class="result__scorecard">
+            <div class="scorebox">
+              <span class="scorebox__num" id="resScore">0</span>
+              <span class="scorebox__label">Score</span>
+            </div>
+            <div class="scorebox">
+              <span class="scorebox__num" id="resAccuracy">0%</span>
+              <span class="scorebox__label">Accuracy</span>
+            </div>
+            <div class="scorebox">
+              <span class="scorebox__num" id="resXp">+0</span>
+              <span class="scorebox__label">XP earned</span>
+            </div>
+            <div class="scorebox">
+              <span class="scorebox__num" id="resStreak">0</span>
+              <span class="scorebox__label">Best streak</span>
+            </div>
+          </div>
+
+          <div class="result__actions">
+            <button class="btn btn--primary" id="btnReplay" type="button">Play again</button>
+            <button class="btn btn--ghost" id="btnHome" type="button">Back to menu</button>
+          </div>
+
+          <h3 class="review-title" id="reviewTitle">Review your answers</h3>
+          <div class="review" id="review"><!-- review items injected by JS --></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/questions.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

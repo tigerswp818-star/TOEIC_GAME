@@ -452,6 +452,15 @@
   }
 
   /* ----------------------------- Events ----------------------------- */
+  // Hero "start now" button — jumps straight into a random mode.
+  const heroStart = $("#btnHeroStart");
+  if (heroStart) {
+    heroStart.addEventListener("click", () => {
+      const modes = Object.keys(META);
+      startGame(modes[Math.floor(Math.random() * modes.length)]);
+    });
+  }
+
   $("#btnPlayAudio").addEventListener("click", () => {
     const q = game && game.questions[game.index];
     if (q && q.audio) speak(q.audio);

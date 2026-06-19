@@ -31,15 +31,59 @@
       <!-- ============================ HOME ============================ -->
       <section id="screen-home" class="screen screen--active">
         <header class="hero">
-          <div class="hero__badge">🏆 TOEIC Quest</div>
-          <h1 class="hero__title">
-            Level up your <span class="grad-text">TOEIC</span> score,<br />
-            one quest at a time.
-          </h1>
-          <p class="hero__sub">
-            Timed quizzes across four skills. Build streaks, earn XP, and watch
-            your level climb. <span class="th">เล่นเพื่อฝึก TOEIC แบบสนุก ๆ</span>
-          </p>
+          <div class="hero__left">
+            <div class="hero__badge">
+              <span class="hero__badge-dot"></span> TOEIC Quest · เกมฝึก TOEIC
+            </div>
+            <h1 class="hero__title">
+              Level up your <span class="grad-text">TOEIC</span> score,
+              one quest at a time.
+            </h1>
+            <p class="hero__sub">
+              Timed quizzes across four skills. Build streaks, earn XP, and watch
+              your level climb.
+              <span class="th">เล่นเพื่อฝึก TOEIC แบบสนุก ๆ ฟรี ไม่ต้องสมัคร</span>
+            </p>
+
+            <div class="hero__cta">
+              <button class="btn btn--primary btn--lg" id="btnHeroStart" type="button">
+                ▶ เริ่มเล่นเลย
+              </button>
+              <a class="btn btn--ghost btn--lg" href="#modeGrid">ดูโหมดทั้งหมด</a>
+            </div>
+
+            <ul class="hero__pills">
+              <li class="pill"><span>⚡</span> เล่นได้ทันที</li>
+              <li class="pill"><span>🎯</span> 4 ทักษะ</li>
+              <li class="pill"><span>🏆</span> เก็บ XP &amp; เลเวล</li>
+            </ul>
+          </div>
+
+          <!-- Decorative game preview mockup -->
+          <div class="hero__preview" aria-hidden="true">
+            <div class="phone">
+              <div class="phone__notch"></div>
+              <div class="phone__screen">
+                <div class="mini-quizbar">
+                  <span class="mini-x">✕</span>
+                  <span class="mini-progress"><i></i></span>
+                  <span class="mini-chip">🔥 3</span>
+                </div>
+                <div class="mini-timer"><i></i></div>
+                <div class="mini-card">
+                  <div class="mini-tag">VOCABULARY · 4 / 10</div>
+                  <p class="mini-q">She was praised for her ability to ____ complex problems quickly.</p>
+                  <div class="mini-choice mini-choice--correct"><b>A</b> resolve</div>
+                  <div class="mini-choice"><b>B</b> dissolve</div>
+                  <div class="mini-choice"><b>C</b> revolve</div>
+                </div>
+                <div class="mini-float">+140</div>
+              </div>
+            </div>
+            <span class="orbit orbit--1">📚</span>
+            <span class="orbit orbit--2">🎧</span>
+            <span class="orbit orbit--3">✏️</span>
+          </div>
         </header>
 
         <!-- Player stat strip -->

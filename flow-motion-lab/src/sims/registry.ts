@@ -44,6 +44,22 @@ import MachSim from "./mach/MachSim";
 import MachPreview from "./mach/MachPreview";
 import FlowMeterSim from "./flowMeter/FlowMeterSim";
 import FlowMeterPreview from "./flowMeter/FlowMeterPreview";
+import NonNewtonianSim from "./nonNewtonian/NonNewtonianSim";
+import NonNewtonianPreview from "./nonNewtonian/NonNewtonianPreview";
+import PascalSim from "./pascal/PascalSim";
+import PascalPreview from "./pascal/PascalPreview";
+import FloatingStabilitySim from "./floatingStability/FloatingStabilitySim";
+import FloatingStabilityPreview from "./floatingStability/FloatingStabilityPreview";
+import ControlVolumeSim from "./controlVolume/ControlVolumeSim";
+import ControlVolumePreview from "./controlVolume/ControlVolumePreview";
+import PipeJunctionSim from "./pipeJunction/PipeJunctionSim";
+import PipeJunctionPreview from "./pipeJunction/PipeJunctionPreview";
+import EglHglSim from "./eglHgl/EglHglSim";
+import EglHglPreview from "./eglHgl/EglHglPreview";
+import BernoulliValiditySim from "./bernoulliValidity/BernoulliValiditySim";
+import BernoulliValidityPreview from "./bernoulliValidity/BernoulliValidityPreview";
+import NozzleReactionSim from "./nozzleReaction/NozzleReactionSim";
+import NozzleReactionPreview from "./nozzleReaction/NozzleReactionPreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -313,6 +329,102 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: FlowMeterSim,
     Preview: FlowMeterPreview,
+  },
+  {
+    id: "non-newtonian",
+    title: "Newtonian vs Non-Newtonian",
+    titleEn: "Non-Newtonian Fluids",
+    tagline: "ความหนืดเปลี่ยนตาม shear rate — น้ำ ซอส แป้งข้าวโพด",
+    icon: "🥫",
+    accent: "from-amber-400 to-orange-600",
+    formula: "τ = τ₀ + K·γ̇ⁿ",
+    status: "ready",
+    Sim: NonNewtonianSim,
+    Preview: NonNewtonianPreview,
+  },
+  {
+    id: "pascal",
+    title: "แม่แรงไฮดรอลิก",
+    titleEn: "Pascal's Hydraulic Press",
+    tagline: "กฎปาสคาล — แรงเล็กยกของหนักด้วยพื้นที่ลูกสูบ",
+    icon: "🛠️",
+    accent: "from-slate-400 to-blue-700",
+    formula: "F₂ = F₁·A₂/A₁",
+    status: "ready",
+    Sim: PascalSim,
+    Preview: PascalPreview,
+  },
+  {
+    id: "floating-stability",
+    title: "เสถียรภาพการลอย",
+    titleEn: "Floating Stability & Metacenter",
+    tagline: "เรือเสถียรหรือพลิกคว่ำ — G, B และ metacenter",
+    icon: "⛵",
+    accent: "from-cyan-400 to-blue-600",
+    formula: "GM = KB + BM − KG",
+    status: "ready",
+    Sim: FloatingStabilitySim,
+    Preview: FloatingStabilityPreview,
+  },
+  {
+    id: "control-volume",
+    title: "สมดุลมวล Control Volume",
+    titleEn: "Control Volume Mass Balance",
+    tagline: "inflow vs outflow → ของไหลสะสมหรือคงที่",
+    icon: "📦",
+    accent: "from-teal-400 to-cyan-600",
+    formula: "dV/dt = ΣQin − ΣQout",
+    status: "ready",
+    Sim: ControlVolumeSim,
+    Preview: ControlVolumePreview,
+  },
+  {
+    id: "pipe-junction",
+    title: "ท่อแยก",
+    titleEn: "Pipe Junction",
+    tagline: "Q_in = Q_out1 + Q_out2 — สมดุลมวลที่จุดแยก",
+    icon: "🔱",
+    accent: "from-sky-400 to-indigo-600",
+    formula: "Q_in = ΣQ_out",
+    status: "ready",
+    Sim: PipeJunctionSim,
+    Preview: PipeJunctionPreview,
+  },
+  {
+    id: "egl-hgl",
+    title: "เส้นพลังงาน EGL & HGL",
+    titleEn: "Energy & Hydraulic Grade Lines",
+    tagline: "ปั๊มเติม กังหัน/แรงเสียดทานดึงพลังงานออก",
+    icon: "📈",
+    accent: "from-emerald-400 to-teal-600",
+    formula: "EGL = P/ρg + V²/2g + z",
+    status: "ready",
+    Sim: EglHglSim,
+    Preview: EglHglPreview,
+  },
+  {
+    id: "bernoulli-validity",
+    title: "เช็คเงื่อนไขเบอร์นูลลี",
+    titleEn: "Bernoulli Validity Checker",
+    tagline: "ใช้เบอร์นูลลีได้ไหม? เช็ก 4 สมมติฐาน",
+    icon: "✅",
+    accent: "from-lime-400 to-emerald-600",
+    formula: "steady·incompressible·inviscid·streamline",
+    status: "ready",
+    Sim: BernoulliValiditySim,
+    Preview: BernoulliValidityPreview,
+  },
+  {
+    id: "nozzle",
+    title: "แรงปฏิกิริยาหัวฉีด",
+    titleEn: "Nozzle Reaction Force",
+    tagline: "หัวฉีดเร่งน้ำ → แรงดันถอยหลัง (เหมือนสายดับเพลิง)",
+    icon: "🚿",
+    accent: "from-rose-400 to-orange-600",
+    formula: "R = ρQ(V₂−V₁) + P₁A₁",
+    status: "ready",
+    Sim: NozzleReactionSim,
+    Preview: NozzleReactionPreview,
   },
 ];
 

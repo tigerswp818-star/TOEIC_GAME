@@ -227,8 +227,7 @@ export const CHAPTERS: Chapter[] = [
       "Manning equation", "Froude number", "Subcritical/Critical/Supercritical",
       "Hydraulic jump", "Weir", "Flume",
     ],
-    simIds: ["open-channel", "hydraulic-jump"],
-    planned: ["Froude Number Simulator", "Weir & Flume"],
+    simIds: ["open-channel", "hydraulic-jump", "froude", "weir"],
   },
   {
     id: "ch11",
@@ -247,8 +246,7 @@ export const CHAPTERS: Chapter[] = [
       "No-slip", "Boundary layer thickness", "Laminar/Turbulent BL", "Separation",
       "Wake", "Drag", "Lift", "Pressure drag", "Skin friction", "Flow around cylinder/airfoil",
     ],
-    simIds: ["flow-around"],
-    planned: ["Flat Plate Boundary Layer", "Flow Separation", "Airfoil Lift Concept"],
+    simIds: ["flow-around", "boundary-layer", "flow-separation", "airfoil"],
   },
   {
     id: "ch12",
@@ -264,8 +262,7 @@ export const CHAPTERS: Chapter[] = [
       "เห็นรูปร่างผิวน้ำและการกระจายความเร็วของ vortex",
     ],
     topics: ["Forced vortex", "Free vortex", "Circulation", "Vorticity", "Rankine vortex"],
-    simIds: ["vortex"],
-    planned: ["Forced vs Free Vortex", "Circulation Visualizer"],
+    simIds: ["vortex", "forced-free-vortex", "circulation"],
   },
   {
     id: "ch13",
@@ -284,8 +281,7 @@ export const CHAPTERS: Chapter[] = [
       "Compressible vs incompressible", "Mach number", "Speed of sound",
       "Subsonic/Sonic/Supersonic", "Choked flow", "C-D nozzle", "Shock wave",
     ],
-    simIds: ["mach"],
-    planned: ["Nozzle Flow (C-D nozzle)"],
+    simIds: ["mach", "cd-nozzle"],
   },
   {
     id: "ch14",
@@ -304,8 +300,7 @@ export const CHAPTERS: Chapter[] = [
       "What is CFD", "Mesh", "Boundary conditions", "Limitations",
       "Wind tunnel", "Flow visualization", "Pitot tube", "Venturi meter", "Orifice meter",
     ],
-    simIds: ["flow-meter"],
-    planned: ["CFD Mesh Concept Viewer"],
+    simIds: ["flow-meter", "cfd-mesh"],
   },
   {
     id: "ch15",

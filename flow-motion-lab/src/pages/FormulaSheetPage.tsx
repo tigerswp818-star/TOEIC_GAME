@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 interface FormulaEntry {
   formula: string;
   name: string;
@@ -132,9 +134,230 @@ const FORMULAS: FormulaEntry[] = [
     limits: "K ขึ้นกับชนิดของข้อต่อ (เปิดตาราง)",
     example: "ข้องอ 90° มี K ≈ 0.9",
   },
+  {
+    formula: "γ = ρ g",
+    name: "น้ำหนักจำเพาะ Specific Weight",
+    vars: [
+      { symbol: "γ", meaning: "น้ำหนักจำเพาะ", unit: "N/m³" },
+      { symbol: "ρ", meaning: "ความหนาแน่น", unit: "kg/m³" },
+      { symbol: "g", meaning: "ความเร่งโน้มถ่วง", unit: "m/s²" },
+    ],
+    whenToUse: "หาน้ำหนักของไหลต่อหนึ่งหน่วยปริมาตร ใช้ในงานสถิตศาสตร์ของไหล",
+    limits: "g ขึ้นกับตำแหน่ง (ค่ามาตรฐาน 9.81 m/s²)",
+    example: "น้ำ → γ = 1000 × 9.81 ≈ 9,810 N/m³",
+  },
+  {
+    formula: "SG = ρ / ρ_water",
+    name: "ความถ่วงจำเพาะ Specific Gravity",
+    vars: [
+      { symbol: "SG", meaning: "ความถ่วงจำเพาะ (ไร้มิติ)", unit: "—" },
+      { symbol: "ρ", meaning: "ความหนาแน่นของสาร", unit: "kg/m³" },
+      { symbol: "ρ_water", meaning: "ความหนาแน่นน้ำ ≈ 1000", unit: "kg/m³" },
+    ],
+    whenToUse: "เปรียบเทียบความหนาแน่นของสารกับน้ำ บอกว่าจะลอยหรือจม",
+    limits: "อ้างอิงน้ำที่ 4°C; SG < 1 ลอยน้ำ, > 1 จม",
+    example: "น้ำมัน ρ = 920 → SG = 0.92 (ลอยน้ำ)",
+  },
+  {
+    formula: "τ = μ (du/dy)",
+    name: "กฎความหนืดของนิวตัน Newton's Viscosity Law",
+    vars: [
+      { symbol: "τ", meaning: "ความเค้นเฉือน", unit: "Pa" },
+      { symbol: "μ", meaning: "ความหนืดพลวัต", unit: "Pa·s" },
+      { symbol: "du/dy", meaning: "อัตราการเฉือน (gradient ความเร็ว)", unit: "1/s" },
+    ],
+    whenToUse: "หาความเค้นเฉือนในของไหลนิวโทเนียน เช่น ฟิล์มน้ำมันหล่อลื่น",
+    limits: "ใช้ได้กับของไหลนิวโทเนียนเท่านั้น (μ คงที่)",
+    example: "μ=0.001, du/dy=100 → τ = 0.1 Pa",
+  },
+  {
+    formula: "ν = μ / ρ",
+    name: "ความหนืดจลน์ Kinematic Viscosity",
+    vars: [
+      { symbol: "ν", meaning: "ความหนืดจลน์", unit: "m²/s" },
+      { symbol: "μ", meaning: "ความหนืดพลวัต", unit: "Pa·s" },
+      { symbol: "ρ", meaning: "ความหนาแน่น", unit: "kg/m³" },
+    ],
+    whenToUse: "ใช้แทน μ/ρ ในเลขเรย์โนลด์และการวิเคราะห์การไหล",
+    limits: "ขึ้นกับอุณหภูมิอย่างมาก",
+    example: "น้ำ → ν = 0.001/1000 = 1×10⁻⁶ m²/s",
+  },
+  {
+    formula: "ΔP = ρ g Δh",
+    name: "มาโนมิเตอร์ Manometer",
+    vars: [
+      { symbol: "ΔP", meaning: "ผลต่างความดัน", unit: "Pa" },
+      { symbol: "ρ", meaning: "ความหนาแน่นของไหลวัด", unit: "kg/m³" },
+      { symbol: "g", meaning: "ความเร่งโน้มถ่วง", unit: "m/s²" },
+      { symbol: "Δh", meaning: "ผลต่างระดับของไหล", unit: "m" },
+    ],
+    whenToUse: "วัดผลต่างความดันจากผลต่างความสูงคอลัมน์ในมาโนมิเตอร์",
+    limits: "ของไหลอยู่นิ่ง ความหนาแน่นคงที่",
+    example: "ปรอท Δh=0.1 m → ΔP = 13600 × 9.81 × 0.1 ≈ 13,340 Pa",
+  },
+  {
+    formula: "ṁ = ρ Q",
+    name: "อัตราการไหลเชิงมวล Mass Flow Rate",
+    vars: [
+      { symbol: "ṁ", meaning: "อัตราการไหลเชิงมวล", unit: "kg/s" },
+      { symbol: "ρ", meaning: "ความหนาแน่น", unit: "kg/m³" },
+      { symbol: "Q", meaning: "อัตราการไหลเชิงปริมาตร", unit: "m³/s" },
+    ],
+    whenToUse: "หามวลของไหลที่ไหลผ่านต่อวินาที ใช้ในสมการพลังงานและโมเมนตัม",
+    limits: "ใช้ความหนาแน่นที่จุดวัด",
+    example: "น้ำ Q=0.2 → ṁ = 1000 × 0.2 = 200 kg/s",
+  },
+  {
+    formula: "P₁/ρg + V₁²/2g + z₁ + h_pump = P₂/ρg + V₂²/2g + z₂ + h_turbine + h_loss",
+    name: "เบอร์นูลลีขยาย Extended Bernoulli (ปั๊ม/กังหัน/สูญเสีย)",
+    vars: [
+      { symbol: "P/ρg", meaning: "เฮดความดัน", unit: "m" },
+      { symbol: "V²/2g", meaning: "เฮดความเร็ว", unit: "m" },
+      { symbol: "z", meaning: "เฮดความสูง", unit: "m" },
+      { symbol: "h_pump", meaning: "เฮดที่ปั๊มเพิ่ม", unit: "m" },
+      { symbol: "h_turbine", meaning: "เฮดที่กังหันดึงออก", unit: "m" },
+      { symbol: "h_loss", meaning: "เฮดที่สูญเสีย", unit: "m" },
+    ],
+    whenToUse: "วิเคราะห์ระบบท่อจริงที่มีปั๊ม กังหัน และการสูญเสีย",
+    limits: "ไหลคงตัว อัดตัวไม่ได้ ระหว่างจุดที่ 1 และ 2",
+    example: "ปั๊มต้องเพิ่ม h_pump เพื่อชดเชย z และ h_loss",
+  },
+  {
+    formula: "Fr = V / √(g D)",
+    name: "เลขฟรูด Froude Number",
+    vars: [
+      { symbol: "Fr", meaning: "เลขฟรูด (ไร้มิติ)", unit: "—" },
+      { symbol: "V", meaning: "ความเร็วการไหล", unit: "m/s" },
+      { symbol: "g", meaning: "ความเร่งโน้มถ่วง", unit: "m/s²" },
+      { symbol: "D", meaning: "ความลึก/ความยาวลักษณะ", unit: "m" },
+    ],
+    whenToUse: "จำแนกการไหลรางเปิด: Fr<1 subcritical, Fr>1 supercritical",
+    limits: "ใช้กับการไหลที่มีผิวอิสระ (รางเปิด คลื่น)",
+    example: "V=2, D=0.5 → Fr = 2/√(9.81×0.5) ≈ 0.9 (subcritical)",
+  },
+  {
+    formula: "Ma = V / a",
+    name: "เลขมัค Mach Number",
+    vars: [
+      { symbol: "Ma", meaning: "เลขมัค (ไร้มิติ)", unit: "—" },
+      { symbol: "V", meaning: "ความเร็วการไหล", unit: "m/s" },
+      { symbol: "a", meaning: "ความเร็วเสียงในตัวกลาง", unit: "m/s" },
+    ],
+    whenToUse: "บอกผลของการอัดตัว: Ma<0.3 ถือว่าอัดตัวไม่ได้",
+    limits: "a ขึ้นกับชนิดและอุณหภูมิของก๊าซ",
+    example: "อากาศ V=170, a≈340 → Ma = 0.5 (subsonic อัดตัวได้)",
+  },
+  {
+    formula: "We = ρ V² L / σ",
+    name: "เลขเวเบอร์ Weber Number",
+    vars: [
+      { symbol: "We", meaning: "เลขเวเบอร์ (ไร้มิติ)", unit: "—" },
+      { symbol: "ρ", meaning: "ความหนาแน่น", unit: "kg/m³" },
+      { symbol: "V", meaning: "ความเร็ว", unit: "m/s" },
+      { symbol: "L", meaning: "ความยาวลักษณะ", unit: "m" },
+      { symbol: "σ", meaning: "แรงตึงผิว", unit: "N/m" },
+    ],
+    whenToUse: "เทียบแรงเฉื่อยกับแรงตึงผิว สำคัญในการแตกตัวเป็นละอองและฟอง",
+    limits: "เกี่ยวข้องเมื่อแรงตึงผิวมีบทบาท (หยด ละออง)",
+    example: "We สูง → หยดแตกง่าย",
+  },
+  {
+    formula: "Q = π ΔP r⁴ / (8 μ L)",
+    name: "ฮาเกน–ปวซอย Hagen–Poiseuille",
+    vars: [
+      { symbol: "Q", meaning: "อัตราการไหล", unit: "m³/s" },
+      { symbol: "ΔP", meaning: "ผลต่างความดัน", unit: "Pa" },
+      { symbol: "r", meaning: "รัศมีท่อ", unit: "m" },
+      { symbol: "μ", meaning: "ความหนืดพลวัต", unit: "Pa·s" },
+      { symbol: "L", meaning: "ความยาวท่อ", unit: "m" },
+    ],
+    whenToUse: "หาอัตราการไหลในท่อกลมเล็กที่ไหลแบบราบเรียบ (laminar)",
+    limits: "ใช้กับ laminar fully-developed ในท่อกลมเท่านั้น; Q ∝ r⁴",
+    example: "เพิ่มรัศมี 2 เท่า → Q เพิ่ม 16 เท่า",
+  },
+  {
+    formula: "P = ρ g Q H / η",
+    name: "กำลังปั๊ม Pump Power",
+    vars: [
+      { symbol: "P", meaning: "กำลังที่เพลาปั๊มต้องใช้", unit: "W" },
+      { symbol: "ρ", meaning: "ความหนาแน่น", unit: "kg/m³" },
+      { symbol: "g", meaning: "ความเร่งโน้มถ่วง", unit: "m/s²" },
+      { symbol: "Q", meaning: "อัตราการไหล", unit: "m³/s" },
+      { symbol: "H", meaning: "เฮดของปั๊ม", unit: "m" },
+      { symbol: "η", meaning: "ประสิทธิภาพ (0–1)", unit: "—" },
+    ],
+    whenToUse: "หากำลังที่ปั๊มต้องการเพื่อยกของไหลด้วยอัตรา Q ที่เฮด H",
+    limits: "η < 1 เสมอ; ใช้ ρgQH คือกำลังของไหลในอุดมคติ",
+    example: "Q=0.05, H=20, η=0.7 → P = 1000×9.81×0.05×20/0.7 ≈ 14 kW",
+  },
+  {
+    formula: "V = (1/n) R^(2/3) √S",
+    name: "สมการแมนนิง Manning Equation",
+    vars: [
+      { symbol: "V", meaning: "ความเร็วเฉลี่ย", unit: "m/s" },
+      { symbol: "n", meaning: "สัมประสิทธิ์ความขรุขระแมนนิง", unit: "—" },
+      { symbol: "R", meaning: "รัศมีไฮดรอลิก", unit: "m" },
+      { symbol: "S", meaning: "ความชันของท้องราง", unit: "m/m" },
+    ],
+    whenToUse: "หาความเร็ว/อัตราการไหลในรางเปิด (แม่น้ำ คลอง ท่อระบาย)",
+    limits: "ใช้กับการไหลคงตัวสม่ำเสมอในรางเปิด; n ขึ้นกับชนิดผิว",
+    example: "คอนกรีต n≈0.013; ดิน n≈0.025",
+  },
+  {
+    formula: "R = A / P_wetted",
+    name: "รัศมีไฮดรอลิก Hydraulic Radius",
+    vars: [
+      { symbol: "R", meaning: "รัศมีไฮดรอลิก", unit: "m" },
+      { symbol: "A", meaning: "พื้นที่หน้าตัดการไหล", unit: "m²" },
+      { symbol: "P_wetted", meaning: "เส้นรอบเปียก", unit: "m" },
+    ],
+    whenToUse: "ใช้ในสมการแมนนิงและการไหลในรางเปิดหรือท่อไม่กลม",
+    limits: "P_wetted นับเฉพาะส่วนที่สัมผัสของไหล (ไม่รวมผิวอิสระ)",
+    example: "ท่อกลมเต็ม → R = D/4",
+  },
+  {
+    formula: "F_D = ½ ρ V² C_d A",
+    name: "แรงต้าน Drag Force",
+    vars: [
+      { symbol: "F_D", meaning: "แรงต้าน", unit: "N" },
+      { symbol: "ρ", meaning: "ความหนาแน่นของไหล", unit: "kg/m³" },
+      { symbol: "V", meaning: "ความเร็วสัมพัทธ์", unit: "m/s" },
+      { symbol: "C_d", meaning: "สัมประสิทธิ์แรงต้าน", unit: "—" },
+      { symbol: "A", meaning: "พื้นที่อ้างอิง (frontal)", unit: "m²" },
+    ],
+    whenToUse: "หาแรงต้านของอากาศ/น้ำต่อรถ เครื่องบิน วัตถุที่เคลื่อนที่",
+    limits: "C_d ขึ้นกับรูปทรงและ Re; F_D ∝ V²",
+    example: "ความเร็ว 2 เท่า → แรงต้าน 4 เท่า",
+  },
+  {
+    formula: "F_L = ½ ρ V² C_l A",
+    name: "แรงยก Lift Force",
+    vars: [
+      { symbol: "F_L", meaning: "แรงยก", unit: "N" },
+      { symbol: "ρ", meaning: "ความหนาแน่นของไหล", unit: "kg/m³" },
+      { symbol: "V", meaning: "ความเร็วสัมพัทธ์", unit: "m/s" },
+      { symbol: "C_l", meaning: "สัมประสิทธิ์แรงยก", unit: "—" },
+      { symbol: "A", meaning: "พื้นที่ปีกอ้างอิง", unit: "m²" },
+    ],
+    whenToUse: "หาแรงยกของปีกเครื่องบินหรือใบพัด",
+    limits: "C_l ขึ้นกับมุมปะทะ; ถ้ามุมมากเกินไปเกิด stall",
+    example: "เพิ่มความเร็วและพื้นที่ปีก → แรงยกมากขึ้น",
+  },
 ];
 
 export default function FormulaSheetPage() {
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return FORMULAS;
+    return FORMULAS.filter(
+      (f) =>
+        f.name.toLowerCase().includes(q) ||
+        f.formula.toLowerCase().includes(q),
+    );
+  }, [query]);
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <header className="mb-6">
@@ -146,8 +369,25 @@ export default function FormulaSheetPage() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {FORMULAS.map((f) => (
+      <div className="mb-6">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="🔍 ค้นหาสูตร เช่น Bernoulli, Reynolds, ρgh…"
+          className="w-full rounded-xl border border-line bg-surface-soft px-4 py-3 text-ink outline-none focus:border-flow-500 focus:ring-2 focus:ring-flow-500/30"
+          aria-label="ค้นหาสูตร"
+        />
+        <p className="mt-2 text-xs text-ink-faint">พบ {filtered.length} สูตร</p>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="lab-card p-8 text-center text-sm text-ink-soft">
+          ไม่พบสูตรที่ตรงกับ “{query}”
+        </p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {filtered.map((f) => (
           <article key={f.formula} className="lab-card p-5">
             <h2 className="text-sm font-bold text-ink">{f.name}</h2>
             <div className="mt-2 rounded-lg bg-flow-500/10 px-3 py-2 font-mono text-base font-semibold text-flow-700 dark:text-flow-200">
@@ -180,8 +420,9 @@ export default function FormulaSheetPage() {
               </p>
             </div>
           </article>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

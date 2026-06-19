@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { QuizItem } from "@/types/simulation";
+import { useProgress } from "@/hooks/useProgress";
 
 interface MiniQuizProps {
   items: QuizItem[];
@@ -7,6 +8,7 @@ interface MiniQuizProps {
 
 /** A short multiple-choice quiz with instant, explained feedback. */
 export default function MiniQuiz({ items }: MiniQuizProps) {
+  const { recordQuiz } = useProgress();
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const item = items[idx];
@@ -14,6 +16,12 @@ export default function MiniQuiz({ items }: MiniQuizProps) {
 
   const answered = picked !== null;
   const correct = picked === item.answer;
+
+  const choose = (i: number) => {
+    if (picked !== null) return;
+    setPicked(i);
+    recordQuiz(i === item.answer);
+  };
 
   const next = () => {
     setPicked(null);
@@ -48,7 +56,7 @@ export default function MiniQuiz({ items }: MiniQuizProps) {
               key={i}
               type="button"
               disabled={answered}
-              onClick={() => setPicked(i)}
+              onClick={() => choose(i)}
               className={`rounded-xl border px-3 py-2.5 text-left text-sm transition disabled:cursor-default ${tone}`}
             >
               <span className="mr-2 font-mono text-xs text-ink-faint">

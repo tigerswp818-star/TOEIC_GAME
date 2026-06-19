@@ -4,8 +4,11 @@ import Navbar from "./components/layout/Navbar";
 import { useTheme } from "./hooks/useTheme";
 import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
+import ChapterPage from "./pages/ChapterPage";
 import SimulationPage from "./pages/SimulationPage";
 import FormulaSheetPage from "./pages/FormulaSheetPage";
+import UnitConverterPage from "./pages/UnitConverterPage";
+import GlossaryPage from "./pages/GlossaryPage";
 import RealWorldPage from "./pages/RealWorldPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -27,8 +30,11 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/lab" element={<DashboardPage />} />
+          <Route path="/chapter/:id" element={<ChapterPage />} />
           <Route path="/sim/:id" element={<SimulationPage />} />
           <Route path="/formulas" element={<FormulaSheetPage />} />
+          <Route path="/converter" element={<UnitConverterPage />} />
+          <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/real-world" element={<RealWorldPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

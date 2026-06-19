@@ -8,8 +8,10 @@ interface NavbarProps {
 }
 
 const links = [
-  { to: "/lab", label: "ห้องทดลอง Lab" },
+  { to: "/lab", label: "แผนที่การเรียน" },
   { to: "/formulas", label: "สูตร Formulas" },
+  { to: "/converter", label: "แปลงหน่วย" },
+  { to: "/glossary", label: "ศัพท์" },
   { to: "/real-world", label: "ในชีวิตจริง" },
 ];
 

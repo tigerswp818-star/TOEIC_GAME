@@ -16,6 +16,18 @@ import VortexSim from "./vortex/VortexSim";
 import VortexPreview from "./vortex/VortexPreview";
 import FlowAroundSim from "./flowAround/FlowAroundSim";
 import FlowAroundPreview from "./flowAround/FlowAroundPreview";
+import ManometerSim from "./manometer/ManometerSim";
+import ManometerPreview from "./manometer/ManometerPreview";
+import DamPressureSim from "./damPressure/DamPressureSim";
+import DamPressurePreview from "./damPressure/DamPressurePreview";
+import JetImpactSim from "./jetImpact/JetImpactSim";
+import JetImpactPreview from "./jetImpact/JetImpactPreview";
+import PipeBendSim from "./pipeBend/PipeBendSim";
+import PipeBendPreview from "./pipeBend/PipeBendPreview";
+import MoodySim from "./moody/MoodySim";
+import MoodyPreview from "./moody/MoodyPreview";
+import PumpCurveSim from "./pumpCurve/PumpCurveSim";
+import PumpCurvePreview from "./pumpCurve/PumpCurvePreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -117,6 +129,78 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: FlowAroundSim,
     Preview: FlowAroundPreview,
+  },
+  {
+    id: "manometer",
+    title: "มาโนมิเตอร์",
+    titleEn: "Manometer",
+    tagline: "อ่านความดันต่างจากระดับของไหลในหลอด U-tube",
+    icon: "🌡️",
+    accent: "from-cyan-400 to-blue-600",
+    formula: "ΔP = ρgh",
+    status: "ready",
+    Sim: ManometerSim,
+    Preview: ManometerPreview,
+  },
+  {
+    id: "dam-pressure",
+    title: "ความดันบนเขื่อน",
+    titleEn: "Dam Pressure & Center of Pressure",
+    tagline: "แรงดันน้ำบนเขื่อนและจุดศูนย์กลางแรงดัน",
+    icon: "🏞️",
+    accent: "from-blue-500 to-slate-700",
+    formula: "F = ρg·h_c·A",
+    status: "ready",
+    Sim: DamPressureSim,
+    Preview: DamPressurePreview,
+  },
+  {
+    id: "jet-impact",
+    title: "แรงกระแทกของลำน้ำ",
+    titleEn: "Water Jet Impact",
+    tagline: "แรงจากการเปลี่ยนโมเมนตัมของลำน้ำที่ชนแผ่น",
+    icon: "💥",
+    accent: "from-rose-400 to-orange-600",
+    formula: "F = ρQV",
+    status: "ready",
+    Sim: JetImpactSim,
+    Preview: JetImpactPreview,
+  },
+  {
+    id: "pipe-bend",
+    title: "แรงบนข้องอท่อ",
+    titleEn: "Pipe Bend Force",
+    tagline: "แรงบนข้องอจากโมเมนตัมและความดันของของไหล",
+    icon: "🔧",
+    accent: "from-amber-400 to-rose-600",
+    formula: "F = (PA+ρQV)·f(θ)",
+    status: "ready",
+    Sim: PipeBendSim,
+    Preview: PipeBendPreview,
+  },
+  {
+    id: "moody",
+    title: "แผนภูมิมูดี้",
+    titleEn: "Moody Chart",
+    tagline: "friction factor จาก Reynolds number และความขรุขระ",
+    icon: "📊",
+    accent: "from-teal-400 to-emerald-600",
+    formula: "f = f(Re, ε/D)",
+    status: "ready",
+    Sim: MoodySim,
+    Preview: MoodyPreview,
+  },
+  {
+    id: "pump-curve",
+    title: "เส้นโค้งปั๊มและระบบ",
+    titleEn: "Pump & System Curve",
+    tagline: "หา operating point จาก pump curve และ system curve",
+    icon: "⚙️",
+    accent: "from-sky-400 to-indigo-600",
+    formula: "H₀−aQ² = H_s+CQ²",
+    status: "ready",
+    Sim: PumpCurveSim,
+    Preview: PumpCurvePreview,
   },
 ];
 

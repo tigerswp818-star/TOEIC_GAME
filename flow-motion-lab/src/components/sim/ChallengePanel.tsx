@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Challenge } from "@/types/simulation";
+import { useProgress } from "@/hooks/useProgress";
 
 interface ChallengePanelProps {
   challenges: Challenge[];
@@ -11,12 +12,16 @@ interface ChallengePanelProps {
 export default function ChallengePanel({ challenges, result }: ChallengePanelProps) {
   const [i, setI] = useState(0);
   const [celebrated, setCelebrated] = useState(false);
+  const { markChallengeSolved } = useProgress();
   const challenge = challenges[i];
   const solved = challenge ? challenge.isSolved(result) : false;
 
   useEffect(() => {
-    if (solved) setCelebrated(true);
-  }, [solved]);
+    if (solved && challenge) {
+      setCelebrated(true);
+      markChallengeSolved(challenge.title);
+    }
+  }, [solved, challenge, markChallengeSolved]);
 
   // Reset celebration when switching challenges.
   useEffect(() => setCelebrated(false), [i]);

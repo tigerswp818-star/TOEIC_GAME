@@ -1,4 +1,11 @@
-# 🌊 Flow Motion Lab — เห็นการไหล เข้าใจของไหล
+# 🌊 Flow Motion Lab: Complete Interactive Fluid Mechanics
+
+> หลักสูตร Fluid Mechanics **15 บท · 3 ระดับ** (พื้นฐาน → วิศวกรรม → ขั้นสูง) พร้อม
+> **simulation 14 ตัว** ที่เห็นการไหลจริง, แผนที่การเรียน + เส้นทางการเรียน (Learning Path),
+> ระบบติดตามความก้าวหน้า (Progress), Mini Quiz, Challenge, Formula Sheet,
+> Unit Converter และ Glossary — เห็นการเคลื่อนที่ก่อน แล้วจึงเชื่อมกับสูตร
+
+## เดิม: เห็นการไหล เข้าใจของไหล
 
 เว็บไซต์ **interactive** สำหรับเรียน **Fluid Mechanics** แบบ "เห็นภาพการเคลื่อนที่ของของไหล"
 ไม่ได้มีแค่สูตร แต่ทำให้ผู้เรียน **เห็น** หลักการผ่าน simulation และ animation แบบ real-time —

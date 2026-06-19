@@ -1,9 +1,16 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getSim } from "@/sims/registry";
+import { useProgress } from "@/hooks/useProgress";
 
 export default function SimulationPage() {
   const { id } = useParams();
   const sim = id ? getSim(id) : undefined;
+  const { markSim } = useProgress();
+
+  useEffect(() => {
+    if (sim && sim.status === "ready") markSim(sim.id);
+  }, [sim, markSim]);
 
   if (!sim) {
     return (

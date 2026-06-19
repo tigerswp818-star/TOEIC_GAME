@@ -53,8 +53,7 @@ export const CHAPTERS: Chapter[] = [
       "Kinematic viscosity", "Newtonian fluid", "Non-Newtonian fluid",
       "Surface tension", "Capillary action", "Vapor pressure", "Cavitation",
     ],
-    simIds: ["viscosity-race", "capillary"],
-    planned: ["Newtonian vs Non-Newtonian"],
+    simIds: ["viscosity-race", "capillary", "non-newtonian"],
   },
   {
     id: "ch2",
@@ -75,8 +74,7 @@ export const CHAPTERS: Chapter[] = [
       "Force on plane surface", "Center of pressure", "Force on curved surface",
       "Buoyancy", "Stability", "Metacenter",
     ],
-    simIds: ["hydrostatic", "buoyancy", "manometer", "dam-pressure"],
-    planned: ["Pascal's Hydraulic Press", "Floating Stability"],
+    simIds: ["hydrostatic", "buoyancy", "manometer", "dam-pressure", "pascal", "floating-stability"],
   },
   {
     id: "ch3",
@@ -114,8 +112,7 @@ export const CHAPTERS: Chapter[] = [
       "วิเคราะห์ท่อแยก (branching) ด้วยสมดุลมวล",
     ],
     topics: ["Conservation of mass", "Control volume", "1D continuity", "Branching pipe flow"],
-    simIds: ["continuity"],
-    planned: ["Control Volume Mass Balance", "Pipe Junction"],
+    simIds: ["continuity", "control-volume", "pipe-junction"],
   },
   {
     id: "ch5",
@@ -134,8 +131,7 @@ export const CHAPTERS: Chapter[] = [
       "Bernoulli", "Pressure head", "Velocity head", "Elevation head", "Total head",
       "HGL", "EGL", "Pump head", "Turbine head", "Extended Bernoulli",
     ],
-    simIds: ["bernoulli"],
-    planned: ["EGL / HGL Simulator", "Bernoulli Validity Checker"],
+    simIds: ["bernoulli", "egl-hgl", "bernoulli-validity"],
   },
   {
     id: "ch6",
@@ -154,8 +150,7 @@ export const CHAPTERS: Chapter[] = [
       "Linear momentum", "Control volume momentum", "Jet impact",
       "Force on nozzle", "Force on pipe bend", "Reaction force", "Momentum flux",
     ],
-    simIds: ["jet-impact", "pipe-bend"],
-    planned: ["Nozzle Reaction"],
+    simIds: ["jet-impact", "pipe-bend", "nozzle"],
   },
   {
     id: "ch7",

@@ -1,0 +1,74 @@
+name: Deploy Flow Motion Lab to GitHub Pages
+
+# Builds the Vite app in flow-motion-lab/ and publishes it to GitHub Pages,
+# while keeping the existing TOEIC Quest site (web/) at the site root.
+#
+#   /                     -> TOEIC Quest (web/)
+#   /flow-motion-lab/     -> Flow Motion Lab (built from flow-motion-lab/dist)
+#
+# One-time setup: Repo Settings -> Pages -> Source: "GitHub Actions".
+# If this branch is blocked from deploying, also add it under
+# Settings -> Environments -> github-pages -> Deployment branches.
+
+on:
+  push:
+    branches:
+      - claude/busy-ptolemy-kv9crc
+    paths:
+      - "flow-motion-lab/**"
+      - "web/**"
+      - ".github/workflows/deploy-flow-motion-lab.yml"
+  workflow_dispatch: # run manually from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deploy at a time; newer pushes win.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Flow Motion Lab
+        working-directory: flow-motion-lab
+        run: |
+          npm ci
+          npm run build
+
+      - name: Assemble Pages site
+        run: |
+          rm -rf public
+          mkdir -p public
+          # Existing TOEIC Quest site at the root (if present).
+          if [ -d web ]; then cp -r web/. public/; fi
+          # Flow Motion Lab under /flow-motion-lab/ (relative base in vite config).
+          mkdir -p public/flow-motion-lab
+          cp -r flow-motion-lab/dist/. public/flow-motion-lab/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

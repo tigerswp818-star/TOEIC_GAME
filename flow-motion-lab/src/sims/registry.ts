@@ -78,6 +78,24 @@ import AffinitySim from "./affinity/AffinitySim";
 import AffinityPreview from "./affinity/AffinityPreview";
 import NpshSim from "./npsh/NpshSim";
 import NpshPreview from "./npsh/NpshPreview";
+import FroudeSim from "./froude/FroudeSim";
+import FroudePreview from "./froude/FroudePreview";
+import WeirSim from "./weir/WeirSim";
+import WeirPreview from "./weir/WeirPreview";
+import BoundaryLayerSim from "./boundaryLayer/BoundaryLayerSim";
+import BoundaryLayerPreview from "./boundaryLayer/BoundaryLayerPreview";
+import FlowSeparationSim from "./flowSeparation/FlowSeparationSim";
+import FlowSeparationPreview from "./flowSeparation/FlowSeparationPreview";
+import AirfoilSim from "./airfoil/AirfoilSim";
+import AirfoilPreview from "./airfoil/AirfoilPreview";
+import ForcedFreeVortexSim from "./forcedFreeVortex/ForcedFreeVortexSim";
+import ForcedFreeVortexPreview from "./forcedFreeVortex/ForcedFreeVortexPreview";
+import CirculationSim from "./circulation/CirculationSim";
+import CirculationPreview from "./circulation/CirculationPreview";
+import CdNozzleSim from "./cdNozzle/CdNozzleSim";
+import CdNozzlePreview from "./cdNozzle/CdNozzlePreview";
+import CfdMeshSim from "./cfdMesh/CfdMeshSim";
+import CfdMeshPreview from "./cfdMesh/CfdMeshPreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -551,6 +569,114 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: NpshSim,
     Preview: NpshPreview,
+  },
+  {
+    id: "froude",
+    title: "เลขฟรูด",
+    titleEn: "Froude Number",
+    tagline: "subcritical/critical/supercritical — คลื่นผิวน้ำ",
+    icon: "🌊",
+    accent: "from-cyan-400 to-teal-600",
+    formula: "Fr = V/√(gy)",
+    status: "ready",
+    Sim: FroudeSim,
+    Preview: FroudePreview,
+  },
+  {
+    id: "weir",
+    title: "ฝายน้ำล้น",
+    titleEn: "Weir Flow Measurement",
+    tagline: "วัดอัตราการไหลจากหัวน้ำเหนือสันฝาย",
+    icon: "⛲",
+    accent: "from-blue-400 to-cyan-600",
+    formula: "Q = Cd·(2/3)√(2g)·b·H^1.5",
+    status: "ready",
+    Sim: WeirSim,
+    Preview: WeirPreview,
+  },
+  {
+    id: "boundary-layer",
+    title: "ชั้นขอบเขตบนแผ่นเรียบ",
+    titleEn: "Flat Plate Boundary Layer",
+    tagline: "no-slip + ชั้นขอบเขตหนาขึ้นตามระยะ x",
+    icon: "📏",
+    accent: "from-emerald-400 to-teal-600",
+    formula: "δ = 5x/√(Re_x)",
+    status: "ready",
+    Sim: BoundaryLayerSim,
+    Preview: BoundaryLayerPreview,
+  },
+  {
+    id: "flow-separation",
+    title: "การแยกตัวของการไหล",
+    titleEn: "Flow Separation & Vortex Shedding",
+    tagline: "separation point, wake และ Kármán vortex street",
+    icon: "🍥",
+    accent: "from-fuchsia-400 to-rose-600",
+    formula: "adverse ∂p/∂x → separation",
+    status: "ready",
+    Sim: FlowSeparationSim,
+    Preview: FlowSeparationPreview,
+  },
+  {
+    id: "airfoil",
+    title: "แรงยกของปีก",
+    titleEn: "Airfoil Lift Concept",
+    tagline: "ความดันบน-ล่างต่างกัน → lift และ stall",
+    icon: "🛩️",
+    accent: "from-sky-400 to-indigo-600",
+    formula: "F_L = ½ρV²C_L·A",
+    status: "ready",
+    Sim: AirfoilSim,
+    Preview: AirfoilPreview,
+  },
+  {
+    id: "forced-free-vortex",
+    title: "Forced vs Free Vortex",
+    titleEn: "Forced & Free Vortex",
+    tagline: "solid-body (vθ=ωr) เทียบ free (vθ=C/r) + ผิวน้ำ",
+    icon: "🌀",
+    accent: "from-violet-400 to-fuchsia-600",
+    formula: "vθ = ωr  ·  vθ = C/r",
+    status: "ready",
+    Sim: ForcedFreeVortexSim,
+    Preview: ForcedFreeVortexPreview,
+  },
+  {
+    id: "circulation",
+    title: "Circulation รอบเส้นปิด",
+    titleEn: "Circulation Visualizer",
+    tagline: "Γ = ∮V·dl รอบเส้นปิดในสนาม vortex",
+    icon: "♻️",
+    accent: "from-purple-400 to-violet-600",
+    formula: "Γ = ∮ V·dl",
+    status: "ready",
+    Sim: CirculationSim,
+    Preview: CirculationPreview,
+  },
+  {
+    id: "cd-nozzle",
+    title: "หัวฉีดลู่เข้า-บานออก",
+    titleEn: "Converging–Diverging Nozzle",
+    tagline: "เร่งถึง M=1 ที่คอคอด แล้ว supersonic (choked)",
+    icon: "🚀",
+    accent: "from-rose-400 to-orange-600",
+    formula: "M=1 at throat (choked)",
+    status: "ready",
+    Sim: CdNozzleSim,
+    Preview: CdNozzlePreview,
+  },
+  {
+    id: "cfd-mesh",
+    title: "แนวคิด Mesh ของ CFD",
+    titleEn: "CFD Mesh Concept",
+    tagline: "mesh ละเอียด = แม่นกว่า แต่ใช้ compute มากกว่า",
+    icon: "🖥️",
+    accent: "from-slate-400 to-cyan-600",
+    formula: "cells ∝ N² (cost ∝ cells)",
+    status: "ready",
+    Sim: CfdMeshSim,
+    Preview: CfdMeshPreview,
   },
 ];
 

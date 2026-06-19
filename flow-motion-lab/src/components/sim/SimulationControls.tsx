@@ -1,6 +1,7 @@
 import type { SimControls } from "@/hooks/useSimControls";
 import type { ToggleKey } from "@/types/simulation";
 import ToggleChip from "./ToggleChip";
+import { useClassroom } from "@/hooks/useClassroom";
 
 const SPEEDS = [0.25, 0.5, 1, 2];
 
@@ -28,6 +29,7 @@ export default function SimulationControls({
   availableToggles,
 }: SimulationControlsProps) {
   const { playing, speed, toggles, togglePlay, setSpeed, reset, setToggle } = controls;
+  const { active: classroom } = useClassroom();
 
   return (
     <div className="space-y-3">
@@ -55,7 +57,7 @@ export default function SimulationControls({
           <span aria-hidden>🐢</span> ช้า
         </button>
 
-        <div className="flex items-center gap-1 rounded-xl border border-line bg-surface-soft p-1">
+        <div className={`items-center gap-1 rounded-xl border border-line bg-surface-soft p-1 ${classroom ? "hidden" : "flex"}`}>
           {SPEEDS.map((s) => (
             <button
               key={s}
@@ -73,17 +75,19 @@ export default function SimulationControls({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {availableToggles.map((key) => (
-          <ToggleChip
-            key={key}
-            label={TOGGLE_META[key].label}
-            icon={TOGGLE_META[key].icon}
-            active={toggles[key]}
-            onClick={() => setToggle(key, !toggles[key])}
-          />
-        ))}
-      </div>
+      {!classroom && (
+        <div className="flex flex-wrap gap-2">
+          {availableToggles.map((key) => (
+            <ToggleChip
+              key={key}
+              label={TOGGLE_META[key].label}
+              icon={TOGGLE_META[key].icon}
+              active={toggles[key]}
+              onClick={() => setToggle(key, !toggles[key])}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -5,6 +5,8 @@ interface ExplanationPanelProps {
   badge?: { label: string; tone: "cyan" | "amber" | "rose" | "emerald" };
 }
 
+import { useClassroom } from "@/hooks/useClassroom";
+
 const toneClass: Record<string, string> = {
   cyan: "bg-flow-500/15 text-flow-600 dark:text-flow-300",
   amber: "bg-amber-500/15 text-amber-600 dark:text-amber-300",
@@ -17,6 +19,7 @@ const toneClass: Record<string, string> = {
  * always describes what the animation is currently showing.
  */
 export default function ExplanationPanel({ text, badge }: ExplanationPanelProps) {
+  const { active: classroom } = useClassroom();
   return (
     <section className="rounded-xl border border-line bg-surface-soft p-3.5">
       <div className="flex items-center justify-between gap-2">
@@ -31,7 +34,7 @@ export default function ExplanationPanel({ text, badge }: ExplanationPanelProps)
           </span>
         )}
       </div>
-      <p className="mt-2 text-sm leading-relaxed text-ink-soft">{text}</p>
+      <p className={`mt-2 leading-relaxed text-ink-soft ${classroom ? "text-lg" : "text-sm"}`}>{text}</p>
     </section>
   );
 }

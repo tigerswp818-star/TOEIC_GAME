@@ -4,6 +4,7 @@ import { HashRouter } from "react-router-dom";
 import App from "./App";
 import { ThemeProvider } from "./hooks/useTheme";
 import { ProgressProvider } from "./hooks/useProgress";
+import { ClassroomProvider } from "./hooks/useClassroom";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -11,7 +12,9 @@ createRoot(document.getElementById("root")!).render(
     <HashRouter>
       <ThemeProvider>
         <ProgressProvider>
-          <App />
+          <ClassroomProvider>
+            <App />
+          </ClassroomProvider>
         </ProgressProvider>
       </ThemeProvider>
     </HashRouter>

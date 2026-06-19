@@ -95,8 +95,7 @@ export const CHAPTERS: Chapter[] = [
       "Velocity field", "Steady/Unsteady", "Uniform/Non-uniform",
       "Rotational/Irrotational", "Vorticity",
     ],
-    simIds: ["streamlines", "rotational"],
-    planned: ["Velocity Field Simulator"],
+    simIds: ["streamlines", "rotational", "velocity-field"],
   },
   {
     id: "ch4",
@@ -169,8 +168,7 @@ export const CHAPTERS: Chapter[] = [
       "Dimensional homogeneity", "Buckingham Pi", "Model & prototype",
       "Geometric/Kinematic/Dynamic similarity", "Reynolds", "Froude", "Mach", "Weber", "Euler",
     ],
-    simIds: [],
-    planned: ["Dimension Checker", "Dimensionless Number Explorer", "Model–Prototype Similarity"],
+    simIds: ["dimension-checker", "dimensionless", "similarity"],
   },
   {
     id: "ch8",
@@ -190,8 +188,7 @@ export const CHAPTERS: Chapter[] = [
       "Friction factor", "Moody chart", "Relative roughness", "Minor losses",
       "Pipes in series/parallel", "Equivalent length",
     ],
-    simIds: ["reynolds", "headloss", "moody"],
-    planned: ["Laminar Velocity Profile", "Turbulent Velocity Profile", "Series & Parallel Pipes"],
+    simIds: ["reynolds", "headloss", "moody", "laminar-profile", "turbulent-profile", "pipe-network"],
   },
   {
     id: "ch9",
@@ -210,8 +207,7 @@ export const CHAPTERS: Chapter[] = [
       "Pump head", "Pump power", "Pump/System curve", "Operating point",
       "Affinity laws", "NPSH", "Cavitation", "Turbine head/power",
     ],
-    simIds: ["pump-curve"],
-    planned: ["Affinity Laws", "Cavitation & NPSH"],
+    simIds: ["pump-curve", "affinity", "npsh"],
   },
   {
     id: "ch10",

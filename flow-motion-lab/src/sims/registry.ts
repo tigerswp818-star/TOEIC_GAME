@@ -60,6 +60,24 @@ import BernoulliValiditySim from "./bernoulliValidity/BernoulliValiditySim";
 import BernoulliValidityPreview from "./bernoulliValidity/BernoulliValidityPreview";
 import NozzleReactionSim from "./nozzleReaction/NozzleReactionSim";
 import NozzleReactionPreview from "./nozzleReaction/NozzleReactionPreview";
+import VelocityFieldSim from "./velocityField/VelocityFieldSim";
+import VelocityFieldPreview from "./velocityField/VelocityFieldPreview";
+import DimensionCheckerSim from "./dimensionChecker/DimensionCheckerSim";
+import DimensionCheckerPreview from "./dimensionChecker/DimensionCheckerPreview";
+import DimensionlessSim from "./dimensionless/DimensionlessSim";
+import DimensionlessPreview from "./dimensionless/DimensionlessPreview";
+import SimilaritySim from "./similarity/SimilaritySim";
+import SimilarityPreview from "./similarity/SimilarityPreview";
+import LaminarProfileSim from "./laminarProfile/LaminarProfileSim";
+import LaminarProfilePreview from "./laminarProfile/LaminarProfilePreview";
+import TurbulentProfileSim from "./turbulentProfile/TurbulentProfileSim";
+import TurbulentProfilePreview from "./turbulentProfile/TurbulentProfilePreview";
+import PipeNetworkSim from "./pipeNetwork/PipeNetworkSim";
+import PipeNetworkPreview from "./pipeNetwork/PipeNetworkPreview";
+import AffinitySim from "./affinity/AffinitySim";
+import AffinityPreview from "./affinity/AffinityPreview";
+import NpshSim from "./npsh/NpshSim";
+import NpshPreview from "./npsh/NpshPreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -425,6 +443,114 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: NozzleReactionSim,
     Preview: NozzleReactionPreview,
+  },
+  {
+    id: "velocity-field",
+    title: "สนามความเร็ว",
+    titleEn: "Velocity Field Explorer",
+    tagline: "uniform · source · sink · vortex — เวกเตอร์และ streamline",
+    icon: "🧮",
+    accent: "from-indigo-400 to-violet-600",
+    formula: "v(x,y) field",
+    status: "ready",
+    Sim: VelocityFieldSim,
+    Preview: VelocityFieldPreview,
+  },
+  {
+    id: "dimension-checker",
+    title: "ตรวจสอบมิติ",
+    titleEn: "Dimensional Homogeneity Checker",
+    tagline: "สมการสมดุลมิติไหม? เครื่องชั่งมิติ [M L T]",
+    icon: "⚖️",
+    accent: "from-slate-400 to-indigo-600",
+    formula: "[M^a L^b T^c] LHS = RHS",
+    status: "ready",
+    Sim: DimensionCheckerSim,
+    Preview: DimensionCheckerPreview,
+  },
+  {
+    id: "dimensionless",
+    title: "ตัวเลขไร้มิติ",
+    titleEn: "Dimensionless Number Explorer",
+    tagline: "Re · Fr · Ma · We — เลือกสถานการณ์ เห็นตัวเลขที่สำคัญ",
+    icon: "🔢",
+    accent: "from-cyan-400 to-blue-600",
+    formula: "Re · Fr · Ma · We",
+    status: "ready",
+    Sim: DimensionlessSim,
+    Preview: DimensionlessPreview,
+  },
+  {
+    id: "similarity",
+    title: "แบบจำลองกับของจริง",
+    titleEn: "Model & Prototype Similarity",
+    tagline: "รักษา Re หรือ Fr ให้เท่ากันระหว่าง model กับ prototype",
+    icon: "🚢",
+    accent: "from-sky-400 to-teal-600",
+    formula: "Re_m = Re_p / Fr_m = Fr_p",
+    status: "ready",
+    Sim: SimilaritySim,
+    Preview: SimilarityPreview,
+  },
+  {
+    id: "laminar-profile",
+    title: "หน้าตัดความเร็ว Laminar",
+    titleEn: "Laminar Velocity Profile",
+    tagline: "พาราโบลา u(r)=u_max(1−(r/R)²) — no-slip ที่ผนัง",
+    icon: "🩸",
+    accent: "from-rose-400 to-red-600",
+    formula: "u = u_max(1−(r/R)²)",
+    status: "ready",
+    Sim: LaminarProfileSim,
+    Preview: LaminarProfilePreview,
+  },
+  {
+    id: "turbulent-profile",
+    title: "หน้าตัดความเร็ว Turbulent",
+    titleEn: "Turbulent Velocity Profile",
+    tagline: "หน้าตัดแบนกว่า laminar (กฎ 1/7) — เทียบกันได้",
+    icon: "🌫️",
+    accent: "from-fuchsia-400 to-rose-600",
+    formula: "u = u_max(1−r/R)^(1/n)",
+    status: "ready",
+    Sim: TurbulentProfileSim,
+    Preview: TurbulentProfilePreview,
+  },
+  {
+    id: "pipe-network",
+    title: "ท่ออนุกรม & ขนาน",
+    titleEn: "Pipes in Series & Parallel",
+    tagline: "อนุกรมบวก head loss · ขนานแยก flow ลดการสูญเสีย",
+    icon: "🛢️",
+    accent: "from-orange-400 to-amber-600",
+    formula: "series: Σhf · parallel: Σering Q",
+    status: "ready",
+    Sim: PipeNetworkSim,
+    Preview: PipeNetworkPreview,
+  },
+  {
+    id: "affinity",
+    title: "กฎสัดส่วนปั๊ม",
+    titleEn: "Pump Affinity Laws",
+    tagline: "Q∝N · H∝N² · Power∝N³ เมื่อเปลี่ยนรอบปั๊ม",
+    icon: "🔁",
+    accent: "from-sky-400 to-indigo-600",
+    formula: "Q∝N, H∝N², P∝N³",
+    status: "ready",
+    Sim: AffinitySim,
+    Preview: AffinityPreview,
+  },
+  {
+    id: "npsh",
+    title: "Cavitation & NPSH",
+    titleEn: "Cavitation & NPSH",
+    tagline: "ความดันต่ำกว่าความดันไอ → ฟองไอในปั๊ม",
+    icon: "🫧",
+    accent: "from-violet-400 to-blue-600",
+    formula: "NPSH_a = (P_atm+P_s−P_v)/ρg − z − h_L",
+    status: "ready",
+    Sim: NpshSim,
+    Preview: NpshPreview,
   },
 ];
 

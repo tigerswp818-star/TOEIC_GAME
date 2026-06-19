@@ -13,8 +13,7 @@ name: Deploy Flow Motion Lab to GitHub Pages
 on:
   push:
     branches:
-      - claude/toeic-quest-web-app-r87m2 # default branch
-      - claude/busy-ptolemy-kv9crc
+      - claude/toeic-quest-web-app-r87m2 # default branch (only branch the github-pages env allows)
     paths:
       - "flow-motion-lab/**"
       - "web/**"

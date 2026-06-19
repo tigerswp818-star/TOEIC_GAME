@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getSim } from "@/sims/registry";
 import { useProgress } from "@/hooks/useProgress";
+import AccuracyNote from "@/components/sim/AccuracyNote";
 
 export default function SimulationPage() {
   const { id } = useParams();
@@ -42,5 +43,10 @@ export default function SimulationPage() {
   }
 
   const Sim = sim.Sim;
-  return <Sim />;
+  return (
+    <>
+      <AccuracyNote simId={sim.id} />
+      <Sim />
+    </>
+  );
 }

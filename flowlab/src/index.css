@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    @apply dark:bg-slate-950 dark:text-slate-100;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Visible, consistent focus ring for keyboard users across the app. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950;
+  }
+}
+
+@layer components {
+  /* Reusable card surface used by most panels. */
+  .surface {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+    @apply dark:border-slate-800 dark:bg-slate-900;
+  }
+
+  /* Range slider styling that works in light & dark. */
+  input[type="range"].flow-range {
+    @apply h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 dark:bg-slate-700;
+  }
+  input[type="range"].flow-range::-webkit-slider-thumb {
+    @apply h-5 w-5 appearance-none rounded-full border-2 border-white bg-brand-600 shadow transition;
+    @apply dark:border-slate-900;
+  }
+  input[type="range"].flow-range:focus-visible::-webkit-slider-thumb {
+    @apply ring-2 ring-brand-400;
+  }
+  input[type="range"].flow-range::-moz-range-thumb {
+    @apply h-5 w-5 rounded-full border-2 border-white bg-brand-600 shadow;
+    @apply dark:border-slate-900;
+  }
+}
+
+/* Thin custom scrollbar for the sidebar / scroll regions. */
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300 dark:bg-slate-700;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}

@@ -1,0 +1,48 @@
+name: Deploy TOEIC Quest to GitHub Pages
+
+# Publishes the static site in web/ to GitHub Pages.
+# One-time setup: Repo Settings → Pages → Build and deployment →
+# Source: "GitHub Actions". (Private repos require a paid plan, or make
+# the repo public.)
+
+on:
+  push:
+    branches:
+      - claude/funny-carson-a90dek
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch: # lets you run it manually from the Actions tab
+
+# Permissions the deploy needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deploy at a time; newer pushes win.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site (web/ folder)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -8,6 +8,7 @@ name: Deploy TOEIC Quest to GitHub Pages
 on:
   push:
     branches:
+      - claude/toeic-quest-web-app-r87m2 # default branch
       - claude/funny-carson-a90dek
     paths:
       - "web/**"

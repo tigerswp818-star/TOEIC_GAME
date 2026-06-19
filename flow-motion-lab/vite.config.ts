@@ -12,4 +12,15 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the framework into its own long-cached chunk, separate from the
+        // app + simulations bundle, so revisits and new sim updates re-fetch less.
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
+  },
 });

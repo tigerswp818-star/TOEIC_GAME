@@ -20,18 +20,18 @@
 - **Mini Quiz** เฉลยทันทีพร้อมเหตุผล, **Formula Sheet**, และหน้า **เห็นในชีวิตจริง**
 - **Responsive** มือถือ/แท็บเล็ต/เดสก์ท็อป + **Dark / Light mode**
 
-## 🧪 Simulation
+## 🧪 Simulation (พร้อมใช้ทั้ง 8 หัวข้อ)
 
-| สถานะ | หัวข้อ | สูตรหลัก |
-|------|--------|----------|
-| ✅ พร้อมใช้ | สมการความต่อเนื่อง Continuity | `A₁V₁ = A₂V₂` |
-| ✅ พร้อมใช้ | เบอร์นูลลี / เวนทูรี Bernoulli / Venturi | `P/ρg + V²/2g + z = const` |
-| ✅ พร้อมใช้ | เลขเรย์โนลด์ Reynolds Number | `Re = ρVD/μ` |
-| ✅ พร้อมใช้ | แรงลอยตัว Buoyancy | `Fb = ρgV` |
-| 🚧 เร็ว ๆ นี้ | ความดันของของไหล Hydrostatic Pressure | `P = ρgh` |
-| 🚧 เร็ว ๆ นี้ | การสูญเสียในท่อ Pipe Head Loss | `hf = f(L/D)(V²/2g)` |
-| 🚧 เร็ว ๆ นี้ | การหมุนวน Vortex | `v = ω·r` |
-| 🚧 เร็ว ๆ นี้ | การไหลผ่านวัตถุ Flow Around Object | Drag & Wake |
+| หัวข้อ | สูตรหลัก | สิ่งที่ได้เห็น |
+|--------|----------|----------------|
+| สมการความต่อเนื่อง Continuity | `A₁V₁ = A₂V₂` | อนุภาคเร่งเร็วในคอท่อ + ตัวนับการไหลผ่านหน้าตัด |
+| เบอร์นูลลี / เวนทูรี Bernoulli / Venturi | `P/ρg + V²/2g + z = const` | แผนที่สีความดัน + มาโนมิเตอร์ 3 หลอด |
+| เลขเรย์โนลด์ Reynolds Number | `Re = ρVD/μ` | Laminar → Turbulent + eddies/vortices |
+| แรงลอยตัว Buoyancy | `Fb = ρgV` | วัตถุลอย/จม/สมดุล + ลูกศรแรง Fb vs W |
+| ความดันของของไหล Hydrostatic Pressure | `P = ρgh` | สีตามความลึก + ลูกศรแรงดันผนัง + เกจหมุน |
+| การสูญเสียในท่อ Pipe Head Loss | `hf = f(L/D)(V²/2g)` | เส้นพลังงาน (EGL) ลดลง + step ที่วาล์ว/ข้องอ |
+| การหมุนวน Vortex | `v = ω·r` | Rankine vortex มุมมองด้านบน + โปรไฟล์ vθ–r |
+| การไหลผ่านวัตถุ Flow Around Object | `Cp = 1 − (v/U)²` | streamline อ้อมวัตถุ + wake + pressure map |
 
 ## 🛠️ Tech stack
 
@@ -62,6 +62,7 @@ src/
   hooks/        useRaf · useSimControls · useTheme (context)
   lib/          constants · math · colors · fluidFormulas · render/draw
   sims/         registry.ts + continuity/ bernoulli/ reynolds/ buoyancy/
+                  hydrostatic/ headloss/ vortex/ flowAround/
                   (แต่ละโฟลเดอร์: <Name>Model.ts, <Name>Sim.tsx, <Name>Preview.tsx)
   pages/        Landing · Dashboard · Simulation · FormulaSheet · RealWorld · NotFound
   types/        simulation.ts

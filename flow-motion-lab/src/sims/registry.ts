@@ -8,6 +8,14 @@ import ReynoldsSim from "./reynolds/ReynoldsSim";
 import ReynoldsPreview from "./reynolds/ReynoldsPreview";
 import BuoyancySim from "./buoyancy/BuoyancySim";
 import BuoyancyPreview from "./buoyancy/BuoyancyPreview";
+import HydrostaticSim from "./hydrostatic/HydrostaticSim";
+import HydrostaticPreview from "./hydrostatic/HydrostaticPreview";
+import HeadLossSim from "./headloss/HeadLossSim";
+import HeadLossPreview from "./headloss/HeadLossPreview";
+import VortexSim from "./vortex/VortexSim";
+import VortexPreview from "./vortex/VortexPreview";
+import FlowAroundSim from "./flowAround/FlowAroundSim";
+import FlowAroundPreview from "./flowAround/FlowAroundPreview";
 
 /**
  * Central catalogue of every simulation. The dashboard and router both read
@@ -70,7 +78,9 @@ export const SIMULATIONS: SimMeta[] = [
     icon: "📏",
     accent: "from-blue-500 to-slate-700",
     formula: "P = ρgh",
-    status: "soon",
+    status: "ready",
+    Sim: HydrostaticSim,
+    Preview: HydrostaticPreview,
   },
   {
     id: "headloss",
@@ -80,7 +90,9 @@ export const SIMULATIONS: SimMeta[] = [
     icon: "📉",
     accent: "from-orange-400 to-rose-600",
     formula: "hf = f(L/D)(V²/2g)",
-    status: "soon",
+    status: "ready",
+    Sim: HeadLossSim,
+    Preview: HeadLossPreview,
   },
   {
     id: "vortex",
@@ -90,7 +102,9 @@ export const SIMULATIONS: SimMeta[] = [
     icon: "🌪️",
     accent: "from-violet-400 to-fuchsia-600",
     formula: "v = ω·r",
-    status: "soon",
+    status: "ready",
+    Sim: VortexSim,
+    Preview: VortexPreview,
   },
   {
     id: "flow-around",
@@ -100,7 +114,9 @@ export const SIMULATIONS: SimMeta[] = [
     icon: "✈️",
     accent: "from-emerald-400 to-teal-600",
     formula: "Drag & Wake",
-    status: "soon",
+    status: "ready",
+    Sim: FlowAroundSim,
+    Preview: FlowAroundPreview,
   },
 ];
 

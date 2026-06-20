@@ -19,11 +19,26 @@ function ScrollToTop() {
   return null;
 }
 
+/**
+ * Fixed, non-interactive aurora orbs that drift slowly behind every page,
+ * layered under all content for an ambient "fluid lab at night" depth.
+ */
+function AmbientBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      <div className="absolute -left-32 -top-40 h-[34rem] w-[34rem] rounded-full bg-flow-500/20 blur-3xl animate-float" />
+      <div className="absolute -right-40 top-10 h-[30rem] w-[30rem] rounded-full bg-iris-500/20 blur-3xl animate-float-slow" />
+      <div className="absolute bottom-[-12rem] left-1/3 h-[32rem] w-[32rem] rounded-full bg-deep-600/15 blur-3xl animate-float" />
+    </div>
+  );
+}
+
 export default function App() {
   const { theme, toggle } = useTheme();
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="relative flex min-h-full flex-col">
+      <AmbientBackdrop />
       <ScrollToTop />
       <Navbar theme={theme} onToggleTheme={toggle} />
       <main className="flex-1">
@@ -39,12 +54,15 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <footer className="border-t border-line bg-surface-soft py-6 text-center text-xs text-ink-faint">
-        <p>
-          🌊 <span className="font-semibold text-ink-soft">Flow Motion Lab</span> · เห็นการไหล
-          เข้าใจของไหล
+      <footer className="relative mt-4 border-t border-line/60 py-8 text-center text-xs text-ink-faint">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-flow-400/60 to-transparent" />
+        <p className="text-sm">
+          <span className="bg-aurora-text bg-clip-text font-bold tracking-tight text-transparent">
+            🌊 Flow Motion Lab
+          </span>
+          <span className="text-ink-faint"> · เห็นการไหล เข้าใจของไหล</span>
         </p>
-        <p className="mt-1">สื่อการเรียนรู้ Fluid Mechanics แบบเห็นภาพเคลื่อนไหว · คำนวณทั้งหมดในเบราว์เซอร์</p>
+        <p className="mt-1.5">สื่อการเรียนรู้ Fluid Mechanics แบบเห็นภาพเคลื่อนไหว · คำนวณทั้งหมดในเบราว์เซอร์</p>
       </footer>
     </div>
   );

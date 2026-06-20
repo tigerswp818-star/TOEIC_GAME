@@ -22,19 +22,22 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `rounded-lg px-3 py-2 text-sm font-medium transition ${
       isActive
-        ? "bg-flow-500/15 text-flow-600 dark:text-flow-300"
+        ? "bg-gradient-to-r from-flow-500/20 to-iris-500/20 text-flow-600 ring-1 ring-flow-400/30 dark:text-flow-200"
         : "text-ink-soft hover:bg-surface-soft hover:text-ink"
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-surface/70 backdrop-blur-xl">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-flow-400/50 to-transparent" />
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-flow-400 to-deep-600 text-lg shadow-glow">
+        <Link to="/" className="group flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-flow-400 via-deep-500 to-iris-600 text-lg shadow-glow transition group-hover:shadow-glow-lg">
             🌊
           </span>
           <span className="leading-tight">
-            <span className="block text-sm font-bold tracking-tight">Flow Motion Lab</span>
+            <span className="block bg-aurora-text bg-clip-text text-sm font-bold tracking-tight text-transparent">
+              Flow Motion Lab
+            </span>
             <span className="block text-[11px] text-ink-faint">เห็นการไหล เข้าใจของไหล</span>
           </span>
         </Link>

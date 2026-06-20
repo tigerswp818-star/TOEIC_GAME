@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import ParticleFlowCanvas, { type DrawContext } from "@/components/canvas/ParticleFlowCanvas";
 import { useTheme } from "@/hooks/useTheme";
+import { CHAPTERS } from "@/data/curriculum";
 import { READY_SIMS, SIMULATIONS } from "@/sims/registry";
 import { areaAt, velocityAt } from "@/sims/continuity/continuityModel";
 import { velocityColor, pressureColor } from "@/lib/colors";
@@ -77,7 +78,7 @@ export default function LandingPage() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 opacity-90">
+        <div className="absolute inset-0">
           <ParticleFlowCanvas
             draw={heroDraw}
             playing
@@ -87,29 +88,47 @@ export default function LandingPage() {
             ariaLabel="ของไหลไหลผ่านท่อใส มีอนุภาคน้ำ ลูกศรทิศทาง และสีตามความดัน"
           />
         </div>
-        <div className="relative mx-auto max-w-5xl px-4 py-20 text-center sm:py-28">
-          <span className="lab-chip mx-auto mb-5 !bg-surface-raised/80 backdrop-blur">
-            🌊 สื่อการเรียนรู้ Fluid Mechanics
+        {/* Scrim — fades the live canvas into the page so the headline pops. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-surface/40 via-surface/55 to-surface" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-flow-400/40 to-transparent" />
+
+        <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:py-32">
+          <span className="lab-chip mx-auto mb-6 animate-fade-in ring-1 ring-flow-400/30 !bg-surface-raised/70">
+            <span className="animate-pulse-soft">🌊</span> สื่อการเรียนรู้ Fluid Mechanics · Interactive
           </span>
-          <h1 className="mx-auto max-w-3xl text-3xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">
+          <h1 className="mx-auto max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight text-ink sm:text-6xl">
             เรียน Fluid Mechanics
             <br />
-            <span className="bg-gradient-to-r from-flow-500 to-deep-600 bg-clip-text text-transparent">
-              ด้วยภาพเคลื่อนไหว
-            </span>
+            <span className="text-aurora">ด้วยภาพเคลื่อนไหว</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base text-ink-soft sm:text-lg">
             ไม่ต้องท่องสูตร แต่ได้ “เห็น” การไหลจริง — อนุภาคของไหล เส้นการไหล (Streamline)
             ลูกศรความเร็ว (Velocity) และสีความดัน (Pressure) ที่เปลี่ยนทันทีเมื่อคุณปรับค่า
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/lab" className="lab-btn-primary !px-6 !py-3 text-base">
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <Link to="/lab" className="lab-btn-primary !px-7 !py-3.5 text-base">
               🧪 เริ่มทดลอง
             </Link>
-            <Link to="/sim/continuity" className="lab-btn-ghost !px-6 !py-3 text-base backdrop-blur">
+            <Link to="/sim/continuity" className="lab-btn-ghost !px-7 !py-3.5 text-base">
               💧 ดูหลักการไหล
             </Link>
           </div>
+
+          {/* Stat ribbon */}
+          <dl className="mx-auto mt-12 grid max-w-2xl grid-cols-3 gap-3">
+            {[
+              { value: `${SIMULATIONS.length}`, label: "Simulation" },
+              { value: `${CHAPTERS.length}`, label: "บทเรียน" },
+              { value: "3", label: "ระดับ · โหมด" },
+            ].map((s) => (
+              <div key={s.label} className="glass rounded-2xl px-4 py-4">
+                <dt className="bg-aurora-text bg-clip-text font-mono text-2xl font-bold text-transparent sm:text-3xl">
+                  {s.value}
+                </dt>
+                <dd className="mt-0.5 text-xs text-ink-faint">{s.label}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -117,14 +136,20 @@ export default function LandingPage() {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-4 sm:grid-cols-3">
           {[
-            { icon: "👁️", title: "เห็นภาพ ไม่ใช่ท่องจำ", body: "ทุกบทมีภาพเคลื่อนไหวกลางจอ ปรับค่าแล้วการไหลเปลี่ยนทันที" },
-            { icon: "🎚️", title: "ลองเล่นได้จริง", body: "เลื่อน slider ปรับพื้นที่ ความเร็ว ความหนืด แล้วดูผลแบบ real-time" },
-            { icon: "🧭", title: "3 โหมดการเรียน", body: "สำรวจอิสระ · เรียนทีละขั้น (Guided) · โจทย์ท้าทาย (Challenge)" },
-          ].map((f) => (
-            <div key={f.title} className="lab-card p-5">
-              <div className="text-2xl">{f.icon}</div>
-              <h3 className="mt-2 font-bold text-ink">{f.title}</h3>
-              <p className="mt-1 text-sm text-ink-soft">{f.body}</p>
+            { icon: "👁️", grad: "from-flow-400 to-deep-600", title: "เห็นภาพ ไม่ใช่ท่องจำ", body: "ทุกบทมีภาพเคลื่อนไหวกลางจอ ปรับค่าแล้วการไหลเปลี่ยนทันที" },
+            { icon: "🎚️", grad: "from-deep-500 to-iris-600", title: "ลองเล่นได้จริง", body: "เลื่อน slider ปรับพื้นที่ ความเร็ว ความหนืด แล้วดูผลแบบ real-time" },
+            { icon: "🧭", grad: "from-iris-500 to-flow-500", title: "3 โหมดการเรียน", body: "สำรวจอิสระ · เรียนทีละขั้น (Guided) · โจทย์ท้าทาย (Challenge)" },
+          ].map((f, i) => (
+            <div
+              key={f.title}
+              className="lab-card group animate-rise p-6 hover:-translate-y-1 hover:ring-aurora"
+              style={{ animationDelay: `${i * 90}ms` }}
+            >
+              <div className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${f.grad} text-2xl shadow-glow transition group-hover:scale-110`}>
+                {f.icon}
+              </div>
+              <h3 className="mt-4 font-bold text-ink">{f.title}</h3>
+              <p className="mt-1.5 text-sm text-ink-soft">{f.body}</p>
             </div>
           ))}
         </div>
@@ -142,19 +167,22 @@ export default function LandingPage() {
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {READY_SIMS.map((s) => (
+          {READY_SIMS.map((s, i) => (
             <Link
               key={s.id}
               to={`/sim/${s.id}`}
-              className="lab-card group overflow-hidden p-4 transition hover:-translate-y-0.5 hover:shadow-glow"
+              style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+              className="lab-card group relative animate-rise overflow-hidden p-4 hover:-translate-y-1 hover:ring-aurora"
             >
-              <div className={`mb-3 inline-grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br ${s.accent} text-xl`}>
+              {/* gradient wash that blooms on hover */}
+              <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${s.accent} opacity-0 transition-opacity duration-300 group-hover:opacity-[0.08]`} />
+              <div className={`relative mb-3 inline-grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${s.accent} text-xl shadow-glow transition group-hover:scale-110`}>
                 {s.icon}
               </div>
-              <h3 className="font-bold text-ink">{s.title}</h3>
-              <p className="text-xs text-ink-faint">{s.titleEn}</p>
-              <p className="mt-2 line-clamp-2 text-sm text-ink-soft">{s.tagline}</p>
-              <p className="mt-3 font-mono text-xs text-flow-600 dark:text-flow-300">{s.formula}</p>
+              <h3 className="relative font-bold text-ink">{s.title}</h3>
+              <p className="relative text-xs text-ink-faint">{s.titleEn}</p>
+              <p className="relative mt-2 line-clamp-2 text-sm text-ink-soft">{s.tagline}</p>
+              <p className="relative mt-3 font-mono text-xs text-flow-600 dark:text-flow-300">{s.formula}</p>
             </Link>
           ))}
         </div>

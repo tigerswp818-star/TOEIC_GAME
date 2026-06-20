@@ -18,13 +18,13 @@
 }
 
 .dark {
-  --surface: 8 13 24;
-  --surface-soft: 14 21 36;
-  --surface-raised: 19 27 45;
+  --surface: 6 10 20;
+  --surface-soft: 13 19 34;
+  --surface-raised: 18 26 44;
   --ink: 226 232 240;
-  --ink-soft: 148 163 184;
-  --ink-faint: 100 116 139;
-  --line: 35 47 70;
+  --ink-soft: 154 169 191;
+  --ink-faint: 109 124 148;
+  --line: 38 51 76;
   color-scheme: dark;
 }
 
@@ -39,6 +39,19 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Faint aurora wash anchored to the viewport — gives every page depth
+     without affecting layout. Tuned soft so text stays readable. */
+  background-image:
+    radial-gradient(60rem 40rem at 12% -8%, rgb(34 211 238 / 0.12), transparent 60%),
+    radial-gradient(52rem 38rem at 92% 4%, rgb(124 58 237 / 0.12), transparent 60%),
+    radial-gradient(48rem 40rem at 50% 116%, rgb(37 99 235 / 0.1), transparent 60%);
+  background-attachment: fixed;
+}
+.dark body {
+  background-image:
+    radial-gradient(60rem 42rem at 10% -10%, rgb(34 211 238 / 0.16), transparent 60%),
+    radial-gradient(54rem 40rem at 94% 2%, rgb(139 92 246 / 0.18), transparent 60%),
+    radial-gradient(50rem 42rem at 50% 120%, rgb(37 99 235 / 0.16), transparent 60%);
 }
 
 /* Custom range slider so it reads as a lab control on every browser */
@@ -58,10 +71,13 @@ input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 9999px;
-  background: #06b6d4;
+  background: radial-gradient(circle at 35% 30%, #67e8f9, #06b6d4 60%, #0891b2);
   border: 3px solid #fff;
-  box-shadow: 0 1px 4px rgb(8 13 24 / 0.4);
-  transition: transform 0.12s ease;
+  box-shadow: 0 1px 4px rgb(8 13 24 / 0.4), 0 0 0 0 rgb(34 211 238 / 0.5);
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 1px 4px rgb(8 13 24 / 0.4), 0 0 0 6px rgb(34 211 238 / 0.18);
 }
 .dark input[type="range"]::-webkit-slider-thumb {
   border-color: rgb(var(--surface-raised));
@@ -106,20 +122,52 @@ input[type="range"]::-moz-range-thumb {
   }
 }
 
+@layer utilities {
+  /* Frosted-glass surface — translucent panel over the aurora backdrop. */
+  .glass {
+    @apply border border-white/10 bg-surface-raised/70 backdrop-blur-xl;
+  }
+  .dark .glass {
+    @apply border-white/[0.08] bg-surface-raised/55;
+  }
+  /* Aurora gradient text (cyan → blue → violet), gently animated. */
+  .text-aurora {
+    @apply bg-aurora-text bg-clip-text text-transparent;
+    background-size: 220% auto;
+    @apply animate-gradient-pan;
+  }
+  /* Hairline gradient ring used to lift cards above the background. */
+  .ring-aurora {
+    box-shadow:
+      0 0 0 1px rgb(34 211 238 / 0.18),
+      0 18px 60px -24px rgb(34 211 238 / 0.45),
+      0 8px 30px -18px rgb(124 58 237 / 0.4);
+  }
+}
+
 @layer components {
   .lab-card {
-    @apply rounded-2xl border border-line bg-surface-raised shadow-lab;
+    @apply rounded-2xl border border-line bg-surface-raised/80 shadow-lab backdrop-blur-sm transition duration-300;
+  }
+  .dark .lab-card {
+    @apply border-white/[0.07] bg-surface-raised/60;
   }
   .lab-chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-soft px-3 py-1 text-xs font-medium text-ink-soft;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-soft/80 px-3 py-1 text-xs font-medium text-ink-soft backdrop-blur;
   }
   .lab-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
+  /* Primary CTA: cyan→blue→violet gradient with glow + animated sheen. */
   .lab-btn-primary {
-    @apply lab-btn bg-flow-500 text-white shadow-glow hover:bg-flow-400;
+    @apply lab-btn bg-gradient-to-r from-flow-500 via-deep-500 to-iris-500 text-white shadow-glow;
+    background-size: 180% auto;
+  }
+  .lab-btn-primary:hover {
+    @apply shadow-glow-lg;
+    background-position: right center;
   }
   .lab-btn-ghost {
-    @apply lab-btn border border-line bg-surface-soft text-ink hover:bg-surface-raised;
+    @apply lab-btn border border-line bg-surface-soft/70 text-ink backdrop-blur hover:border-flow-400/50 hover:bg-surface-raised;
   }
 }

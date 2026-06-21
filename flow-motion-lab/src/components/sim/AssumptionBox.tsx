@@ -7,7 +7,8 @@ interface AssumptionBoxProps {
 export default function AssumptionBox({ assumptions, title = "สมมติฐานและข้อจำกัด (Assumptions)" }: AssumptionBoxProps) {
   if (assumptions.length === 0) return null;
   return (
-    <section className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5">
+    <section className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 pl-4">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 to-orange-500" />
       <h3 className="flex items-center gap-1.5 text-sm font-semibold text-amber-700 dark:text-amber-300">
         <span aria-hidden>📋</span> {title}
       </h3>

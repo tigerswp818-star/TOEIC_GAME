@@ -21,10 +21,12 @@ const toneClass: Record<string, string> = {
 export default function ExplanationPanel({ text, badge }: ExplanationPanelProps) {
   const { active: classroom } = useClassroom();
   return (
-    <section className="rounded-xl border border-line bg-surface-soft p-3.5">
+    <section className="relative overflow-hidden rounded-xl border border-line bg-surface-soft p-3.5 pl-4">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-flow-400 to-iris-500" />
       <div className="flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-sm font-semibold text-ink">
-          <span aria-hidden>💡</span> ตอนนี้เกิดอะไรขึ้น?
+          <span aria-hidden className="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-flow-400 to-iris-500 text-xs shadow-glow">💡</span>
+          ตอนนี้เกิดอะไรขึ้น?
         </h3>
         {badge && (
           <span

@@ -71,15 +71,18 @@ export function LineChart({ series, xLabel, yLabel, marker, markers, domain }: L
         ) : null,
       )}
       {allMarkers.map((m, i) => (
-        <circle
-          key={i}
-          cx={sx(m.x)}
-          cy={sy(m.y)}
-          r={4.5}
-          fill={m.color ?? "#06b6d4"}
-          stroke="#fff"
-          strokeWidth={1.5}
-        />
+        <g key={i}>
+          {/* soft glow halo */}
+          <circle cx={sx(m.x)} cy={sy(m.y)} r={9} fill={m.color ?? "#06b6d4"} opacity={0.25} />
+          <circle
+            cx={sx(m.x)}
+            cy={sy(m.y)}
+            r={4.5}
+            fill={m.color ?? "#06b6d4"}
+            stroke="#fff"
+            strokeWidth={1.5}
+          />
+        </g>
       ))}
       {xLabel && (
         <text x={(W + PAD.l) / 2} y={H - 6} textAnchor="middle" className="fill-ink-faint" fontSize={10}>
@@ -149,9 +152,10 @@ interface GraphPanelProps {
 /** Card wrapper around a chart. */
 export default function GraphPanel({ title, children }: GraphPanelProps) {
   return (
-    <div className="rounded-xl border border-line bg-surface-soft p-3">
+    <div className="rounded-xl border border-line bg-surface-soft p-3 transition hover:border-flow-400/40">
       <div className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-ink">
-        <span aria-hidden>📈</span> {title}
+        <span aria-hidden className="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-flow-400 to-iris-500 text-xs shadow-glow">📈</span>
+        {title}
       </div>
       {children}
     </div>

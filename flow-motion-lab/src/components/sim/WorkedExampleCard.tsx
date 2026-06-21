@@ -8,7 +8,8 @@ export default function WorkedExampleCard({ example }: { example: WorkedExample 
         <span aria-hidden>🧮</span> ตัวอย่างคำนวณทีละขั้น
       </div>
       <h3 className="mt-2 text-sm font-semibold text-ink">{example.title}</h3>
-      <div className="mt-2 rounded-lg bg-flow-500/10 px-3 py-2 font-mono text-sm font-semibold text-flow-700 dark:text-flow-200">
+      <div className="relative mt-2 overflow-hidden rounded-lg bg-gradient-to-r from-flow-500/15 to-iris-500/10 px-3 py-2 font-mono text-sm font-semibold text-flow-700 dark:text-flow-200">
+        <span className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-flow-400 to-iris-500" />
         {example.formula}
       </div>
       <p className="mt-2 text-xs text-ink-soft">

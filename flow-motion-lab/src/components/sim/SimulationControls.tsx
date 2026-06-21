@@ -65,7 +65,7 @@ export default function SimulationControls({
               onClick={() => setSpeed(s)}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold tabular-nums transition ${
                 speed === s
-                  ? "bg-flow-500 text-white"
+                  ? "bg-gradient-to-r from-flow-500 to-iris-500 text-white shadow-glow"
                   : "text-ink-soft hover:bg-surface-raised"
               }`}
             >

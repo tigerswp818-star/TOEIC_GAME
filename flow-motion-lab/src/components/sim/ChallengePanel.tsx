@@ -30,9 +30,9 @@ export default function ChallengePanel({ challenges, result }: ChallengePanelPro
 
   return (
     <section
-      className={`rounded-xl border p-3.5 transition ${
+      className={`rounded-xl border p-3.5 transition duration-300 ${
         solved
-          ? "border-emerald-400 bg-emerald-500/10"
+          ? "border-emerald-400/70 bg-gradient-to-br from-emerald-500/15 to-flow-500/10 shadow-[0_0_24px_-6px_rgba(16,185,129,0.55)]"
           : "border-amber-400/40 bg-amber-500/5"
       }`}
     >

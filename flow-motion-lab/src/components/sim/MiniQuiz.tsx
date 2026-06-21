@@ -32,7 +32,8 @@ export default function MiniQuiz({ items }: MiniQuizProps) {
     <div className="lab-card p-4 sm:p-5">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-ink">
-          <span aria-hidden>❓</span> Mini Quiz
+          <span aria-hidden className="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-flow-400 to-iris-500 text-xs shadow-glow">❓</span>
+          Mini Quiz
         </h3>
         <span className="text-xs text-ink-faint">
           ข้อ {idx + 1} / {items.length}

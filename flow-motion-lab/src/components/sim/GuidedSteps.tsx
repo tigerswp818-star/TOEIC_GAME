@@ -30,7 +30,7 @@ export default function GuidedSteps({ steps, onApply }: GuidedStepsProps) {
           {steps.map((_, idx) => (
             <span
               key={idx}
-              className={`h-1.5 w-5 rounded-full ${idx <= i ? "bg-flow-500" : "bg-line"}`}
+              className={`h-1.5 w-5 rounded-full transition ${idx <= i ? "bg-gradient-to-r from-flow-500 to-iris-500" : "bg-line"}`}
             />
           ))}
         </div>

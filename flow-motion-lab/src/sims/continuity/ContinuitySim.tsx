@@ -15,9 +15,9 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { continuityVelocity, flowRate } from "@/lib/fluidFormulas";
-import { formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { formatNumber, approach } from "@/lib/math";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, softGlow, pulse, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   areaAt,
@@ -113,6 +113,9 @@ export default function ContinuitySim() {
 
   const particlesRef = useRef<PipeParticle[]>(seedParticles(PARTICLE_COUNT));
   const crossRef = useRef({ inlet: 0, throat: 0 });
+  // Displayed geometry/velocity, eased toward the live params so slider changes
+  // morph smoothly instead of jumping.
+  const dispRef = useRef<Params>({ ...DEFAULTS });
 
   const v2 = continuityVelocity(params.a1, params.v1, params.a2);
   const q = flowRate(params.a1, params.v1);
@@ -138,8 +141,15 @@ export default function ContinuitySim() {
   const applyPreset = (vals: Record<string, number>) =>
     setParams((p) => ({ ...p, ...vals }));
 
-  const draw = ({ ctx, width, height, dt, theme: t }: DrawContext) => {
-    const { a1, a2, v1 } = params;
+  const draw = ({ ctx, width, height, dt, time, theme: t }: DrawContext) => {
+    // Ease displayed geometry toward the live params (smooth morph; runs every
+    // frame regardless of play/pause so slider changes always glide).
+    const d = dispRef.current;
+    d.a1 = approach(d.a1, params.a1, 0.14);
+    d.a2 = approach(d.a2, params.a2, 0.14);
+    d.v1 = approach(d.v1, params.v1, 0.14);
+    const { a1, a2, v1 } = d;
+
     const amax = Math.max(a1, a2);
     const centerY = height / 2;
     const maxHalf = height * 0.4;
@@ -148,28 +158,44 @@ export default function ContinuitySim() {
     const vecPx = width * 0.05;
     const dark = t === "dark";
 
-    // --- pipe body ---
+    // --- pipe body (glass tube) ---
     const steps = 80;
-    ctx.beginPath();
-    ctx.moveTo(0, centerY - halfAt(0));
-    for (let i = 1; i <= steps; i++) {
-      const xf = i / steps;
-      ctx.lineTo(xf * width, centerY - halfAt(xf));
-    }
-    for (let i = steps; i >= 0; i--) {
-      const xf = i / steps;
-      ctx.lineTo(xf * width, centerY + halfAt(xf));
-    }
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0, 0, 0, height);
-    grad.addColorStop(0, dark ? "rgba(14,116,144,0.20)" : "rgba(165,243,252,0.45)");
-    grad.addColorStop(1, dark ? "rgba(6,30,55,0.35)" : "rgba(207,250,254,0.55)");
+    const pipePath = () => {
+      ctx.beginPath();
+      ctx.moveTo(0, centerY - halfAt(0));
+      for (let i = 1; i <= steps; i++) ctx.lineTo((i / steps) * width, centerY - halfAt(i / steps));
+      for (let i = steps; i >= 0; i--) ctx.lineTo((i / steps) * width, centerY + halfAt(i / steps));
+      ctx.closePath();
+    };
+    pipePath();
+    const grad = ctx.createLinearGradient(0, centerY - maxHalf, 0, centerY + maxHalf);
+    grad.addColorStop(0, dark ? "rgba(34,211,238,0.10)" : "rgba(165,243,252,0.40)");
+    grad.addColorStop(0.5, dark ? "rgba(56,189,248,0.16)" : "rgba(207,250,254,0.55)");
+    grad.addColorStop(1, dark ? "rgba(8,30,55,0.30)" : "rgba(186,230,253,0.45)");
     ctx.fillStyle = grad;
     ctx.fill();
+    // glass top highlight (specular sheen along the upper wall)
+    ctx.save();
+    pipePath();
+    ctx.clip();
+    const sheen = ctx.createLinearGradient(0, centerY - maxHalf, 0, centerY);
+    sheen.addColorStop(0, dark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.5)");
+    sheen.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = sheen;
+    ctx.fillRect(0, centerY - maxHalf, width, maxHalf);
+    ctx.restore();
+
+    // --- throat highlight: glow the high-velocity / low-pressure neck ---
+    const throatHalf = halfAt(PLANE_THROAT);
+    const throatGlow = 0.28 + 0.16 * pulse(time, 1.6);
+    const accel = Math.min(1, (maxVel / v1 - 1) / 3); // 0 when uniform
+    if (accel > 0.02) {
+      softGlow(ctx, PLANE_THROAT * width, centerY, throatHalf * 2.4, "167, 139, 250", throatGlow * accel);
+    }
 
     // pipe walls
     ctx.lineWidth = 3;
-    ctx.strokeStyle = dark ? "#1e3a5f" : "#94a3b8";
+    ctx.strokeStyle = dark ? "#2a4a73" : "#94a3b8";
     ctx.beginPath();
     ctx.moveTo(0, centerY - halfAt(0));
     for (let i = 1; i <= steps; i++) ctx.lineTo((i / steps) * width, centerY - halfAt(i / steps));
@@ -179,16 +205,16 @@ export default function ContinuitySim() {
     for (let i = 1; i <= steps; i++) ctx.lineTo((i / steps) * width, centerY + halfAt(i / steps));
     ctx.stroke();
 
-    // --- streamlines ---
+    // --- streamlines (brightness scales with local velocity) ---
     if (controls.toggles.streamlines) {
-      const fractions = [-0.7, -0.35, 0, 0.35, 0.7];
+      const fractions = [-0.78, -0.5, -0.22, 0.22, 0.5, 0.78];
       for (const f of fractions) {
         const pts: Pt[] = [];
         for (let i = 0; i <= steps; i++) {
           const xf = i / steps;
           pts.push({ x: xf * width, y: centerY + f * halfAt(xf) });
         }
-        drawStreamline(ctx, pts, dark ? "rgba(103,232,249,0.35)" : "rgba(8,145,178,0.35)", 1.2);
+        drawStreamline(ctx, pts, dark ? "rgba(103,232,249,0.32)" : "rgba(8,145,178,0.32)", 1.2);
       }
     }
 
@@ -214,7 +240,7 @@ export default function ContinuitySim() {
       });
     }
 
-    // --- particles ---
+    // --- particles (velocity-coloured, glowing, with motion trails) ---
     const particles = particlesRef.current;
     for (const p of particles) {
       const vel = velocityAt(p.xf, a1, a2, v1);
@@ -236,10 +262,14 @@ export default function ContinuitySim() {
         const y = centerY + p.f * halfAt(p.xf);
         const x = p.xf * width;
         const tNorm = Math.min(1, vel / maxVel);
-        ctx.beginPath();
-        ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(tNorm, 0.95);
-        ctx.fill();
+        // faster fluid → longer trail, brighter, slightly larger
+        const trail = Math.min(width * 0.06, vel * vecPx * 0.7);
+        drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+          radius: 2.2 + tNorm * 1.1,
+          trail,
+          alpha: 0.85,
+          glow: tNorm > 0.55,
+        });
       }
     }
 

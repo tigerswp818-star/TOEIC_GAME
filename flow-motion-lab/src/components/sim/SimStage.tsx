@@ -41,8 +41,26 @@ export default function SimStage({
         <div className="relative aspect-[4/3] w-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-[#0a1426] dark:to-[#060b16] sm:aspect-[16/10]">
           {children}
 
+          {/* Faint engineering grid — radially masked so it reads as panel
+              texture toward the edges and fades to nothing over the central
+              action area, keeping on-canvas labels perfectly readable. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.05] dark:opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+              backgroundSize: "34px 34px",
+              color: "#22d3ee",
+              WebkitMaskImage:
+                "radial-gradient(120% 120% at 50% 50%, transparent 45%, black 100%)",
+              maskImage:
+                "radial-gradient(120% 120% at 50% 50%, transparent 45%, black 100%)",
+            }}
+          />
+
           {/* Very soft edge depth only — kept gentle so on-canvas labels near
-              the edges stay fully readable (no grid, no heavy vignette). */}
+              the edges stay fully readable. */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 shadow-[inset_0_0_28px_rgba(8,13,24,0.14)] dark:shadow-[inset_0_0_34px_rgba(2,6,16,0.28)]"

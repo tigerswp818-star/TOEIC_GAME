@@ -60,6 +60,23 @@ export const velocityColor = (t: number, alpha = 1): string => {
 };
 
 /**
+ * Particle velocity ramp for the "modern scientific" look: slow → light cyan,
+ * medium → blue, fast → violet. Returns an "r, g, b" channel string for use
+ * with softGlow / drawFlowParticle. `t` in [0,1].
+ */
+const VEL_RAMP: RGB[] = [
+  { r: 125, g: 232, b: 249 }, // light cyan (slow)
+  { r: 59, g: 130, b: 246 }, // blue
+  { r: 167, g: 139, b: 250 }, // violet (fast)
+];
+export const velocityRampRGB = (t: number): string => {
+  const x = clamp(t, 0, 1) * (VEL_RAMP.length - 1);
+  const i = Math.floor(x);
+  const c = lerpRGB(VEL_RAMP[i], VEL_RAMP[Math.min(i + 1, VEL_RAMP.length - 1)], x - i);
+  return `${c.r}, ${c.g}, ${c.b}`;
+};
+
+/**
  * Water depth shading: surface → light, deep → dark blue. `t` in [0,1] where
  * 0 = surface, 1 = bottom. Used by the hydrostatic / buoyancy tanks.
  */

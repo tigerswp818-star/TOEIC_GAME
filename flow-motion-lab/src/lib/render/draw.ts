@@ -94,6 +94,71 @@ export function drawStreamline(
   ctx.restore();
 }
 
+/**
+ * Soft radial highlight — used to glow key points (Venturi throat, vortex core,
+ * low-pressure spots). `rgb` is a "r, g, b" channel string.
+ */
+export function softGlow(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+  rgb: string,
+  alpha = 0.5,
+): void {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, `rgba(${rgb}, ${alpha})`);
+  g.addColorStop(1, `rgba(${rgb}, 0)`);
+  ctx.save();
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/**
+ * A fluid particle drawn with a velocity-aligned motion trail and optional
+ * glow. `(ux,uy)` is the unit direction of motion; `trail` is the trail length
+ * in px (longer = faster). `rgb` is a "r, g, b" channel string.
+ */
+export function drawFlowParticle(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  ux: number,
+  uy: number,
+  rgb: string,
+  opts: { radius?: number; trail?: number; alpha?: number; glow?: boolean } = {},
+): void {
+  const { radius = 2.4, trail = 0, alpha = 0.95, glow = false } = opts;
+  if (trail > 1.5) {
+    const tx = x - ux * trail;
+    const ty = y - uy * trail;
+    const g = ctx.createLinearGradient(tx, ty, x, y);
+    g.addColorStop(0, `rgba(${rgb}, 0)`);
+    g.addColorStop(1, `rgba(${rgb}, ${alpha * 0.5})`);
+    ctx.save();
+    ctx.strokeStyle = g;
+    ctx.lineWidth = radius * 1.25;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (glow) softGlow(ctx, x, y, radius * 3.2, rgb, alpha * 0.3);
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
+  ctx.fill();
+}
+
+/** A 0→1 pulsing value for highlighting key concepts (period in seconds). */
+export const pulse = (time: number, period = 2): number =>
+  0.5 + 0.5 * Math.sin((time / period) * Math.PI * 2);
+
 /** A filled, optionally stroked rounded rectangle. */
 export function roundRect(
   ctx: CanvasRenderingContext2D,

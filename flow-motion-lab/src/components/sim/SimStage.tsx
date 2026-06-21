@@ -41,27 +41,18 @@ export default function SimStage({
         <div className="relative aspect-[4/3] w-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-[#0a1426] dark:to-[#060b16] sm:aspect-[16/10]">
           {children}
 
-          {/* Instrument-grid + vignette overlay — gives the stage a precise,
-              "scientific display" depth without obscuring the animation. */}
+          {/* Very soft edge depth only — kept gentle so on-canvas labels near
+              the edges stay fully readable (no grid, no heavy vignette). */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.09]"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-              backgroundSize: "32px 32px",
-              color: "#22d3ee",
-            }}
+            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_28px_rgba(8,13,24,0.14)] dark:shadow-[inset_0_0_34px_rgba(2,6,16,0.28)]"
           />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_60px_rgba(8,13,24,0.35)] dark:shadow-[inset_0_0_90px_rgba(2,6,16,0.7)]"
-          />
-          {/* Corner HUD brackets. */}
-          <span aria-hidden className="pointer-events-none absolute left-2.5 top-2.5 h-5 w-5 rounded-tl-md border-l-2 border-t-2 border-flow-400/50" />
-          <span aria-hidden className="pointer-events-none absolute right-2.5 top-2.5 h-5 w-5 rounded-tr-md border-r-2 border-t-2 border-iris-400/50" />
-          <span aria-hidden className="pointer-events-none absolute bottom-2.5 left-2.5 h-5 w-5 rounded-bl-md border-b-2 border-l-2 border-iris-400/50" />
-          <span aria-hidden className="pointer-events-none absolute bottom-2.5 right-2.5 h-5 w-5 rounded-br-md border-b-2 border-r-2 border-flow-400/50" />
+          {/* Decorative corner brackets — small & faint so they never clip
+              content the simulation draws in the corners. */}
+          <span aria-hidden className="pointer-events-none absolute left-2 top-2 h-3.5 w-3.5 rounded-tl border-l border-t border-flow-400/30" />
+          <span aria-hidden className="pointer-events-none absolute right-2 top-2 h-3.5 w-3.5 rounded-tr border-r border-t border-iris-400/30" />
+          <span aria-hidden className="pointer-events-none absolute bottom-2 left-2 h-3.5 w-3.5 rounded-bl border-b border-l border-iris-400/30" />
+          <span aria-hidden className="pointer-events-none absolute bottom-2 right-2 h-3.5 w-3.5 rounded-br border-b border-r border-flow-400/30" />
 
           {!controls.playing && (
             <div className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/55 px-3 py-1 text-xs font-semibold text-white backdrop-blur">

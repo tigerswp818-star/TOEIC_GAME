@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   bendForce,
@@ -202,10 +202,16 @@ export default function PipeBendSim() {
         const pt = center(part.s);
         const x = pt.x + pt.nx * pipeR * part.off;
         const y = pt.y + pt.ny * pipeR * part.off;
-        ctx.beginPath();
-        ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(vNorm, 0.95);
-        ctx.fill();
+        // tangent along the path (perpendicular to the centreline normal)
+        const tx = -pt.ny;
+        const ty = pt.nx;
+        const trail = Math.min(vNorm * pipeR * 1.5, 22);
+        drawFlowParticle(ctx, x, y, tx, ty, velocityRampRGB(vNorm), {
+          radius: 2.3,
+          trail,
+          alpha: 0.88,
+          glow: vNorm > 0.6,
+        });
       }
     }
 

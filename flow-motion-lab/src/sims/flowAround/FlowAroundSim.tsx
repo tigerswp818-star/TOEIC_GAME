@@ -18,8 +18,8 @@ import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { RHO_AIR } from "@/lib/constants";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor, pressureColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { velocityRampRGB, pressureColor } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   velocityAt,
@@ -340,15 +340,29 @@ export default function FlowAroundSim() {
         ny = Math.random() * height;
         pt.seed = Math.random() * Math.PI * 2;
       }
+      // travel direction for the trail (guard against recycle jumps)
+      let ux = nx - pt.x;
+      let uy = ny - pt.y;
+      const mm = Math.hypot(ux, uy);
+      if (mm > width * 0.3 || mm < 1e-3) {
+        ux = 1;
+        uy = 0;
+      } else {
+        ux /= mm;
+        uy /= mm;
+      }
       pt.x = nx;
       pt.y = ny;
 
       if (controls.toggles.particles) {
         const tNorm = clamp(speed / (2 * Math.max(U, 0.1)), 0, 1);
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(tNorm, 0.95);
-        ctx.fill();
+        const trail = clamp(tNorm * 18, 0, 20);
+        drawFlowParticle(ctx, pt.x, pt.y, ux, uy, velocityRampRGB(tNorm), {
+          radius: 2.0 + tNorm * 0.8,
+          trail,
+          alpha: 0.82,
+          glow: tNorm > 0.6,
+        });
       }
     }
 

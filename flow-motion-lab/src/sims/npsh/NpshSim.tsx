@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawLabel, roundRect } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawLabel, drawFlowParticle, roundRect } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import { cavitationSeverity, computeNpsh } from "./npshModel";
 
@@ -297,10 +297,13 @@ export default function NpshSim() {
         x = riserX + f * (inletX - riserX);
         y = pipeTopY + p.off * (pipeW * 0.34);
       }
-      ctx.beginPath();
-      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * pipeW * 0.9, 0, 16);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.2 + tNorm * 0.8,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6,
+      });
     }
 
     // --- vapour bubbles: spawn near the inlet/impeller, grow then pop ---

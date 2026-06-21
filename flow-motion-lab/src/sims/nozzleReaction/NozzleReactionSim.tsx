@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   nozzleReaction,
@@ -218,10 +218,13 @@ export default function NozzleReactionSim() {
           : centerY + part.f * jetHalf;
       const x = part.xf * width;
       const tNorm = clamp(vel / maxVel, 0, 1);
-      ctx.beginPath();
-      ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.06, 0, width * 0.06);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.3 + tNorm * 1.0,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.55,
+      });
     }
 
     // --- velocity vectors: short at inlet, long fast jet at outlet ---

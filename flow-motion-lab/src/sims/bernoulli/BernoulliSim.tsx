@@ -22,9 +22,9 @@ import {
   velocityHead,
 } from "@/lib/fluidFormulas";
 import { GRAVITY } from "@/lib/constants";
-import { formatNumber, clamp } from "@/lib/math";
-import { velocityColor, pressureColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, roundRect, type Pt } from "@/lib/render/draw";
+import { formatNumber, clamp, approach } from "@/lib/math";
+import { velocityRampRGB, pressureColor } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, softGlow, pulse, roundRect, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   areaAt,
@@ -134,6 +134,8 @@ export default function BernoulliSim() {
   const [mode, setMode] = useState<LearningMode>("explore");
 
   const particlesRef = useRef<PipeParticle[]>(seedParticles(PARTICLE_COUNT));
+  // Eased display geometry/velocity for smooth morphing on slider change.
+  const dispRef = useRef({ a1: DEFAULTS.a1, a2: DEFAULTS.a2, v1: DEFAULTS.v1 });
 
   const v2 = continuityVelocity(params.a1, params.v1, params.a2);
   // Horizontal pipe → same elevation at inlet & throat, so z₁ = z₂ here.
@@ -156,8 +158,16 @@ export default function BernoulliSim() {
   const applyPreset = (vals: Record<string, number>) =>
     setParams((p) => ({ ...p, ...vals }));
 
-  const draw = ({ ctx, width, height, dt, theme: t }: DrawContext) => {
-    const { a1, a2, v1, rho } = params;
+  const draw = ({ ctx, width, height, dt, time, theme: t }: DrawContext) => {
+    // Ease displayed geometry/velocity toward live params (smooth morph).
+    const dsp = dispRef.current;
+    dsp.a1 = approach(dsp.a1, params.a1, 0.14);
+    dsp.a2 = approach(dsp.a2, params.a2, 0.14);
+    dsp.v1 = approach(dsp.v1, params.v1, 0.14);
+    const a1 = dsp.a1;
+    const a2 = dsp.a2;
+    const v1 = dsp.v1;
+    const rho = params.rho;
     const amax = Math.max(a1, a2);
     const centerY = height * 0.56;
     const maxHalf = height * 0.3;
@@ -227,7 +237,14 @@ export default function BernoulliSim() {
       }
     }
 
-    // --- particles (speed & colour ∝ local velocity) ---
+    // --- throat highlight: glow the lowest-pressure / highest-velocity neck ---
+    const accel = Math.min(1, (maxVel / v1 - 1) / 3);
+    if (accel > 0.02) {
+      const g = (0.3 + 0.18 * pulse(time, 1.6)) * accel;
+      softGlow(ctx, PLANE_THROAT * width, centerY, halfAt(PLANE_THROAT) * 2.6, "96, 165, 250", g);
+    }
+
+    // --- particles (velocity-coloured, glowing, with motion trails) ---
     const particles = particlesRef.current;
     for (const p of particles) {
       const vel = velocityAt(p.xf, a1, a2, v1);
@@ -242,10 +259,13 @@ export default function BernoulliSim() {
         const y = centerY + p.f * halfAt(p.xf);
         const x = p.xf * width;
         const tNorm = Math.min(1, vel / maxVel);
-        ctx.beginPath();
-        ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(tNorm, 0.95);
-        ctx.fill();
+        const trail = Math.min(width * 0.06, vel * vecPx * 0.7);
+        drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+          radius: 2.2 + tNorm * 1.1,
+          trail,
+          alpha: 0.85,
+          glow: tNorm > 0.55,
+        });
       }
     }
 

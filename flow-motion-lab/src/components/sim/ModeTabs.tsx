@@ -21,7 +21,7 @@ export default function ModeTabs({ mode, onChange }: ModeTabsProps) {
           onClick={() => onChange(m.id)}
           className={`flex-1 rounded-lg px-2 py-2 text-xs font-semibold transition sm:text-sm ${
             mode === m.id
-              ? "bg-flow-500 text-white shadow"
+              ? "bg-gradient-to-r from-flow-500 to-iris-500 text-white shadow-glow"
               : "text-ink-soft hover:bg-surface-raised"
           }`}
         >

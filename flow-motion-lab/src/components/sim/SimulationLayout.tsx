@@ -31,16 +31,18 @@ export default function SimulationLayout({
 }: SimulationLayoutProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-5 flex items-center gap-3">
         <Link to="/lab" className="lab-btn-ghost !px-3 !py-2 text-sm" aria-label="กลับห้องทดลอง">
           ←
         </Link>
-        <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-flow-400 to-deep-600 text-2xl shadow-glow">
+        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-flow-400 via-deep-500 to-iris-600 text-2xl shadow-glow ring-1 ring-white/15">
           {icon}
         </span>
-        <div>
-          <h1 className="text-lg font-bold leading-tight text-ink sm:text-xl">{title}</h1>
-          <p className="text-xs text-ink-faint">{titleEn}</p>
+        <div className="min-w-0">
+          <h1 className="bg-gradient-to-r from-ink to-ink-soft bg-clip-text text-lg font-extrabold leading-tight tracking-tight text-transparent sm:text-2xl dark:from-white dark:to-ink-soft">
+            {title}
+          </h1>
+          <p className="font-mono text-xs text-flow-600 dark:text-flow-300/80">{titleEn}</p>
         </div>
       </div>
 

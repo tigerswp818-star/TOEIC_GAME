@@ -18,9 +18,10 @@ export default function FormulaCard({
   children,
 }: FormulaCardProps) {
   return (
-    <div className="rounded-xl border border-flow-500/30 bg-flow-500/5 p-3">
+    <div className="relative overflow-hidden rounded-xl border border-flow-500/30 bg-gradient-to-br from-flow-500/[0.08] to-iris-500/[0.06] p-3">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-flow-400 to-iris-500" />
       <div className="text-[11px] font-semibold uppercase tracking-wide text-flow-600 dark:text-flow-300">
-        สูตร Formula
+        ƒ สูตร Formula
       </div>
       <div className="mt-1 font-mono text-base font-semibold text-ink sm:text-lg">
         {formula}

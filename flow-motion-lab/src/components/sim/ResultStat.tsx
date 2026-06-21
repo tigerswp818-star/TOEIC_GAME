@@ -22,7 +22,13 @@ export default function ResultStat({
 }: ResultStatProps) {
   const display = typeof value === "number" ? formatNumber(value, decimals) : value;
   return (
-    <div className="rounded-xl border border-line bg-surface-soft px-3 py-2.5">
+    <div
+      className={`relative overflow-hidden rounded-xl border px-3 py-2.5 transition ${
+        big
+          ? "border-flow-500/30 bg-gradient-to-br from-flow-500/[0.1] to-iris-500/[0.06] shadow-glow"
+          : "border-line bg-surface-soft hover:border-flow-400/40"
+      }`}
+    >
       <div className="text-[11px] font-medium uppercase tracking-wide text-ink-faint">
         {label}
       </div>

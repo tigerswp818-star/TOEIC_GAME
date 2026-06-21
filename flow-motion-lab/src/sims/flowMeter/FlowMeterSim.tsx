@@ -17,8 +17,8 @@ import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { RHO_WATER } from "@/lib/constants";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel, roundRect } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle, roundRect } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   DEVICES,
@@ -253,10 +253,13 @@ export default function FlowMeterSim() {
         const y = centerY + frac * wallHalf;
         const x = p.xf * width;
         const tNorm = Math.min(1, velFrac / maxVel);
-        ctx.beginPath();
-        ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(tNorm, 0.95);
-        ctx.fill();
+        const trail = clamp(tNorm * width * 0.05, 0, width * 0.05);
+        drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+          radius: 2.2 + tNorm * 0.9,
+          trail,
+          alpha: 0.88,
+          glow: tNorm > 0.6,
+        });
       }
     }
 

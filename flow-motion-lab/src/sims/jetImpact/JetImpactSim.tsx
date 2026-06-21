@@ -17,8 +17,8 @@ import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { RHO_WATER } from "@/lib/constants";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   jetArea,
@@ -298,10 +298,14 @@ export default function JetImpactSim() {
       }
 
       const tNorm = atImpact ? vNorm * 0.6 : vNorm;
-      ctx.beginPath();
-      ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      // streak the incoming jet (horizontal); no trail once it sprays off the plate
+      const trail = atImpact ? 0 : clamp(tNorm * jetHalf * 1.6, 0, 22);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.4,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6 && !atImpact,
+      });
     }
 
     // --- impact force arrow + Δmomentum annotation ---

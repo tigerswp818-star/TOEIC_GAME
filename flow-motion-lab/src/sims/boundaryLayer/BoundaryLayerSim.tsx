@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityColor, velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   reynoldsX,
@@ -235,10 +235,14 @@ export default function BoundaryLayerSim() {
       const px = part.xf * width;
       const py = yToPx(part.y);
       const tNorm = clamp(vel / Math.max(U, 1e-6), 0, 1);
-      ctx.beginPath();
-      ctx.arc(px, py, 2.4, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      // faster (outer) flow streaks; near-wall slow particles barely move
+      const trail = clamp(tNorm * width * 0.045, 0, width * 0.045);
+      drawFlowParticle(ctx, px, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.1 + tNorm * 0.8,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.65,
+      });
     }
 
     // --- transition marker ---

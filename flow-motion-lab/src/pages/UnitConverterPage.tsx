@@ -157,7 +157,7 @@ export default function UnitConverterPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
-          ตัวแปลงหน่วย <span className="text-flow-500">Unit Converter</span>
+          ตัวแปลงหน่วย <span className="text-aurora">Unit Converter</span>
         </h1>
         <p className="mt-1 text-sm text-ink-soft">
           เลือกหมวดหน่วย ใส่ค่า แล้วดูผลลัพธ์ทันที พร้อมตารางแสดงค่าในทุกหน่วยของหมวดนั้น

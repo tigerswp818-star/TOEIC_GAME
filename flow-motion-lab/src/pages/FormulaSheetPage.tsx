@@ -362,7 +362,7 @@ export default function FormulaSheetPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
-          รวมสูตรสำคัญ <span className="text-flow-500">Formula Sheet</span>
+          รวมสูตรสำคัญ <span className="text-aurora">Formula Sheet</span>
         </h1>
         <p className="mt-1 text-sm text-ink-soft">
           ทุกสูตรพร้อมความหมายตัวแปร หน่วย SI เงื่อนไขการใช้ ข้อจำกัด และตัวอย่างสั้น ๆ

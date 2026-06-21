@@ -30,7 +30,7 @@ export default function SimulationLayout({
   bottom,
 }: SimulationLayoutProps) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <div className="mx-auto max-w-7xl animate-fade-in px-4 py-6 sm:px-6">
       <div className="mb-5 flex items-center gap-3">
         <Link to="/lab" className="lab-btn-ghost !px-3 !py-2 text-sm" aria-label="กลับห้องทดลอง">
           ←

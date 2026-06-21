@@ -50,13 +50,20 @@ export const pressureGradientCss = (): string =>
   ).join(", ")})`;
 
 /**
- * Velocity tint: slow → soft cyan, fast → bright white-cyan.
- * Used for particles so faster fluid visibly "glows".
+ * Velocity tint (modern scientific scale): slow → light cyan, medium → blue,
+ * fast → violet. Shared by every simulation's particles & velocity vectors so
+ * speed reads consistently as a cool→energetic colour shift.
  */
+const VEL_STOPS: RGB[] = [
+  { r: 125, g: 232, b: 249 }, // light cyan (slow)
+  { r: 59, g: 130, b: 246 }, // blue
+  { r: 167, g: 139, b: 250 }, // violet (fast)
+];
 export const velocityColor = (t: number, alpha = 1): string => {
-  const slow: RGB = { r: 14, g: 116, b: 144 };
-  const fast: RGB = { r: 165, g: 243, b: 252 };
-  return rgbToCss(lerpRGB(slow, fast, clamp(t, 0, 1)), alpha);
+  const x = clamp(t, 0, 1) * (VEL_STOPS.length - 1);
+  const i = Math.floor(x);
+  const c = lerpRGB(VEL_STOPS[i], VEL_STOPS[Math.min(i + 1, VEL_STOPS.length - 1)], x - i);
+  return rgbToCss(c, alpha);
 };
 
 /**
@@ -64,15 +71,10 @@ export const velocityColor = (t: number, alpha = 1): string => {
  * medium → blue, fast → violet. Returns an "r, g, b" channel string for use
  * with softGlow / drawFlowParticle. `t` in [0,1].
  */
-const VEL_RAMP: RGB[] = [
-  { r: 125, g: 232, b: 249 }, // light cyan (slow)
-  { r: 59, g: 130, b: 246 }, // blue
-  { r: 167, g: 139, b: 250 }, // violet (fast)
-];
 export const velocityRampRGB = (t: number): string => {
-  const x = clamp(t, 0, 1) * (VEL_RAMP.length - 1);
+  const x = clamp(t, 0, 1) * (VEL_STOPS.length - 1);
   const i = Math.floor(x);
-  const c = lerpRGB(VEL_RAMP[i], VEL_RAMP[Math.min(i + 1, VEL_RAMP.length - 1)], x - i);
+  const c = lerpRGB(VEL_STOPS[i], VEL_STOPS[Math.min(i + 1, VEL_STOPS.length - 1)], x - i);
   return `${c.r}, ${c.g}, ${c.b}`;
 };
 

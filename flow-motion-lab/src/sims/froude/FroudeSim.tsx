@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, mapClamped, formatNumber } from "@/lib/math";
-import { depthColor, velocityColor } from "@/lib/colors";
-import { drawLabel } from "@/lib/render/draw";
+import { depthColor, velocityRampRGB } from "@/lib/colors";
+import { drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   computeFroude,
@@ -261,10 +261,13 @@ export default function FroudeSim() {
       if (!controls.toggles.particles) continue;
       const x = p.xf * width;
       const py = bedY - p.df * depthPx;
-      ctx.beginPath();
-      ctx.arc(x, py, 2.4, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.05, 0, width * 0.05);
+      drawFlowParticle(ctx, x, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.1 + tNorm * 0.9,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6,
+      });
     }
 
     // --- the disturbance source marker (the "stone") ---

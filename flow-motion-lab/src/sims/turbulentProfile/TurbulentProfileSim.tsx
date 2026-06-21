@@ -16,8 +16,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   turbulentProfile,
@@ -199,10 +199,13 @@ export default function TurbulentProfileSim() {
       const x = p.xf * width;
       const y = centerY + rfShown * halfH;
       const tNorm = clamp(vel / maxVel, 0, 1);
-      ctx.beginPath();
-      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.05, 0, width * 0.05);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.2 + tNorm * 0.8,
+        trail,
+        alpha: 0.9,
+        glow: tNorm > 0.65,
+      });
     }
 
     // --- velocity-profile curve (turbulent, solid) anchored near pipe exit ---

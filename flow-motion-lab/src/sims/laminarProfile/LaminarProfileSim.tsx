@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityColor, velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   velocityProfile,
@@ -182,10 +182,13 @@ export default function LaminarProfileSim() {
       const x = p.xf * width;
       const y = centerY + p.rf * halfH;
       const tNorm = clamp(vel / umSafe, 0, 1);
-      ctx.beginPath();
-      ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.05, 0, width * 0.05);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.3 + tNorm * 0.8,
+        trail,
+        alpha: 0.9,
+        glow: tNorm > 0.65,
+      });
     }
 
     // --- parabolic velocity profile curve (left vertical reference line) ---

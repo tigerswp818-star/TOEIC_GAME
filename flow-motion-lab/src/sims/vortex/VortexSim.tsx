@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle, softGlow, pulse } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   tangentialSpeed,
@@ -149,7 +149,7 @@ export default function VortexSim() {
   const applyPreset = (vals: Record<string, number>) =>
     setParams((p) => ({ ...p, ...vals }));
 
-  const draw = ({ ctx, width, height, dt, theme: th }: DrawContext) => {
+  const draw = ({ ctx, width, height, dt, time, theme: th }: DrawContext) => {
     const dark = th === "dark";
     const { effOmega: w, rCore: rc, vmax: vpeak, tank } = physicsRef.current;
     const cx = width / 2;
@@ -199,8 +199,12 @@ export default function VortexSim() {
     ctx.stroke();
     ctx.restore();
 
-    // --- particles (rotating rings, coloured by tangential speed) ---
+    // --- vortex core glow (energetic centre, gently pulsing) ---
+    softGlow(ctx, cx, cy, Math.max(corePx * 1.7, tankPx * 0.2), "167, 139, 250", 0.28 + 0.18 * pulse(time, 1.5));
+
+    // --- particles (rotating rings; swirl trails + speed-coloured glow) ---
     const particles = particlesRef.current;
+    const spin = Math.sign(w) || 1;
     for (const p of particles) {
       const rM = p.rf * tank;
       // Advance the orbital angle by the local angular speed (uses damped effΩ).
@@ -212,10 +216,17 @@ export default function VortexSim() {
       const x = cx + Math.cos(p.angle) * rPx;
       const y = cy + Math.sin(p.angle) * rPx;
       const speed = tangentialSpeed(rM, w, rc);
-      ctx.beginPath();
-      ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(clamp(speed / vNorm, 0, 1), 0.95);
-      ctx.fill();
+      const tNorm = clamp(speed / vNorm, 0, 1);
+      // tangential (swirl) direction → trail curves with the rotation
+      const tx = -Math.sin(p.angle) * spin;
+      const ty = Math.cos(p.angle) * spin;
+      const trail = clamp(tNorm * tankPx * 0.16, 0, tankPx * 0.18);
+      drawFlowParticle(ctx, x, y, tx, ty, velocityRampRGB(tNorm), {
+        radius: 2.2 + tNorm * 0.9,
+        trail,
+        alpha: 0.9,
+        glow: tNorm > 0.55,
+      });
     }
 
     // --- velocity vectors: tangential arrows on a few rings ---

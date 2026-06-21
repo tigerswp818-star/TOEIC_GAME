@@ -16,7 +16,8 @@ import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { reynoldsNumber, flowRegime, type FlowRegime } from "@/lib/fluidFormulas";
 import { clamp, lerp, formatNumber, mapClamped } from "@/lib/math";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, type Pt } from "@/lib/render/draw";
 import { REYNOLDS_LAMINAR_MAX, REYNOLDS_TURBULENT_MIN } from "@/lib/constants";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
@@ -277,10 +278,16 @@ export default function ReynoldsSim() {
       // Keep particles inside the pipe.
       py = clamp(py, top + 2, bot - 2);
 
-      ctx.beginPath();
-      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = streamColor(0.95);
-      ctx.fill();
+      // Colour shifts cyan (laminar) → violet (turbulent); faster flow streaks
+      // longer; turbulent particles glow to make eddies pop.
+      const tNorm = clamp(t * 0.5, 0, 1);
+      const trail = clamp(v * width * 0.026, 0, width * 0.05);
+      drawFlowParticle(ctx, px, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.4,
+        trail,
+        alpha: 0.9,
+        glow: t > 1,
+      });
     }
 
     // --- velocity vectors ---

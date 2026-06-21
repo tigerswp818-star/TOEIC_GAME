@@ -17,8 +17,8 @@ import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { RHO_AIR } from "@/lib/constants";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor, pressureColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { velocityRampRGB, pressureColor } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   liftCoefficient,
@@ -328,15 +328,30 @@ export default function AirfoilSim() {
         ny = cy + pt.lane * height * 0.5;
         pt.seed = Math.random() * Math.PI * 2;
       }
+      // direction of travel (for the motion trail) — computed before we commit
+      // the new position; fall back to horizontal on a recycle jump.
+      let ux = nx - pt.x;
+      let uy = ny - pt.y;
+      const m = Math.hypot(ux, uy);
+      if (m > width * 0.3 || m < 1e-3) {
+        ux = 1;
+        uy = 0;
+      } else {
+        ux /= m;
+        uy /= m;
+      }
       pt.x = nx;
       pt.y = ny;
 
       if (controls.toggles.particles) {
         const tNorm = clamp((speedFactor - 0.5) / 2.2, 0, 1);
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(tNorm, 0.95);
-        ctx.fill();
+        const trail = clamp(tNorm * 20, 0, 22);
+        drawFlowParticle(ctx, pt.x, pt.y, ux, uy, velocityRampRGB(tNorm), {
+          radius: 2.0 + tNorm * 0.9,
+          trail,
+          alpha: 0.82,
+          glow: tNorm > 0.6,
+        });
       }
     }
 

@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   computeHeadLoss,
@@ -328,10 +328,13 @@ export default function HeadLossSim() {
       if (!controls.toggles.particles) continue;
       const x = p.xf * width;
       const py = pipeY + p.f * halfH;
-      ctx.beginPath();
-      ctx.arc(x, py, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.05, 0, width * 0.05);
+      drawFlowParticle(ctx, x, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.2 + tNorm * 0.9,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6,
+      });
     }
 
     // --- velocity vectors ---

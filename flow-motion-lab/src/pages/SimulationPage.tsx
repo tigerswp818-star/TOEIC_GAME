@@ -44,15 +44,17 @@ export default function SimulationPage() {
 
   if (sim.status !== "ready" || !sim.Sim) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-20 text-center">
-        <p className="text-6xl">{sim.icon}</p>
-        <h1 className="mt-4 text-2xl font-bold text-ink">{sim.title}</h1>
-        <p className="text-sm text-ink-faint">{sim.titleEn}</p>
-        <span className="lab-chip mt-4 !bg-amber-500/15 !text-amber-600 dark:!text-amber-300">
-          🚧 กำลังพัฒนา — เร็ว ๆ นี้
+      <div className="mx-auto max-w-xl px-4 py-24 text-center">
+        <span className={`mx-auto grid h-24 w-24 place-items-center rounded-3xl bg-gradient-to-br ${sim.accent} text-5xl shadow-glow-lg ring-1 ring-white/15`}>
+          {sim.icon}
+        </span>
+        <h1 className="mt-6 text-2xl font-extrabold tracking-tight text-ink">{sim.title}</h1>
+        <p className="font-mono text-sm text-flow-600 dark:text-flow-300/80">{sim.titleEn}</p>
+        <span className="lab-chip mt-4 !border-amber-400/40 !bg-amber-500/15 !text-amber-600 dark:!text-amber-300">
+          <span className="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-amber-400" /> กำลังพัฒนา — เร็ว ๆ นี้
         </span>
         <p className="mt-4 text-sm text-ink-soft">{sim.tagline}</p>
-        <Link to="/lab" className="lab-btn-primary mt-6">
+        <Link to="/lab" className="lab-btn-primary mt-7 !px-6 !py-3">
           ← เลือกการทดลองอื่น
         </Link>
       </div>
@@ -107,7 +109,8 @@ export default function SimulationPage() {
 
       {classroom.active && teacherNotes.length > 0 && (
         <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6">
-          <section className="rounded-xl border border-flow-500/30 bg-flow-500/5 p-3.5">
+          <section className="relative overflow-hidden rounded-xl border border-flow-500/30 bg-gradient-to-br from-flow-500/[0.08] to-iris-500/[0.06] p-3.5 pl-4">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-flow-400 to-iris-500" />
             <h2 className="flex items-center gap-1.5 text-sm font-bold text-flow-700 dark:text-flow-200">
               <span aria-hidden>👩‍🏫</span> โน้ตสำหรับผู้สอน (Teacher Notes)
             </h2>

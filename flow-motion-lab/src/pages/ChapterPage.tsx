@@ -40,18 +40,20 @@ export default function ChapterPage() {
         <Link to="/lab" className="lab-btn-ghost !px-3 !py-2 text-sm" aria-label="กลับแผนที่การเรียน">
           ←
         </Link>
-        <span className={`grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br ${meta.color} text-2xl`}>
+        <span className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${meta.color} text-2xl shadow-glow ring-1 ring-white/15`}>
           {chapter.icon}
         </span>
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-ink-faint">
             บทที่ {chapter.number}
-            <span className={`rounded-full bg-gradient-to-r ${meta.color} px-2 py-0.5 font-bold text-white`}>
+            <span className={`rounded-full bg-gradient-to-r ${meta.color} px-2 py-0.5 font-bold text-white shadow-glow`}>
               {meta.label}
             </span>
           </div>
-          <h1 className="text-xl font-bold leading-tight text-ink sm:text-2xl">{chapter.title}</h1>
-          <p className="text-xs text-ink-faint">{chapter.titleEn}</p>
+          <h1 className="bg-gradient-to-r from-ink to-ink-soft bg-clip-text text-xl font-extrabold leading-tight tracking-tight text-transparent sm:text-2xl dark:from-white dark:to-ink-soft">
+            {chapter.title}
+          </h1>
+          <p className="font-mono text-xs text-flow-600 dark:text-flow-300/80">{chapter.titleEn}</p>
         </div>
       </div>
 
@@ -120,7 +122,7 @@ export default function ChapterPage() {
                   <Link
                     key={s.id}
                     to={`/sim/${s.id}`}
-                    className="lab-card group overflow-hidden p-4 transition hover:-translate-y-0.5 hover:shadow-glow"
+                    className="lab-card group overflow-hidden p-4 hover:-translate-y-1 hover:ring-aurora"
                   >
                     {Preview && <Preview />}
                     <div className="mt-3 flex items-center gap-2">

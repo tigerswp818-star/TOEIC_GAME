@@ -163,6 +163,78 @@ export const UNIT_CATEGORIES: UnitCategory[] = [
       { symbol: "ft", name: "ฟุต", factor: 0.3048 },
     ],
   },
+  // ── หมวดสถานีสูบจ่ายน้ำ Pump Station ──
+  {
+    id: "energy",
+    label: "พลังงาน Energy",
+    base: "J",
+    units: [
+      { symbol: "J", name: "จูล", factor: 1 },
+      { symbol: "kJ", name: "กิโลจูล", factor: 1000 },
+      { symbol: "MJ", name: "เมกะจูล", factor: 1e6 },
+      { symbol: "Wh", name: "วัตต์-ชั่วโมง", factor: 3600 },
+      { symbol: "kWh", name: "กิโลวัตต์-ชั่วโมง (หน่วยไฟ)", factor: 3.6e6 },
+    ],
+  },
+  {
+    id: "specific-energy",
+    label: "พลังงานจำเพาะ Specific energy",
+    base: "J/m³",
+    units: [
+      { symbol: "J/m³", name: "จูลต่อลูกบาศก์เมตร", factor: 1 },
+      { symbol: "Wh/m³", name: "วัตต์ชั่วโมงต่อลูกบาศก์เมตร", factor: 3600 },
+      { symbol: "kWh/m³", name: "กิโลวัตต์ชั่วโมงต่อลูกบาศก์เมตร", factor: 3.6e6 },
+    ],
+  },
+  {
+    id: "rotational-speed",
+    label: "ความเร็วรอบ Rotational speed",
+    base: "rad/s",
+    units: [
+      { symbol: "rad/s", name: "เรเดียนต่อวินาที", factor: 1 },
+      { symbol: "rpm", name: "รอบต่อนาที", factor: 0.1047198 },
+      { symbol: "deg/s", name: "องศาต่อวินาที", factor: 0.0174533 },
+    ],
+  },
+  {
+    id: "frequency",
+    label: "ความถี่ Frequency",
+    base: "Hz",
+    units: [
+      { symbol: "Hz", name: "เฮิรตซ์", factor: 1 },
+      { symbol: "kHz", name: "กิโลเฮิรตซ์", factor: 1000 },
+      { symbol: "rpm", name: "รอบต่อนาที (เทียบ)", factor: 1 / 60 },
+    ],
+  },
+  {
+    id: "current",
+    label: "กระแสไฟฟ้า Current",
+    base: "A",
+    units: [
+      { symbol: "A", name: "แอมแปร์", factor: 1 },
+      { symbol: "mA", name: "มิลลิแอมแปร์", factor: 1e-3 },
+      { symbol: "kA", name: "กิโลแอมแปร์", factor: 1000 },
+    ],
+  },
+  {
+    id: "voltage",
+    label: "แรงดันไฟฟ้า Voltage",
+    base: "V",
+    units: [
+      { symbol: "V", name: "โวลต์", factor: 1 },
+      { symbol: "mV", name: "มิลลิโวลต์", factor: 1e-3 },
+      { symbol: "kV", name: "กิโลโวลต์", factor: 1000 },
+    ],
+  },
+  {
+    id: "efficiency",
+    label: "ประสิทธิภาพ Efficiency",
+    base: "—",
+    units: [
+      { symbol: "—", name: "สัดส่วน (0–1)", factor: 1 },
+      { symbol: "%", name: "เปอร์เซ็นต์", factor: 0.01 },
+    ],
+  },
 ];
 
 /** Look up a category by id. */

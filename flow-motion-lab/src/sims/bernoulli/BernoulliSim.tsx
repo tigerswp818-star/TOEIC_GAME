@@ -285,7 +285,8 @@ export default function BernoulliSim() {
     // Reference scale: the tallest column (over the widest pipe section) must fit
     // within the headroom above the pipe so tubes never clip off the top.
     const wideTop = centerY - maxHalf; // pipe top at the widest section
-    const maxColPx = Math.max(24, wideTop - 28); // leave room for the label
+    // Reserve ~46 px above the pipe for the tube top + its label (no top clip).
+    const maxColPx = Math.max(24, wideTop - 46);
     const headScale = headWide > 1e-6 ? maxColPx / headWide : 0;
 
     for (const [xf, label] of [

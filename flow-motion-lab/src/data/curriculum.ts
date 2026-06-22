@@ -385,8 +385,8 @@ export const CHAPTERS: Chapter[] = [
       "Induction motor", "Synchronous motor", "Motor power", "Torque", "Speed", "Slip", "Efficiency",
       "Power factor", "Starting current", "Motor load", "Overload", "Phase loss", "Overheat", "Vibration",
     ],
-    simIds: [],
-    planned: ["Motor Load Simulator", "Motor Starting Comparison (DOL/Star-Delta/Soft/VFD)"],
+    simIds: ["motor-load"],
+    planned: ["Motor Starting Comparison (DOL/Star-Delta/Soft/VFD)"],
   },
   {
     id: "ch19",

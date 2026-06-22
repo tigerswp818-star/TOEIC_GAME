@@ -16,6 +16,8 @@ import TroubleshootingSim from "./troubleshooting/TroubleshootingSim";
 import TroubleshootingPreview from "./troubleshooting/TroubleshootingPreview";
 import MultiPumpSim from "./multiPump/MultiPumpSim";
 import MultiPumpPreview from "./multiPump/MultiPumpPreview";
+import MotorLoadSim from "./motorLoad/MotorLoadSim";
+import MotorLoadPreview from "./motorLoad/MotorLoadPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -211,6 +213,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: MultiPumpSim,
     Preview: MultiPumpPreview,
+  },
+  {
+    id: "motor-load",
+    title: "โหลดมอเตอร์ไฟฟ้า",
+    titleEn: "Motor Load",
+    tagline: "กำลังไฟฟ้า/กล ความเร็ว แรงบิด สลิป และ overload (P=√3VI·PF)",
+    icon: "🔌",
+    accent: "from-cyan-400 to-teal-600",
+    formula: "P = √3 V I PF η",
+    status: "ready",
+    Sim: MotorLoadSim,
+    Preview: MotorLoadPreview,
   },
   {
     id: "bernoulli",

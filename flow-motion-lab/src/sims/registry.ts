@@ -4,6 +4,8 @@ import ContinuitySim from "./continuity/ContinuitySim";
 import ContinuityPreview from "./continuity/ContinuityPreview";
 import PumpSystemCurveSim from "./pumpSystemCurve/PumpSystemCurveSim";
 import PumpSystemCurvePreview from "./pumpSystemCurve/PumpSystemCurvePreview";
+import VfdSpeedSim from "./vfdSpeed/VfdSpeedSim";
+import VfdSpeedPreview from "./vfdSpeed/VfdSpeedPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -127,6 +129,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: PumpSystemCurveSim,
     Preview: PumpSystemCurvePreview,
+  },
+  {
+    id: "vfd-speed",
+    title: "ควบคุมรอบด้วย VFD",
+    titleEn: "VFD Speed Control",
+    tagline: "ปรับความถี่ → รอบ/flow/กำลัง ตาม affinity และเทียบการประหยัดกับหรี่วาล์ว",
+    icon: "🎛️",
+    accent: "from-emerald-400 to-cyan-600",
+    formula: "P ∝ N³",
+    status: "ready",
+    Sim: VfdSpeedSim,
+    Preview: VfdSpeedPreview,
   },
   {
     id: "bernoulli",

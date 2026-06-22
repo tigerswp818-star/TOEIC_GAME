@@ -407,8 +407,8 @@ export const CHAPTERS: Chapter[] = [
       "Frequency control", "Motor speed control", "Affinity laws", "Energy saving", "PID pressure control",
       "Ramp up/down", "Min/Max speed", "Dry-run protection", "Overcurrent", "Over/Undervoltage", "Harmonics",
     ],
-    simIds: [],
-    planned: ["VFD Speed Control Simulator", "PID Pressure Control"],
+    simIds: ["vfd-speed"],
+    planned: ["PID Pressure Control"],
   },
   {
     id: "ch20",

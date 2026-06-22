@@ -16,8 +16,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   tangentialSpeed,
@@ -183,16 +183,22 @@ export default function ForcedFreeVortexSim() {
     const particles = particlesRef.current;
     for (const p of particles) {
       const rM = p.rf * TANK;
-      p.angle += angularSpeed(rM, k, pr) * dt; // all motion via dt
+      const w = angularSpeed(rM, k, pr);
+      p.angle += w * dt; // all motion via dt
       if (!controls.toggles.particles) continue;
       const rPx = p.rf * tankPx;
       const x = cx + Math.cos(p.angle) * rPx;
       const y = cy + Math.sin(p.angle) * rPx;
       const speed = tangentialSpeed(rM, k, pr);
-      ctx.beginPath();
-      ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(clamp(speed / vNorm, 0, 1), 0.95);
-      ctx.fill();
+      const sp = clamp(speed / vNorm, 0, 1);
+      const spin = Math.sign(w) || 1;
+      const trail = clamp(sp * tankPx * 0.16, 0, tankPx * 0.18);
+      drawFlowParticle(ctx, x, y, -Math.sin(p.angle) * spin, Math.cos(p.angle) * spin, velocityRampRGB(sp), {
+        radius: 2.2 + sp * 0.8,
+        trail,
+        alpha: 0.88,
+        glow: sp > 0.6,
+      });
     }
 
     // --- velocity vectors: tangential arrows on a few rings ---

@@ -427,8 +427,8 @@ export const CHAPTERS: Chapter[] = [
       "kWh", "kWh/m³", "Pump/Motor/Drive efficiency", "Overall efficiency", "Specific energy",
       "Energy cost", "Peak demand", "Duty/standby", "Multi-pump operation", "Energy saving",
     ],
-    simIds: ["energy-cost"],
-    planned: ["VFD vs Throttling Comparison", "Multi-Pump Optimizer"],
+    simIds: ["energy-cost", "multi-pump"],
+    planned: ["VFD vs Throttling Comparison"],
   },
   {
     id: "ch21",

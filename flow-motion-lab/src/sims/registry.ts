@@ -14,6 +14,8 @@ import WaterHammerSim from "./waterHammer/WaterHammerSim";
 import WaterHammerPreview from "./waterHammer/WaterHammerPreview";
 import TroubleshootingSim from "./troubleshooting/TroubleshootingSim";
 import TroubleshootingPreview from "./troubleshooting/TroubleshootingPreview";
+import MultiPumpSim from "./multiPump/MultiPumpSim";
+import MultiPumpPreview from "./multiPump/MultiPumpPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -197,6 +199,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: TroubleshootingSim,
     Preview: TroubleshootingPreview,
+  },
+  {
+    id: "multi-pump",
+    title: "จัดปั๊มหลายตัว",
+    titleEn: "Multi-Pump Optimizer",
+    tagline: "เดินปั๊มกี่ตัวให้ใกล้ BEP ประหยัดสุด · duty/assist/standby + VFD",
+    icon: "🔢",
+    accent: "from-teal-400 to-indigo-600",
+    formula: "เดินใกล้ BEP = ประหยัด",
+    status: "ready",
+    Sim: MultiPumpSim,
+    Preview: MultiPumpPreview,
   },
   {
     id: "bernoulli",

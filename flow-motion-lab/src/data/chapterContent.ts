@@ -1,11 +1,13 @@
 import type { ChapterContent } from "@/types/chapterContent";
 import { BASIC_CONTENT } from "./chapterContent.basic";
 import { ADVANCED_CONTENT } from "./chapterContent.advanced";
+import { PUMPSTATION_CONTENT } from "./chapterContent.pumpstation";
 
 /** Rich learning content for every chapter, keyed by chapter id. */
 export const CHAPTER_CONTENT: Record<string, ChapterContent> = {
   ...BASIC_CONTENT,
   ...ADVANCED_CONTENT,
+  ...PUMPSTATION_CONTENT,
 };
 
 export const getChapterContent = (id: string): ChapterContent | undefined =>

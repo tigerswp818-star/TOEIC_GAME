@@ -114,6 +114,16 @@ export default function ChapterPage() {
             </Link>
           )}
 
+          {(chapter.id === "ch16" || chapter.id === "ch22") && (
+            <Link to="/digital-twin" className="lab-card flex items-center gap-3 p-4 transition hover:-translate-y-0.5 hover:ring-aurora">
+              <span className="text-2xl">🏭</span>
+              <div>
+                <div className="font-bold text-ink">เปิด Pump Station Digital Twin</div>
+                <div className="text-xs text-ink-soft">แผนผังสถานีสูบน้ำแบบ SCADA เคลื่อนไหวทั้งระบบ + เลือกสถานการณ์</div>
+              </div>
+            </Link>
+          )}
+
           {readySims.length > 0 && (
             <div className="grid gap-4 sm:grid-cols-2">
               {readySims.map((s) => {

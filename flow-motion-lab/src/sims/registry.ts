@@ -6,6 +6,10 @@ import PumpSystemCurveSim from "./pumpSystemCurve/PumpSystemCurveSim";
 import PumpSystemCurvePreview from "./pumpSystemCurve/PumpSystemCurvePreview";
 import VfdSpeedSim from "./vfdSpeed/VfdSpeedSim";
 import VfdSpeedPreview from "./vfdSpeed/VfdSpeedPreview";
+import CavitationSim from "./cavitation/CavitationSim";
+import CavitationPreview from "./cavitation/CavitationPreview";
+import EnergyCostSim from "./energyCost/EnergyCostSim";
+import EnergyCostPreview from "./energyCost/EnergyCostPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -141,6 +145,30 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: VfdSpeedSim,
     Preview: VfdSpeedPreview,
+  },
+  {
+    id: "cavitation",
+    title: "ความเสี่ยง Cavitation",
+    titleEn: "Cavitation Risk (NPSH)",
+    tagline: "NPSHa vs NPSHr — ฟองไอที่ทำลายใบพัด ปรับอุณหภูมิ/ความสูงดูด",
+    icon: "🫧",
+    accent: "from-sky-400 to-rose-500",
+    formula: "NPSHa > NPSHr",
+    status: "ready",
+    Sim: CavitationSim,
+    Preview: CavitationPreview,
+  },
+  {
+    id: "energy-cost",
+    title: "พลังงานและค่าไฟสถานี",
+    titleEn: "Energy Cost Calculator",
+    tagline: "kWh/m³ ค่าไฟ/เดือน และประสิทธิภาพรวมของสถานีสูบน้ำ",
+    icon: "⚡",
+    accent: "from-amber-400 to-emerald-500",
+    formula: "kWh/m³ = Pin / Q",
+    status: "ready",
+    Sim: EnergyCostSim,
+    Preview: EnergyCostPreview,
   },
   {
     id: "bernoulli",

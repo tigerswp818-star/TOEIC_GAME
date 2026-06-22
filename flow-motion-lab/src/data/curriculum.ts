@@ -364,8 +364,7 @@ export const CHAPTERS: Chapter[] = [
       "Centrifugal pump", "Pump head", "Flow rate", "Pump curve", "System curve", "Operating point",
       "BEP", "Pump efficiency", "Shut-off head", "Run-out", "Pump power", "NPSH", "Cavitation", "Affinity laws",
     ],
-    simIds: ["pump-system-curve"],
-    planned: ["Cavitation Risk Simulator"],
+    simIds: ["pump-system-curve", "cavitation"],
   },
   {
     id: "ch18",
@@ -428,8 +427,8 @@ export const CHAPTERS: Chapter[] = [
       "kWh", "kWh/m³", "Pump/Motor/Drive efficiency", "Overall efficiency", "Specific energy",
       "Energy cost", "Peak demand", "Duty/standby", "Multi-pump operation", "Energy saving",
     ],
-    simIds: [],
-    planned: ["Energy Cost Calculator", "VFD vs Throttling Comparison", "Multi-Pump Optimizer"],
+    simIds: ["energy-cost"],
+    planned: ["VFD vs Throttling Comparison", "Multi-Pump Optimizer"],
   },
   {
     id: "ch21",

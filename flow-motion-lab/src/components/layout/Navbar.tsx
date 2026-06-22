@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import SearchBox from "./SearchBox";
 
 interface NavbarProps {
   theme: "light" | "dark";
@@ -30,7 +31,7 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-surface/70 backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-flow-400/50 to-transparent" />
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/" className="group flex items-center gap-2.5" onClick={() => setOpen(false)}>
+        <Link to="/" className="group flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-flow-400 via-deep-500 to-iris-600 text-lg shadow-glow transition group-hover:shadow-glow-lg">
             🌊
           </span>
@@ -42,7 +43,14 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        {/* Global search (desktop / tablet) */}
+        <div className="hidden flex-1 justify-center px-2 md:flex">
+          <div className="w-full max-w-sm">
+            <SearchBox />
+          </div>
+        </div>
+
+        <nav className="hidden items-center gap-1 lg:flex">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass}>
               {l.label}
@@ -50,14 +58,14 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link to="/lab" className="hidden lab-btn-primary !py-2 sm:inline-flex">
             เริ่มทดลอง
           </Link>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <button
             type="button"
-            className="lab-btn-ghost !px-3 !py-2 md:hidden"
+            className="lab-btn-ghost !px-3 !py-2 lg:hidden"
             onClick={() => setOpen((o) => !o)}
             aria-label="เมนู"
             aria-expanded={open}
@@ -68,7 +76,11 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
       </div>
 
       {open && (
-        <nav className="border-t border-line bg-surface px-4 py-3 md:hidden">
+        <nav className="border-t border-line bg-surface px-4 py-3 lg:hidden">
+          {/* Search inside the mobile menu */}
+          <div className="mb-2 md:hidden">
+            <SearchBox onNavigate={() => setOpen(false)} />
+          </div>
           <div className="flex flex-col gap-1">
             {links.map((l) => (
               <NavLink

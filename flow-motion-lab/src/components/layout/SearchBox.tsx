@@ -21,6 +21,7 @@ const PAGES: SearchItem[] = [
   { id: "converter", title: "ตัวแปลงหน่วย", titleEn: "Unit Converter", icon: "🔁", to: "/converter", kind: "page", extra: "หน่วย unit convert" },
   { id: "glossary", title: "อภิธานศัพท์", titleEn: "Glossary", icon: "📖", to: "/glossary", kind: "page", extra: "ศัพท์ term คำศัพท์" },
   { id: "real-world", title: "เห็นในชีวิตจริง", titleEn: "Real-world", icon: "🌍", to: "/real-world", kind: "page", extra: "ตัวอย่าง application" },
+  { id: "digital-twin", title: "Pump Station Digital Twin", titleEn: "SCADA Dashboard", icon: "🏭", to: "/digital-twin", kind: "page", extra: "สถานีสูบน้ำ scada pump station สถานี monitoring" },
 ];
 
 const SIM_ITEMS: SearchItem[] = SIMULATIONS.map((s) => ({

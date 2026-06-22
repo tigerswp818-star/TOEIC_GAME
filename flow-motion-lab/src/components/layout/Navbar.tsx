@@ -14,6 +14,7 @@ const links = [
   { to: "/converter", label: "แปลงหน่วย" },
   { to: "/glossary", label: "ศัพท์" },
   { to: "/real-world", label: "ในชีวิตจริง" },
+  { to: "/digital-twin", label: "Digital Twin" },
 ];
 
 /** Top navigation bar shared across pages. */

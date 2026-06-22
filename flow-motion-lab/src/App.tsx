@@ -10,6 +10,7 @@ import FormulaSheetPage from "./pages/FormulaSheetPage";
 import UnitConverterPage from "./pages/UnitConverterPage";
 import GlossaryPage from "./pages/GlossaryPage";
 import RealWorldPage from "./pages/RealWorldPage";
+import DigitalTwinPage from "./pages/DigitalTwinPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 /** Scrolls to top whenever the route changes. */
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/converter" element={<UnitConverterPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/real-world" element={<RealWorldPage />} />
+          <Route path="/digital-twin" element={<DigitalTwinPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

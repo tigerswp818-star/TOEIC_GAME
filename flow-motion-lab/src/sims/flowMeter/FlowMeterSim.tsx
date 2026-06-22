@@ -280,7 +280,9 @@ export default function FlowMeterSim() {
       const dp = deltaPForVelocity(device, v, rho, beta);
       const tubeW = Math.max(14, width * 0.04);
       const wideTop = centerY - wallHalf;
-      const maxColPx = Math.max(28, wideTop - 22);
+      // Reserve ~46 px above the pipe for the tube top + its label so neither
+      // clips off the top edge of the canvas.
+      const maxColPx = Math.max(24, wideTop - 46);
 
       // The "high" column is full; the "low" column drops by an amount ∝ ΔP.
       // Scale ΔP onto the available column height (cap so it never clips).

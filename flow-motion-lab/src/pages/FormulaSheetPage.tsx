@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { formatNumber } from "@/lib/math";
 
 interface FormulaEntry {
   formula: string;
@@ -345,8 +346,149 @@ const FORMULAS: FormulaEntry[] = [
   },
 ];
 
+const G = 9.81;
+
+interface CalcInput {
+  symbol: string;
+  unit: string;
+  default: number;
+}
+interface CalcConfig {
+  result: { symbol: string; unit: string };
+  inputs: CalcInput[];
+  /** Compute the result from the inputs (same order as `inputs`). */
+  fn: (v: number[]) => number;
+}
+
+/**
+ * Live calculators keyed by the formula string. Most solve for the subject
+ * variable; a few conceptual relations (Bernoulli head sum, extended Bernoulli)
+ * have no single-output calculator and are intentionally omitted.
+ */
+const CALCS: Record<string, CalcConfig> = {
+  "ρ = m / V": { result: { symbol: "ρ", unit: "kg/m³" }, inputs: [{ symbol: "m", unit: "kg", default: 1000 }, { symbol: "V", unit: "m³", default: 1 }], fn: ([m, V]) => m / V },
+  "P = F / A": { result: { symbol: "P", unit: "Pa" }, inputs: [{ symbol: "F", unit: "N", default: 100 }, { symbol: "A", unit: "m²", default: 0.5 }], fn: ([F, A]) => F / A },
+  "P = ρ g h": { result: { symbol: "P", unit: "Pa" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "g", unit: "m/s²", default: G }, { symbol: "h", unit: "m", default: 10 }], fn: ([r, g, h]) => r * g * h },
+  "Fb = ρ g V": { result: { symbol: "Fb", unit: "N" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "g", unit: "m/s²", default: G }, { symbol: "V", unit: "m³", default: 0.002 }], fn: ([r, g, V]) => r * g * V },
+  "Q = A V": { result: { symbol: "Q", unit: "m³/s" }, inputs: [{ symbol: "A", unit: "m²", default: 0.1 }, { symbol: "V", unit: "m/s", default: 2 }], fn: ([A, V]) => A * V },
+  "A₁V₁ = A₂V₂": { result: { symbol: "V₂", unit: "m/s" }, inputs: [{ symbol: "A₁", unit: "m²", default: 0.3 }, { symbol: "V₁", unit: "m/s", default: 2 }, { symbol: "A₂", unit: "m²", default: 0.1 }], fn: ([a1, v1, a2]) => (a1 * v1) / a2 },
+  "Re = ρVD/μ": { result: { symbol: "Re", unit: "—" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "V", unit: "m/s", default: 1 }, { symbol: "D", unit: "m", default: 0.05 }, { symbol: "μ", unit: "Pa·s", default: 0.001 }], fn: ([r, V, D, m]) => (r * V * D) / m },
+  "hf = f (L/D)(V²/2g)": { result: { symbol: "hf", unit: "m" }, inputs: [{ symbol: "f", unit: "—", default: 0.02 }, { symbol: "L", unit: "m", default: 100 }, { symbol: "D", unit: "m", default: 0.1 }, { symbol: "V", unit: "m/s", default: 2 }], fn: ([f, L, D, V]) => f * (L / D) * ((V * V) / (2 * G)) },
+  "hm = K (V²/2g)": { result: { symbol: "hm", unit: "m" }, inputs: [{ symbol: "K", unit: "—", default: 0.9 }, { symbol: "V", unit: "m/s", default: 2 }], fn: ([K, V]) => K * ((V * V) / (2 * G)) },
+  "γ = ρ g": { result: { symbol: "γ", unit: "N/m³" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "g", unit: "m/s²", default: G }], fn: ([r, g]) => r * g },
+  "SG = ρ / ρ_water": { result: { symbol: "SG", unit: "—" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 920 }, { symbol: "ρ_water", unit: "kg/m³", default: 1000 }], fn: ([r, rw]) => r / rw },
+  "τ = μ (du/dy)": { result: { symbol: "τ", unit: "Pa" }, inputs: [{ symbol: "μ", unit: "Pa·s", default: 0.001 }, { symbol: "du/dy", unit: "1/s", default: 100 }], fn: ([m, dudy]) => m * dudy },
+  "ν = μ / ρ": { result: { symbol: "ν", unit: "m²/s" }, inputs: [{ symbol: "μ", unit: "Pa·s", default: 0.001 }, { symbol: "ρ", unit: "kg/m³", default: 1000 }], fn: ([m, r]) => m / r },
+  "ΔP = ρ g Δh": { result: { symbol: "ΔP", unit: "Pa" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 13600 }, { symbol: "g", unit: "m/s²", default: G }, { symbol: "Δh", unit: "m", default: 0.1 }], fn: ([r, g, h]) => r * g * h },
+  "ṁ = ρ Q": { result: { symbol: "ṁ", unit: "kg/s" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "Q", unit: "m³/s", default: 0.2 }], fn: ([r, Q]) => r * Q },
+  "Fr = V / √(g D)": { result: { symbol: "Fr", unit: "—" }, inputs: [{ symbol: "V", unit: "m/s", default: 2 }, { symbol: "g", unit: "m/s²", default: G }, { symbol: "D", unit: "m", default: 0.5 }], fn: ([V, g, D]) => V / Math.sqrt(g * D) },
+  "Ma = V / a": { result: { symbol: "Ma", unit: "—" }, inputs: [{ symbol: "V", unit: "m/s", default: 170 }, { symbol: "a", unit: "m/s", default: 340 }], fn: ([V, a]) => V / a },
+  "We = ρ V² L / σ": { result: { symbol: "We", unit: "—" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "V", unit: "m/s", default: 1 }, { symbol: "L", unit: "m", default: 0.01 }, { symbol: "σ", unit: "N/m", default: 0.072 }], fn: ([r, V, L, s]) => (r * V * V * L) / s },
+  "Q = π ΔP r⁴ / (8 μ L)": { result: { symbol: "Q", unit: "m³/s" }, inputs: [{ symbol: "ΔP", unit: "Pa", default: 1000 }, { symbol: "r", unit: "m", default: 0.005 }, { symbol: "μ", unit: "Pa·s", default: 0.001 }, { symbol: "L", unit: "m", default: 1 }], fn: ([dp, r, m, L]) => (Math.PI * dp * Math.pow(r, 4)) / (8 * m * L) },
+  "P = ρ g Q H / η": { result: { symbol: "P", unit: "W" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1000 }, { symbol: "g", unit: "m/s²", default: G }, { symbol: "Q", unit: "m³/s", default: 0.05 }, { symbol: "H", unit: "m", default: 20 }, { symbol: "η", unit: "—", default: 0.7 }], fn: ([r, g, Q, H, e]) => (r * g * Q * H) / e },
+  "V = (1/n) R^(2/3) √S": { result: { symbol: "V", unit: "m/s" }, inputs: [{ symbol: "n", unit: "—", default: 0.013 }, { symbol: "R", unit: "m", default: 0.5 }, { symbol: "S", unit: "m/m", default: 0.001 }], fn: ([n, R, S]) => (1 / n) * Math.pow(R, 2 / 3) * Math.sqrt(S) },
+  "R = A / P_wetted": { result: { symbol: "R", unit: "m" }, inputs: [{ symbol: "A", unit: "m²", default: 1 }, { symbol: "P_wetted", unit: "m", default: 4 }], fn: ([A, P]) => A / P },
+  "F_D = ½ ρ V² C_d A": { result: { symbol: "F_D", unit: "N" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1.2 }, { symbol: "V", unit: "m/s", default: 20 }, { symbol: "C_d", unit: "—", default: 0.3 }, { symbol: "A", unit: "m²", default: 2 }], fn: ([r, V, cd, A]) => 0.5 * r * V * V * cd * A },
+  "F_L = ½ ρ V² C_l A": { result: { symbol: "F_L", unit: "N" }, inputs: [{ symbol: "ρ", unit: "kg/m³", default: 1.2 }, { symbol: "V", unit: "m/s", default: 50 }, { symbol: "C_l", unit: "—", default: 0.5 }, { symbol: "A", unit: "m²", default: 15 }], fn: ([r, V, cl, A]) => 0.5 * r * V * V * cl * A },
+};
+
+/** Live calculator for one formula — inputs morph the result instantly. */
+function CalcPanel({ calc }: { calc: CalcConfig }) {
+  const [raw, setRaw] = useState<string[]>(() => calc.inputs.map((i) => String(i.default)));
+  const nums = raw.map((r) => parseFloat(r));
+  const ok = nums.every((n) => Number.isFinite(n));
+  const result = ok ? calc.fn(nums) : NaN;
+  return (
+    <section className="mt-4 rounded-xl border border-flow-500/30 bg-gradient-to-br from-flow-500/[0.08] to-iris-500/[0.06] p-4">
+      <h3 className="text-sm font-bold text-flow-700 dark:text-flow-200">🧮 เครื่องคิดเลข</h3>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        {calc.inputs.map((inp, i) => (
+          <label key={inp.symbol} className="block">
+            <span className="block text-xs font-medium text-ink-soft">
+              <span className="font-mono font-semibold text-flow-600 dark:text-flow-300">{inp.symbol}</span>{" "}
+              <span className="text-ink-faint">({inp.unit})</span>
+            </span>
+            <input
+              type="number"
+              value={raw[i]}
+              onChange={(e) => setRaw((p) => p.map((v, j) => (j === i ? e.target.value : v)))}
+              className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 text-right font-mono text-sm tabular-nums text-ink focus:border-flow-400 focus:outline-none focus:ring-1 focus:ring-flow-400/40"
+            />
+          </label>
+        ))}
+      </div>
+      <div className="mt-4 flex items-baseline justify-between gap-3 rounded-xl border border-flow-500/30 bg-surface-raised/70 px-4 py-3 shadow-glow">
+        <span className="font-mono text-sm font-semibold text-flow-600 dark:text-flow-300">{calc.result.symbol} =</span>
+        <span className="flex items-baseline gap-1">
+          <span className="font-mono text-2xl font-bold tabular-nums text-ink">{ok ? formatNumber(result, 4) : "—"}</span>
+          <span className="text-xs text-ink-soft">{calc.result.unit}</span>
+        </span>
+      </div>
+      <p className="mt-2 text-[11px] text-ink-faint">ปรับค่าตัวแปรด้านบน ผลลัพธ์อัปเดตทันที</p>
+    </section>
+  );
+}
+
+/** Modal showing a formula's details + live calculator. */
+function FormulaModal({ entry, onClose }: { entry: FormulaEntry; onClose: () => void }) {
+  const calc = CALCS[entry.formula];
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={entry.name}>
+      <div className="absolute inset-0 animate-fade-in bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative max-h-[90vh] w-full max-w-lg animate-rise overflow-auto rounded-2xl border border-white/10 bg-surface-raised/95 p-5 shadow-glass backdrop-blur-xl">
+        <button type="button" onClick={onClose} aria-label="ปิด" className="lab-btn-ghost absolute right-3 top-3 !px-2.5 !py-1.5 !text-sm">
+          ✕
+        </button>
+        <h2 className="pr-10 text-lg font-bold text-ink">{entry.name}</h2>
+        <div className="relative mt-3 overflow-hidden rounded-xl border border-flow-500/30 bg-gradient-to-br from-flow-500/[0.1] to-iris-500/[0.06] px-4 py-3">
+          <span className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-flow-400 to-iris-500" />
+          <span className="font-mono text-base font-semibold text-ink sm:text-lg">{entry.formula}</span>
+        </div>
+
+        {calc ? (
+          <CalcPanel calc={calc} />
+        ) : (
+          <p className="mt-4 rounded-xl border border-line bg-surface-soft px-4 py-3 text-sm text-ink-soft">
+            สูตรนี้เป็นความสัมพันธ์เชิงแนวคิด — ใช้ดูหลักการ (ยังไม่มีเครื่องคิดเลขเฉพาะ)
+          </p>
+        )}
+
+        <dl className="mt-4 space-y-1 text-xs">
+          {entry.vars.map((v) => (
+            <div key={v.symbol} className="flex gap-2">
+              <dt className="w-20 shrink-0 font-mono font-semibold text-flow-600 dark:text-flow-300">{v.symbol}</dt>
+              <dd className="text-ink-soft">
+                {v.meaning} <span className="text-ink-faint">({v.unit})</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-3 space-y-1.5 text-xs">
+          <p>
+            <span className="font-semibold text-ink">📌 ใช้เมื่อ:</span> <span className="text-ink-soft">{entry.whenToUse}</span>
+          </p>
+          <p>
+            <span className="font-semibold text-ink">⚠️ ข้อจำกัด:</span> <span className="text-ink-soft">{entry.limits}</span>
+          </p>
+          <p>
+            <span className="font-semibold text-ink">🧮 ตัวอย่าง:</span> <span className="text-ink-soft">{entry.example}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FormulaSheetPage() {
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<FormulaEntry | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -387,42 +529,39 @@ export default function FormulaSheetPage() {
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {filtered.map((f) => (
-          <article key={f.formula} className="lab-card p-5">
-            <h2 className="text-sm font-bold text-ink">{f.name}</h2>
-            <div className="mt-2 rounded-lg bg-flow-500/10 px-3 py-2 font-mono text-base font-semibold text-flow-700 dark:text-flow-200">
-              {f.formula}
-            </div>
-            <dl className="mt-3 space-y-1 text-xs">
-              {f.vars.map((v) => (
-                <div key={v.symbol} className="flex gap-2">
-                  <dt className="w-16 shrink-0 font-mono font-semibold text-flow-600 dark:text-flow-300">
-                    {v.symbol}
-                  </dt>
-                  <dd className="text-ink-soft">
-                    {v.meaning} <span className="text-ink-faint">({v.unit})</span>
-                  </dd>
+          {filtered.map((f) => {
+            const hasCalc = Boolean(CALCS[f.formula]);
+            return (
+              <button
+                key={f.formula}
+                type="button"
+                onClick={() => setSelected(f)}
+                className="lab-card group flex flex-col p-5 text-left transition hover:-translate-y-0.5 hover:ring-aurora"
+              >
+                <h2 className="text-sm font-bold text-ink">{f.name}</h2>
+                <div className="mt-2 rounded-lg bg-flow-500/10 px-3 py-2 font-mono text-base font-semibold text-flow-700 dark:text-flow-200">
+                  {f.formula}
                 </div>
-              ))}
-            </dl>
-            <div className="mt-3 space-y-1.5 text-xs">
-              <p>
-                <span className="font-semibold text-ink">📌 ใช้เมื่อ:</span>{" "}
-                <span className="text-ink-soft">{f.whenToUse}</span>
-              </p>
-              <p>
-                <span className="font-semibold text-ink">⚠️ ข้อจำกัด:</span>{" "}
-                <span className="text-ink-soft">{f.limits}</span>
-              </p>
-              <p>
-                <span className="font-semibold text-ink">🧮 ตัวอย่าง:</span>{" "}
-                <span className="text-ink-soft">{f.example}</span>
-              </p>
-            </div>
-          </article>
-          ))}
+                <p className="mt-2 line-clamp-2 flex-1 text-xs text-ink-soft">{f.whenToUse}</p>
+                <div className="mt-3 flex items-center justify-between">
+                  <span
+                    className={`lab-chip !text-[11px] ${
+                      hasCalc ? "!border-flow-400/40 !text-flow-600 dark:!text-flow-300" : "!text-ink-faint"
+                    }`}
+                  >
+                    {hasCalc ? "🧮 คำนวณได้" : "เชิงแนวคิด"}
+                  </span>
+                  <span className="text-xs font-semibold text-flow-600 transition group-hover:translate-x-0.5 dark:text-flow-300">
+                    เปิด →
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
+
+      {selected && <FormulaModal entry={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 }

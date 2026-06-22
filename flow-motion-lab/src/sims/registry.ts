@@ -22,6 +22,10 @@ import MotorStartingSim from "./motorStarting/MotorStartingSim";
 import MotorStartingPreview from "./motorStarting/MotorStartingPreview";
 import VfdVsThrottleSim from "./vfdVsThrottle/VfdVsThrottleSim";
 import VfdVsThrottlePreview from "./vfdVsThrottle/VfdVsThrottlePreview";
+import PidPressureSim from "./pidPressure/PidPressureSim";
+import PidPressurePreview from "./pidPressure/PidPressurePreview";
+import CheckValveSlamSim from "./checkValveSlam/CheckValveSlamSim";
+import CheckValveSlamPreview from "./checkValveSlam/CheckValveSlamPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -253,6 +257,30 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: VfdVsThrottleSim,
     Preview: VfdVsThrottlePreview,
+  },
+  {
+    id: "pid-pressure",
+    title: "ควบคุมแรงดันด้วย PID",
+    titleEn: "PID Pressure Control",
+    tagline: "เซนเซอร์ + VFD รักษาแรงดันปลายทาง — จูน Kp/Ki ดู overshoot",
+    icon: "🎯",
+    accent: "from-cyan-400 to-amber-500",
+    formula: "PID → VFD → P",
+    status: "ready",
+    Sim: PidPressureSim,
+    Preview: PidPressurePreview,
+  },
+  {
+    id: "check-valve-slam",
+    title: "Check Valve Slam",
+    titleEn: "Check Valve Slam",
+    tagline: "วาล์วกันกลับกระแทกเมื่อปั๊มหยุด — แรงดันพุ่ง ΔP=ρaΔV",
+    icon: "🚪",
+    accent: "from-rose-400 to-amber-500",
+    formula: "ΔP = ρ a ΔV",
+    status: "ready",
+    Sim: CheckValveSlamSim,
+    Preview: CheckValveSlamPreview,
   },
   {
     id: "bernoulli",

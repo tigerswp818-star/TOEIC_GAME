@@ -344,7 +344,6 @@ export const CHAPTERS: Chapter[] = [
       "Control panel", "SCADA/Monitoring", "Storage/Elevated tank", "Distribution network",
     ],
     simIds: [],
-    planned: ["แผนผังสถานีแบบ interactive", "Pump Station Digital Twin (SCADA)"],
   },
   {
     id: "ch17",
@@ -405,8 +404,7 @@ export const CHAPTERS: Chapter[] = [
       "Frequency control", "Motor speed control", "Affinity laws", "Energy saving", "PID pressure control",
       "Ramp up/down", "Min/Max speed", "Dry-run protection", "Overcurrent", "Over/Undervoltage", "Harmonics",
     ],
-    simIds: ["vfd-speed"],
-    planned: ["PID Pressure Control"],
+    simIds: ["vfd-speed", "pid-pressure"],
   },
   {
     id: "ch20",
@@ -446,8 +444,7 @@ export const CHAPTERS: Chapter[] = [
       "Gate/Butterfly/Check valve", "Control valve", "Air release valve", "Pressure reducing valve",
       "Surge tank", "Water hammer", "Transient pressure", "Valve closing time", "Check valve slam", "Pipe burst risk",
     ],
-    simIds: ["water-hammer"],
-    planned: ["Check Valve Slam"],
+    simIds: ["water-hammer", "check-valve-slam"],
   },
   {
     id: "ch22",
@@ -468,7 +465,6 @@ export const CHAPTERS: Chapter[] = [
       "Temperature sensor", "SCADA", "Alarm", "Trend graph", "Data logging", "Preventive/Predictive maintenance",
     ],
     simIds: [],
-    planned: ["SCADA Dashboard mockup + scenario selector"],
   },
   {
     id: "ch23",

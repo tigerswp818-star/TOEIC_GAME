@@ -165,7 +165,7 @@ export default function ChapterPage() {
             </div>
           )}
 
-          {readySims.length === 0 && chapter.id !== "ch15" && (!chapter.planned || chapter.planned.length === 0) && (
+          {readySims.length === 0 && !["ch15", "ch16", "ch22"].includes(chapter.id) && (!chapter.planned || chapter.planned.length === 0) && (
             <div className="lab-card p-6 text-center text-sm text-ink-faint">
               เนื้อหาและการทดลองของบทนี้กำลังจัดทำ
             </div>

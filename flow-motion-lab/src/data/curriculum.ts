@@ -385,8 +385,7 @@ export const CHAPTERS: Chapter[] = [
       "Induction motor", "Synchronous motor", "Motor power", "Torque", "Speed", "Slip", "Efficiency",
       "Power factor", "Starting current", "Motor load", "Overload", "Phase loss", "Overheat", "Vibration",
     ],
-    simIds: ["motor-load"],
-    planned: ["Motor Starting Comparison (DOL/Star-Delta/Soft/VFD)"],
+    simIds: ["motor-load", "motor-starting"],
   },
   {
     id: "ch19",
@@ -427,8 +426,7 @@ export const CHAPTERS: Chapter[] = [
       "kWh", "kWh/m³", "Pump/Motor/Drive efficiency", "Overall efficiency", "Specific energy",
       "Energy cost", "Peak demand", "Duty/standby", "Multi-pump operation", "Energy saving",
     ],
-    simIds: ["energy-cost", "multi-pump"],
-    planned: ["VFD vs Throttling Comparison"],
+    simIds: ["energy-cost", "multi-pump", "vfd-vs-throttle"],
   },
   {
     id: "ch21",

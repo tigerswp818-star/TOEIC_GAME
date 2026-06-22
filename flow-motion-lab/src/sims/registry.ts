@@ -18,6 +18,10 @@ import MultiPumpSim from "./multiPump/MultiPumpSim";
 import MultiPumpPreview from "./multiPump/MultiPumpPreview";
 import MotorLoadSim from "./motorLoad/MotorLoadSim";
 import MotorLoadPreview from "./motorLoad/MotorLoadPreview";
+import MotorStartingSim from "./motorStarting/MotorStartingSim";
+import MotorStartingPreview from "./motorStarting/MotorStartingPreview";
+import VfdVsThrottleSim from "./vfdVsThrottle/VfdVsThrottleSim";
+import VfdVsThrottlePreview from "./vfdVsThrottle/VfdVsThrottlePreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -225,6 +229,30 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: MotorLoadSim,
     Preview: MotorLoadPreview,
+  },
+  {
+    id: "motor-starting",
+    title: "การสตาร์ทมอเตอร์",
+    titleEn: "Motor Starting Comparison",
+    tagline: "เทียบ DOL / Star-Delta / Soft Starter / VFD — กระแสและแรงบิดสตาร์ท",
+    icon: "🚦",
+    accent: "from-amber-400 to-rose-500",
+    formula: "I_start: DOL≫VFD",
+    status: "ready",
+    Sim: MotorStartingSim,
+    Preview: MotorStartingPreview,
+  },
+  {
+    id: "vfd-vs-throttle",
+    title: "VFD เทียบหรี่วาล์ว",
+    titleEn: "VFD vs Throttling",
+    tagline: "ลด flow สองวิธี เทียบพลังงานและค่าไฟ/เดือน",
+    icon: "⚖️",
+    accent: "from-emerald-400 to-rose-500",
+    formula: "VFD ประหยัดกว่า",
+    status: "ready",
+    Sim: VfdVsThrottleSim,
+    Preview: VfdVsThrottlePreview,
   },
   {
     id: "bernoulli",

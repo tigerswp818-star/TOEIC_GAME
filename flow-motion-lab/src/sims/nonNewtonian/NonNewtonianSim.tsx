@@ -16,8 +16,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   apparentViscosity,
@@ -258,11 +258,14 @@ export default function NonNewtonianSim() {
       const x = cellX + p.xf * cellW;
       const y = bottom - p.yf * cellH;
       // Spacing/colour conveys "thickness": faster layers glow brighter.
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.globalAlpha = controls.toggles.particles ? 0.95 : 0.16;
-      ctx.fillStyle = velocityColor(u, 0.95);
-      ctx.fill();
+      const trail = clamp(u * cellW * 0.06, 0, 14);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(u), {
+        radius: r,
+        trail,
+        alpha: 0.95,
+        glow: u > 0.6,
+      });
       ctx.globalAlpha = 1;
     }
 

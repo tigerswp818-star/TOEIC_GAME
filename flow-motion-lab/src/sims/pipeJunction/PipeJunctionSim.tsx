@@ -16,8 +16,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   junctionBalance,
@@ -272,10 +272,13 @@ export default function PipeJunctionSim() {
         qBranch = p.branch === "in" ? b.qIn : p.branch === "out1" ? b.qOut1 : b.qOut2;
       }
       const tNorm = Math.min(1, qBranch / maxQ);
-      ctx.beginPath();
-      ctx.arc(px, py, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = Math.min(tNorm * 12, 12);
+      drawFlowParticle(ctx, px, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.4,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6,
+      });
     }
 
     // --- inlet flow-direction arrow ---

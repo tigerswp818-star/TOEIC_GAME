@@ -15,8 +15,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber } from "@/lib/math";
-import { velocityColor } from "@/lib/colors";
-import { drawArrow, drawStreamline, drawLabel, type Pt } from "@/lib/render/draw";
+import { velocityRampRGB } from "@/lib/colors";
+import { drawArrow, drawStreamline, drawLabel, drawFlowParticle, type Pt } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   velocityAt,
@@ -232,10 +232,21 @@ export default function VelocityFieldSim() {
       recycleParticle(p, WORLD_HALF, fk);
 
       if (!controls.toggles.particles) continue;
-      ctx.beginPath();
-      ctx.arc(toX(p.x), toY(p.y), 2.3, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(clamp(v.speed / refSpeed, 0, 1), 0.95);
-      ctx.fill();
+      const sp = clamp(v.speed / refSpeed, 0, 1);
+      // screen-space travel direction (robust to any world→canvas mapping)
+      const eps = 0.01;
+      let ux = toX(p.x + v.vx * eps) - toX(p.x);
+      let uy = toY(p.y + v.vy * eps) - toY(p.y);
+      const mm = Math.hypot(ux, uy) || 1;
+      ux /= mm;
+      uy /= mm;
+      const trail = clamp(sp * 16, 0, 18);
+      drawFlowParticle(ctx, toX(p.x), toY(p.y), ux, uy, velocityRampRGB(sp), {
+        radius: 2.2 + sp * 0.8,
+        trail,
+        alpha: 0.85,
+        glow: sp > 0.6,
+      });
     }
 
     // --- velocity vectors: sparse grid, LENGTH ∝ local speed ---

@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { formatNumber } from "@/lib/math";
-import { depthColor, velocityColor } from "@/lib/colors";
-import { drawLabel } from "@/lib/render/draw";
+import { depthColor, velocityRampRGB } from "@/lib/colors";
+import { drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import { RHO_WATER } from "@/lib/constants";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
@@ -283,10 +283,15 @@ export default function ControlVolumeSim() {
         idx++;
         const x = from.x + (to.x - from.x) * p.t + (horizontal ? 0 : p.j * halfW);
         const y = from.y + (to.y - from.y) * p.t + (horizontal ? p.j * halfW : 0);
-        ctx.beginPath();
-        ctx.arc(x, y, 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = velocityColor(Math.min(1, q / vmax), 0.95);
-        ctx.fill();
+        const tN = Math.min(1, q / vmax);
+        const mb = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+        const trail = Math.min(tN * 16, 16);
+        drawFlowParticle(ctx, x, y, (to.x - from.x) / mb, (to.y - from.y) / mb, velocityRampRGB(tN), {
+          radius: 2.4,
+          trail,
+          alpha: 0.88,
+          glow: tN > 0.6,
+        });
       }
     };
 

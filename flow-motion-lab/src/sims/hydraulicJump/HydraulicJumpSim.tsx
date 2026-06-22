@@ -15,8 +15,8 @@ import MiniQuiz from "@/components/sim/MiniQuiz";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, formatNumber, smoothstep } from "@/lib/math";
-import { depthColor, velocityColor } from "@/lib/colors";
-import { drawLabel } from "@/lib/render/draw";
+import { depthColor, velocityRampRGB } from "@/lib/colors";
+import { drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   computeJump,
@@ -251,10 +251,14 @@ export default function HydraulicJumpSim() {
       py = clamp(py, surf + 2, bedY - 2);
       const tNorm = clamp(vel / maxVel, 0, 1);
       const r = inRoller ? 2.2 : 2.6;
-      ctx.beginPath();
-      ctx.arc(px, py, r, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      // smooth supercritical flow streaks; turbulent roller barely trails
+      const trail = inRoller ? 0 : clamp(tNorm * width * 0.05, 0, width * 0.05);
+      drawFlowParticle(ctx, px, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: r,
+        trail,
+        alpha: 0.9,
+        glow: tNorm > 0.6 && !inRoller,
+      });
     }
 
     // --- regime labels ---

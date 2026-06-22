@@ -16,8 +16,8 @@ import ToggleChip from "@/components/sim/ToggleChip";
 import { useSimControls } from "@/hooks/useSimControls";
 import { useTheme } from "@/hooks/useTheme";
 import { clamp, mapClamped, formatNumber } from "@/lib/math";
-import { velocityColor, depthColor } from "@/lib/colors";
-import { drawArrow, drawLabel } from "@/lib/render/draw";
+import { velocityRampRGB, depthColor } from "@/lib/colors";
+import { drawArrow, drawLabel, drawFlowParticle } from "@/lib/render/draw";
 import type { Challenge, GuidedStep, LearningMode, QuizItem } from "@/types/simulation";
 import {
   computeWeir,
@@ -321,10 +321,13 @@ export default function WeirSim() {
         py = clamp(py, spillY, bedY - 2);
         tNorm = clamp(0.45 + fall * 0.55, 0, 1); // accelerating → brighter
       }
-      ctx.beginPath();
-      ctx.arc(px, py, 2.4, 0, Math.PI * 2);
-      ctx.fillStyle = velocityColor(tNorm, 0.95);
-      ctx.fill();
+      const trail = clamp(tNorm * width * 0.04, 0, width * 0.04);
+      drawFlowParticle(ctx, px, py, 1, 0, velocityRampRGB(tNorm), {
+        radius: 2.2 + tNorm * 0.7,
+        trail,
+        alpha: 0.88,
+        glow: tNorm > 0.6,
+      });
     }
 
     // --- weir-type label on canvas ---

@@ -2,6 +2,8 @@ import type { SimMeta } from "@/types/simulation";
 
 import ContinuitySim from "./continuity/ContinuitySim";
 import ContinuityPreview from "./continuity/ContinuityPreview";
+import PumpSystemCurveSim from "./pumpSystemCurve/PumpSystemCurveSim";
+import PumpSystemCurvePreview from "./pumpSystemCurve/PumpSystemCurvePreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -113,6 +115,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: ContinuitySim,
     Preview: ContinuityPreview,
+  },
+  {
+    id: "pump-system-curve",
+    title: "กราฟปั๊มและกราฟระบบ",
+    titleEn: "Pump Curve vs System Curve",
+    tagline: "หาจุดทำงาน (Operating Point) เทียบ VFD กับการหรี่วาล์ว และ BEP",
+    icon: "📈",
+    accent: "from-cyan-400 to-violet-600",
+    formula: "H_pump(Q) = H_system(Q)",
+    status: "ready",
+    Sim: PumpSystemCurveSim,
+    Preview: PumpSystemCurvePreview,
   },
   {
     id: "bernoulli",

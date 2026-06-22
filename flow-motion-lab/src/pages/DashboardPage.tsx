@@ -4,7 +4,7 @@ import { CHAPTERS, LEVELS, LEARNING_PATHS, type Level } from "@/data/curriculum"
 import { getSim, READY_SIMS } from "@/sims/registry";
 import { useProgress } from "@/hooks/useProgress";
 
-const LEVEL_ORDER: Level[] = ["basic", "intermediate", "advanced"];
+const LEVEL_ORDER: Level[] = ["basic", "intermediate", "advanced", "pumpstation"];
 
 export default function DashboardPage() {
   const [pathId, setPathId] = useState<string>("all");

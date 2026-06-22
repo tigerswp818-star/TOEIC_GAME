@@ -1,11 +1,12 @@
 /** Curriculum model: levels, learning paths and the 15-chapter structure. */
 
-export type Level = "basic" | "intermediate" | "advanced";
+export type Level = "basic" | "intermediate" | "advanced" | "pumpstation";
 
 export const LEVELS: Record<Level, { label: string; labelEn: string; color: string }> = {
   basic: { label: "พื้นฐาน", labelEn: "Basic", color: "from-emerald-400 to-teal-600" },
   intermediate: { label: "วิศวกรรม", labelEn: "Intermediate", color: "from-sky-400 to-indigo-600" },
   advanced: { label: "ขั้นสูง", labelEn: "Advanced", color: "from-fuchsia-400 to-rose-600" },
+  pumpstation: { label: "สถานีสูบจ่ายน้ำ", labelEn: "Pump Station", color: "from-cyan-400 to-violet-600" },
 };
 
 export interface Chapter {
@@ -320,6 +321,181 @@ export const CHAPTERS: Chapter[] = [
     ],
     simIds: [],
   },
+
+  // ══ หมวดสถานีสูบจ่ายน้ำ Pump Station (เชิงการเรียนรู้ — ไม่ใช่ระบบควบคุมจริง) ══
+  {
+    id: "ch16",
+    number: 16,
+    title: "ภาพรวมสถานีสูบจ่ายน้ำ",
+    titleEn: "Pump Station Overview",
+    level: "pumpstation",
+    icon: "🏭",
+    summary:
+      "องค์ประกอบของสถานีสูบจ่ายน้ำตั้งแต่บ่อพักถึงโครงข่ายจ่ายน้ำ · ⚠️ เนื้อหาเชิงการเรียนรู้เท่านั้น งานไฟฟ้าแรงสูงและระบบสูบน้ำจริงต้องทำโดยวิศวกร/ช่างผู้ชำนาญ",
+    objectives: [
+      "รู้จักองค์ประกอบหลัก: บ่อพัก (Reservoir/Sump) ปั๊ม มอเตอร์ VFD วาล์ว ท่อ ถัง โครงข่ายจ่ายน้ำ",
+      "เข้าใจเส้นทางน้ำจากบ่อพัก → ปั๊ม → ท่อส่ง → ถัง/โครงข่าย",
+      "รู้บทบาทของ sensor (ความดัน/อัตราการไหล/ระดับน้ำ) และระบบ SCADA",
+      "ตระหนักถึงความปลอดภัยของไฟฟ้า เครื่องจักรหมุน และระบบแรงดัน",
+    ],
+    topics: [
+      "Reservoir/Sump", "Pump", "Electric motor", "VFD/Inverter", "Suction pipe", "Discharge pipe",
+      "Check valve", "Gate/Butterfly valve", "Pressure sensor", "Flow meter", "Level sensor",
+      "Control panel", "SCADA/Monitoring", "Storage/Elevated tank", "Distribution network",
+    ],
+    simIds: [],
+    planned: ["แผนผังสถานีแบบ interactive", "Pump Station Digital Twin (SCADA)"],
+  },
+  {
+    id: "ch17",
+    number: 17,
+    title: "หลักการทำงานของปั๊มน้ำ",
+    titleEn: "Pump Fundamentals",
+    level: "pumpstation",
+    icon: "⚙️",
+    summary: "ปั๊มหอยโข่งสร้างหัว (head) อย่างไร · Pump curve, System curve, จุดทำงาน, BEP, NPSH และ cavitation",
+    objectives: [
+      "อ่าน Pump curve และ System curve แล้วหาจุดทำงาน (Operating point)",
+      "เข้าใจ Best Efficiency Point (BEP) และผลของการเดินห่างจาก BEP",
+      "คำนวณกำลัง: Ph = ρgQH, Ps = Ph/η และ TDH",
+      "เข้าใจ affinity laws (Q∝N, H∝N², P∝N³) และความเสี่ยง cavitation/NPSH",
+    ],
+    topics: [
+      "Centrifugal pump", "Pump head", "Flow rate", "Pump curve", "System curve", "Operating point",
+      "BEP", "Pump efficiency", "Shut-off head", "Run-out", "Pump power", "NPSH", "Cavitation", "Affinity laws",
+    ],
+    simIds: ["pump-system-curve"],
+    planned: ["Cavitation Risk Simulator"],
+  },
+  {
+    id: "ch18",
+    number: 18,
+    title: "มอเตอร์ไฟฟ้าสำหรับปั๊ม",
+    titleEn: "Electric Motor for Pump",
+    level: "pumpstation",
+    icon: "🔌",
+    summary:
+      "มอเตอร์เหนี่ยวนำขับปั๊มอย่างไร · ความเร็ว แรงบิด สลิป ประสิทธิภาพ และการป้องกัน · ⚠️ การตรวจ/ซ่อมระบบไฟฟ้าต้องทำโดยช่างหรือวิศวกรที่ได้รับอนุญาต ห้ามเปิดตู้ไฟเอง",
+    objectives: [
+      "เข้าใจความเร็วซิงโครนัส Ns = 120f/p และสลิป s = (Ns−Nr)/Ns",
+      "คำนวณกำลังมอเตอร์ 3 เฟส P = √3 V I PF η และพลังงาน kWh",
+      "เข้าใจโหลดมอเตอร์ที่เปลี่ยนตาม flow/head และอาการ overload",
+      "รู้จักการป้องกัน: overload, phase loss, overheat, vibration เชิงแนวคิด",
+    ],
+    topics: [
+      "Induction motor", "Synchronous motor", "Motor power", "Torque", "Speed", "Slip", "Efficiency",
+      "Power factor", "Starting current", "Motor load", "Overload", "Phase loss", "Overheat", "Vibration",
+    ],
+    simIds: [],
+    planned: ["Motor Load Simulator", "Motor Starting Comparison (DOL/Star-Delta/Soft/VFD)"],
+  },
+  {
+    id: "ch19",
+    number: 19,
+    title: "ไดร์ฟควบคุมรอบปั๊ม (VFD)",
+    titleEn: "Variable Frequency Drive",
+    level: "pumpstation",
+    icon: "🎛️",
+    summary: "VFD ปรับความถี่เพื่อคุมรอบมอเตอร์/ปั๊ม · ประหยัดพลังงานตาม affinity laws และคุมแรงดันด้วย PID",
+    objectives: [
+      "เข้าใจการคุมความเร็วด้วยความถี่และผลต่อ flow/head/power",
+      "เห็นว่าทำไม VFD ประหยัดพลังงาน (P ∝ N³) เทียบกับการหรี่วาล์ว",
+      "เข้าใจการคุมแรงดันปลายทางแบบ PID เบื้องต้น (ramp, overshoot)",
+      "รู้จักการป้องกัน: dry-run, overcurrent, over/undervoltage เชิงแนวคิด",
+    ],
+    topics: [
+      "Frequency control", "Motor speed control", "Affinity laws", "Energy saving", "PID pressure control",
+      "Ramp up/down", "Min/Max speed", "Dry-run protection", "Overcurrent", "Over/Undervoltage", "Harmonics",
+    ],
+    simIds: [],
+    planned: ["VFD Speed Control Simulator", "PID Pressure Control"],
+  },
+  {
+    id: "ch20",
+    number: 20,
+    title: "ประสิทธิภาพพลังงานสถานีสูบน้ำ",
+    titleEn: "Pump Station Energy Efficiency",
+    level: "pumpstation",
+    icon: "⚡",
+    summary: "วิเคราะห์พลังงาน kWh/m³ · ประสิทธิภาพรวม wire-to-water · การประหยัดด้วย VFD, ท่อ และการเดินปั๊มหลายตัว",
+    objectives: [
+      "คำนวณ kWh/m³ และค่าไฟจากกำลัง อัตราการไหล และค่าไฟต่อหน่วย",
+      "เข้าใจประสิทธิภาพรวม η_total = η_pump × η_motor × η_drive",
+      "เปรียบเทียบการประหยัดพลังงาน VFD เทียบกับการหรี่วาล์ว",
+      "วางแผนเดินปั๊มหลายตัว (duty/standby) ให้ใกล้ BEP",
+    ],
+    topics: [
+      "kWh", "kWh/m³", "Pump/Motor/Drive efficiency", "Overall efficiency", "Specific energy",
+      "Energy cost", "Peak demand", "Duty/standby", "Multi-pump operation", "Energy saving",
+    ],
+    simIds: [],
+    planned: ["Energy Cost Calculator", "VFD vs Throttling Comparison", "Multi-Pump Optimizer"],
+  },
+  {
+    id: "ch21",
+    number: 21,
+    title: "วาล์ว ค้อนน้ำ และการป้องกัน",
+    titleEn: "Valves, Water Hammer & Protection",
+    level: "pumpstation",
+    icon: "🛡️",
+    summary: "ชนิดวาล์ว · ค้อนน้ำ (water hammer) จากการปิดวาล์ว/ปั๊มหยุดเร็ว และวิธีป้องกัน",
+    objectives: [
+      "รู้จักวาล์วชนิดต่าง ๆ และหน้าที่ (gate, butterfly, check, control, PRV, air release)",
+      "เข้าใจค้อนน้ำ: ΔP = ρaΔV และ ΔH = aΔV/g (Joukowsky)",
+      "เห็นผลของเวลาปิดวาล์วต่อความรุนแรงของแรงดันกระชาก",
+      "รู้แนวทางป้องกัน: surge tank, ปิดวาล์วช้าลง, check valve ที่เหมาะสม",
+    ],
+    topics: [
+      "Gate/Butterfly/Check valve", "Control valve", "Air release valve", "Pressure reducing valve",
+      "Surge tank", "Water hammer", "Transient pressure", "Valve closing time", "Check valve slam", "Pipe burst risk",
+    ],
+    simIds: [],
+    planned: ["Water Hammer Simulator", "Check Valve Slam"],
+  },
+  {
+    id: "ch22",
+    number: 22,
+    title: "เครื่องมือวัดและระบบติดตาม (SCADA)",
+    titleEn: "Sensors, SCADA & Monitoring",
+    level: "pumpstation",
+    icon: "📡",
+    summary: "เครื่องมือวัดและ SCADA ที่ใช้ติดตามสถานีสูบน้ำ · dashboard, alarm, trend และการบำรุงรักษา",
+    objectives: [
+      "รู้จัก sensor หลัก: pressure, flow, level, power, vibration, temperature",
+      "เข้าใจบทบาทของ SCADA: monitoring, alarm, trend graph, data logging",
+      "อ่านอาการผิดปกติจากค่าที่วัดได้ (เชิงแนวคิด)",
+      "เข้าใจการบำรุงรักษาเชิงป้องกันและเชิงทำนาย (preventive/predictive)",
+    ],
+    topics: [
+      "Pressure transmitter", "Flow meter", "Level sensor", "Power meter", "Vibration sensor",
+      "Temperature sensor", "SCADA", "Alarm", "Trend graph", "Data logging", "Preventive/Predictive maintenance",
+    ],
+    simIds: [],
+    planned: ["SCADA Dashboard mockup + scenario selector"],
+  },
+  {
+    id: "ch23",
+    number: 23,
+    title: "การวิเคราะห์ปัญหาสถานีสูบน้ำ",
+    titleEn: "Troubleshooting Pump Station",
+    level: "pumpstation",
+    icon: "🔎",
+    summary:
+      "วินิจฉัยปัญหาเบื้องต้นเชิงแนวคิด: flow/pressure ต่ำ กระแสสูง สั่น เสียงดัง cavitation ฯลฯ · ⚠️ ห้ามเปิดตู้ไฟหรือซ่อมไฟฟ้าเอง การตรวจระบบไฟฟ้าต้องทำโดยช่าง/วิศวกรที่ได้รับอนุญาต",
+    objectives: [
+      "เชื่อมโยงอาการกับสาเหตุที่เป็นไปได้ (suction, air, valve, impeller, cavitation, overload ฯลฯ)",
+      "รู้ลำดับการตรวจสอบเบื้องต้นอย่างปลอดภัย (ค่า pressure/flow, สถานะวาล์ว, alarm จาก VFD, trend)",
+      "เข้าใจว่า flow ต่ำอาจมาจากปั๊ม วาล์ว หรือการสูญเสียในท่อ",
+      "ตระหนักว่างานไฟฟ้า/เครื่องจักรหมุนต้องให้ผู้ชำนาญดำเนินการ",
+    ],
+    topics: [
+      "No/low flow", "Low/high pressure", "High/low current", "Vibration", "Noise", "Cavitation",
+      "Air lock", "Clogged strainer", "Closed valve", "Wrong rotation", "Impeller wear", "Bearing/Seal problem",
+      "Pipe leakage", "Sensor error", "VFD fault",
+    ],
+    simIds: [],
+    planned: ["Interactive Diagnostic Tool (อาการ → สาเหตุ → การตรวจที่ปลอดภัย)"],
+  },
 ];
 
 export const LEARNING_PATHS: LearningPath[] = [
@@ -370,6 +546,14 @@ export const LEARNING_PATHS: LearningPath[] = [
     icon: "🚀",
     blurb: "vortex การไหลอัดตัวได้ และ CFD/การทดลอง",
     chapterIds: ["ch12", "ch13", "ch14"],
+  },
+  {
+    id: "pumpstation",
+    title: "สถานีสูบจ่ายน้ำ",
+    titleEn: "Pump Station",
+    icon: "🏭",
+    blurb: "ปั๊ม มอเตอร์ VFD วาล์ว พลังงาน SCADA และการวิเคราะห์ปัญหา (เชิงการเรียนรู้)",
+    chapterIds: ["ch16", "ch17", "ch18", "ch19", "ch20", "ch21", "ch22", "ch23"],
   },
 ];
 

@@ -448,8 +448,8 @@ export const CHAPTERS: Chapter[] = [
       "Gate/Butterfly/Check valve", "Control valve", "Air release valve", "Pressure reducing valve",
       "Surge tank", "Water hammer", "Transient pressure", "Valve closing time", "Check valve slam", "Pipe burst risk",
     ],
-    simIds: [],
-    planned: ["Water Hammer Simulator", "Check Valve Slam"],
+    simIds: ["water-hammer"],
+    planned: ["Check Valve Slam"],
   },
   {
     id: "ch22",

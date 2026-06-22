@@ -10,6 +10,8 @@ import CavitationSim from "./cavitation/CavitationSim";
 import CavitationPreview from "./cavitation/CavitationPreview";
 import EnergyCostSim from "./energyCost/EnergyCostSim";
 import EnergyCostPreview from "./energyCost/EnergyCostPreview";
+import WaterHammerSim from "./waterHammer/WaterHammerSim";
+import WaterHammerPreview from "./waterHammer/WaterHammerPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -169,6 +171,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: EnergyCostSim,
     Preview: EnergyCostPreview,
+  },
+  {
+    id: "water-hammer",
+    title: "ค้อนน้ำ Water Hammer",
+    titleEn: "Water Hammer",
+    tagline: "แรงดันกระชากจากการปิดวาล์วเร็ว (Joukowsky) + คลื่นวิ่งย้อนกลับ",
+    icon: "🔨",
+    accent: "from-rose-400 to-orange-500",
+    formula: "ΔP = ρ a ΔV",
+    status: "ready",
+    Sim: WaterHammerSim,
+    Preview: WaterHammerPreview,
   },
   {
     id: "bernoulli",

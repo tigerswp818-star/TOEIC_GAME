@@ -492,8 +492,7 @@ export const CHAPTERS: Chapter[] = [
       "Air lock", "Clogged strainer", "Closed valve", "Wrong rotation", "Impeller wear", "Bearing/Seal problem",
       "Pipe leakage", "Sensor error", "VFD fault",
     ],
-    simIds: [],
-    planned: ["Interactive Diagnostic Tool (อาการ → สาเหตุ → การตรวจที่ปลอดภัย)"],
+    simIds: ["troubleshooting"],
   },
 ];
 

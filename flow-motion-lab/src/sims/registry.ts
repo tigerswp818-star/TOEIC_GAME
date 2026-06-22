@@ -12,6 +12,8 @@ import EnergyCostSim from "./energyCost/EnergyCostSim";
 import EnergyCostPreview from "./energyCost/EnergyCostPreview";
 import WaterHammerSim from "./waterHammer/WaterHammerSim";
 import WaterHammerPreview from "./waterHammer/WaterHammerPreview";
+import TroubleshootingSim from "./troubleshooting/TroubleshootingSim";
+import TroubleshootingPreview from "./troubleshooting/TroubleshootingPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -183,6 +185,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: WaterHammerSim,
     Preview: WaterHammerPreview,
+  },
+  {
+    id: "troubleshooting",
+    title: "วิเคราะห์ปัญหาปั๊ม",
+    titleEn: "Pump Troubleshooting",
+    tagline: "เลือกอาการ → สาเหตุที่เป็นไปได้ + การตรวจสอบเบื้องต้นที่ปลอดภัย",
+    icon: "🔧",
+    accent: "from-slate-400 to-cyan-600",
+    formula: "อาการ → สาเหตุ → ตรวจสอบ",
+    status: "ready",
+    Sim: TroubleshootingSim,
+    Preview: TroubleshootingPreview,
   },
   {
     id: "bernoulli",

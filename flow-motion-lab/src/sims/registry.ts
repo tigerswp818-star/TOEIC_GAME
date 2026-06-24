@@ -26,6 +26,8 @@ import PidPressureSim from "./pidPressure/PidPressureSim";
 import PidPressurePreview from "./pidPressure/PidPressurePreview";
 import CheckValveSlamSim from "./checkValveSlam/CheckValveSlamSim";
 import CheckValveSlamPreview from "./checkValveSlam/CheckValveSlamPreview";
+import StationOverviewSim from "./stationOverview/StationOverviewSim";
+import StationOverviewPreview from "./stationOverview/StationOverviewPreview";
 import BernoulliSim from "./bernoulli/BernoulliSim";
 import BernoulliPreview from "./bernoulli/BernoulliPreview";
 import ReynoldsSim from "./reynolds/ReynoldsSim";
@@ -281,6 +283,18 @@ export const SIMULATIONS: SimMeta[] = [
     status: "ready",
     Sim: CheckValveSlamSim,
     Preview: CheckValveSlamPreview,
+  },
+  {
+    id: "station-overview",
+    title: "ภาพรวมสถานีสูบจ่ายน้ำ",
+    titleEn: "Pump Station Overview",
+    tagline: "แผนผัง interactive ทั้งสถานี เปิด/ปิด layer (flow/ความดัน/VFD/วาล์ว/sensor/พลังงาน)",
+    icon: "🏭",
+    accent: "from-cyan-400 to-violet-600",
+    formula: "บ่อพัก → ปั๊ม → ถัง → จ่ายน้ำ",
+    status: "ready",
+    Sim: StationOverviewSim,
+    Preview: StationOverviewPreview,
   },
   {
     id: "bernoulli",

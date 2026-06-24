@@ -343,7 +343,7 @@ export const CHAPTERS: Chapter[] = [
       "Check valve", "Gate/Butterfly valve", "Pressure sensor", "Flow meter", "Level sensor",
       "Control panel", "SCADA/Monitoring", "Storage/Elevated tank", "Distribution network",
     ],
-    simIds: [],
+    simIds: ["station-overview"],
   },
   {
     id: "ch17",

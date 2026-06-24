@@ -433,7 +433,28 @@ export default function JetImpactSim() {
           <h2 className="text-sm font-bold text-ink">แผงควบคุม Controls</h2>
           <ControlSlider label="ความเร็วลำน้ำ" symbol="V" value={params.v} min={2} max={40} step={0.5} unit="m/s" decimals={1} onChange={set("v")} />
           <ControlSlider label="เส้นผ่านศูนย์กลางลำน้ำ" symbol="d" value={params.d} min={0.01} max={0.1} step={0.001} unit="m" decimals={3} onChange={set("d")} />
-          <ControlSlider label="มุมแผ่น/ใบพัด" symbol="θ/β" value={params.angle} min={0} max={180} step={1} unit="°" decimals={0} onChange={set("angle")} />
+          {/* The angle only changes the force for an inclined plate (F = ρQV·sinθ)
+              or a curved vane (F = ρQV(1−cosβ)). A flat plate normal to the jet
+              gives F = ρQV regardless of angle, so we hide the slider there and
+              explain why instead of showing an inert control. */}
+          {target === "flat-normal" ? (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs leading-relaxed text-ink-soft">
+              💡 แผ่นเรียบ <b>ตั้งฉาก</b> กับลำน้ำ (90°) — มุมไม่มีผลต่อแรง เพราะ F = ρQV เสมอ
+              ลองเปลี่ยนเป็น <b>“แผ่นเอียง”</b> หรือ <b>“ใบพัดโค้ง”</b> ด้านล่าง แล้วปรับมุมเพื่อดูผล
+            </div>
+          ) : (
+            <ControlSlider
+              label={target === "curved-vane" ? "มุมหมุนใบพัด" : "มุมเอียงของแผ่น"}
+              symbol={target === "curved-vane" ? "β" : "θ"}
+              value={params.angle}
+              min={target === "curved-vane" ? 0 : 10}
+              max={180}
+              step={1}
+              unit="°"
+              decimals={0}
+              onChange={set("angle")}
+            />
+          )}
 
           <div className="space-y-1.5">
             <span className="text-sm font-medium text-ink">รูปแบบเป้า Target</span>

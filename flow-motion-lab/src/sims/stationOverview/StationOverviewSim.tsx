@@ -145,22 +145,23 @@ export default function StationOverviewSim() {
     ctx.strokeStyle = dark ? "#2a4a73" : "#64748b"; ctx.lineWidth = 2; ctx.strokeRect(pumpX - mW / 2, pumpY - R - mH - 6, mW, mH);
     drawLabel(ctx, "มอเตอร์ M", pumpX, pumpY - R - mH / 2 - 6, { align: "center", color: dark ? "#e2e8f0" : "#0f172a", bg: "rgba(0,0,0,0)" });
     if (L.vfd) drawLabel(ctx, `VFD ${formatNumber(s.freq, 0)} Hz`, pumpX, pumpY - R - mH - 16, { align: "center", font: "bold 13px 'JetBrains Mono', monospace", color: dark ? "#67e8f9" : "#0891b2", bg: dark ? "rgba(8,13,24,0.8)" : "rgba(255,255,255,0.9)" });
-    if (L.status) drawLabel(ctx, "● RUN", pumpX + mW * 0.7, pumpY - R - mH - 16, { align: "left", color: "#10b981", bg: dark ? "rgba(8,13,24,0.6)" : "rgba(255,255,255,0.8)" });
+    if (L.status) drawLabel(ctx, "● RUN", pumpX, pumpY - R - mH - 34, { align: "center", font: "11px 'IBM Plex Sans Thai', sans-serif", color: "#10b981", bg: dark ? "rgba(8,13,24,0.6)" : "rgba(255,255,255,0.8)" });
 
-    // valves
+    // valves — names below the pipe (check on the left, gate on the right)
+    const small = "10px 'IBM Plex Sans Thai', sans-serif";
     if (L.valve) {
       ctx.fillStyle = "#10b981";
       ctx.beginPath(); ctx.moveTo(cvX - 6, pumpY - 9); ctx.lineTo(cvX + 6, pumpY); ctx.lineTo(cvX - 6, pumpY + 9); ctx.closePath(); ctx.fill();
       ctx.fillRect(gvX - 6, pumpY - 10, 12, 3); ctx.fillRect(gvX - 6, pumpY + 7, 12, 3);
-      drawLabel(ctx, "เช็ควาล์ว", cvX, pumpY + 20, { align: "center", color: dark ? "#94a3b8" : "#64748b", bg: dark ? "rgba(8,13,24,0.5)" : "rgba(255,255,255,0.7)" });
-      drawLabel(ctx, "เกตวาล์ว 100%", gvX, pumpY - 18, { align: "center", color: dark ? "#94a3b8" : "#64748b", bg: dark ? "rgba(8,13,24,0.5)" : "rgba(255,255,255,0.7)" });
+      drawLabel(ctx, "เช็ควาล์ว", cvX, pumpY + 18, { align: "center", font: small, color: dark ? "#94a3b8" : "#64748b", bg: dark ? "rgba(8,13,24,0.6)" : "rgba(255,255,255,0.8)" });
+      drawLabel(ctx, "เกตวาล์ว 100%", gvX, pumpY + 18, { align: "center", font: small, color: dark ? "#94a3b8" : "#64748b", bg: dark ? "rgba(8,13,24,0.6)" : "rgba(255,255,255,0.8)" });
     }
 
-    // pressure points
+    // pressure points — values on a lower lane so they never touch the names
     if (L.pressure) {
-      const pt = (x: number, bar: number, label: string) => { ctx.beginPath(); ctx.arc(x, pumpY, 4, 0, Math.PI * 2); ctx.fillStyle = bar > 6 ? "#ef4444" : bar > 4 ? "#f59e0b" : "#22d3ee"; ctx.fill(); drawLabel(ctx, `${label} ${formatNumber(bar)} bar`, x, pumpY + 30, { align: "center", color: dark ? "#e2e8f0" : "#0f172a", bg: dark ? "rgba(8,13,24,0.7)" : "rgba(255,255,255,0.85)" }); };
-      pt(pumpX - R - 18, s.psuc, "ดูด");
-      pt(gvX + 16, s.pdis, "ส่ง");
+      const pt = (x: number, bar: number, label: string) => { ctx.beginPath(); ctx.arc(x, pumpY, 4, 0, Math.PI * 2); ctx.fillStyle = bar > 6 ? "#ef4444" : bar > 4 ? "#f59e0b" : "#22d3ee"; ctx.fill(); drawLabel(ctx, `${label} ${formatNumber(bar)} bar`, x, pumpY + 40, { align: "center", font: small, color: dark ? "#e2e8f0" : "#0f172a", bg: dark ? "rgba(8,13,24,0.75)" : "rgba(255,255,255,0.9)" }); };
+      pt(pumpX - R - 14, s.psuc, "ดูด");
+      pt((gvX + tankX) / 2, s.pdis, "ส่ง");
     }
 
     // tank
@@ -178,8 +179,8 @@ export default function StationOverviewSim() {
     drawArrow(ctx, tankX + tankW, tankY + tankH * 0.4, width - 6, tankY + tankH * 0.4, "#67e8f9", 2.5, 8);
     drawLabel(ctx, "จ่ายน้ำ", width - 8, tankY + tankH * 0.4 - 12, { align: "right", color: dark ? "#94a3b8" : "#64748b", bg: dark ? "rgba(8,13,24,0.5)" : "rgba(255,255,255,0.7)" });
 
-    // sensor readouts (flow)
-    if (L.sensor) drawLabel(ctx, `Q ${formatNumber(s.flowH, 0)} m³/h`, (gvX + tankX) / 2, pumpY - 16, { align: "center", color: dark ? "#67e8f9" : "#0891b2", bg: dark ? "rgba(8,13,24,0.7)" : "rgba(255,255,255,0.9)" });
+    // sensor readouts (flow) — above the pipe near the tank inlet
+    if (L.sensor) drawLabel(ctx, `Q ${formatNumber(s.flowH, 0)} m³/h`, (gvX + tankX) / 2, pumpY - 22, { align: "center", font: "11px 'JetBrains Mono', monospace", color: dark ? "#67e8f9" : "#0891b2", bg: dark ? "rgba(8,13,24,0.75)" : "rgba(255,255,255,0.9)" });
 
     // energy panel
     if (L.energy) {

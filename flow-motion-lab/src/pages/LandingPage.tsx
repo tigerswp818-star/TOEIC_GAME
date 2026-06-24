@@ -86,6 +86,7 @@ export default function LandingPage() {
             theme={theme}
             className="block h-full w-full"
             ariaLabel="ของไหลไหลผ่านท่อใส มีอนุภาคน้ำ ลูกศรทิศทาง และสีตามความดัน"
+            zoomable={false}
           />
         </div>
         {/* Scrim — fades the live canvas into the page so the headline pops. */}

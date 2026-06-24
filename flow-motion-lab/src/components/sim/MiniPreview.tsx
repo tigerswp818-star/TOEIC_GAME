@@ -20,6 +20,7 @@ export default function MiniPreview({ draw }: MiniPreviewProps) {
         theme={theme}
         className="block h-full w-full"
         ariaLabel="ตัวอย่างภาพเคลื่อนไหว"
+        zoomable={false}
       />
       <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_18px_rgba(2,6,16,0.2)]" />
     </div>

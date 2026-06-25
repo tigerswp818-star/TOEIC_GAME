@@ -23,8 +23,8 @@ import {
   apparentViscosity,
   shearStress,
   stressCurve,
-  seedShearParticles,
-  layerVelocity,
+  channelProfile,
+  plugFraction,
   FLUID_TYPES,
   CUSTOM_COLOR,
   GAMMA_MIN,
@@ -32,10 +32,22 @@ import {
   type ShearParticle,
 } from "./nonNewtonianModel";
 
-const LAYERS = 9;
-const PER_LAYER = 16;
-/** Normalised cell-widths per second per (relative top-plate velocity). */
-const SPEED = 0.22;
+const PARTICLES = 220;
+/** Normalised channel-widths per second at the centreline (full speed). */
+const SPEED = 0.5;
+
+/** Seed a cloud of particles across the channel (xf across, yf 0→1 height). */
+function seedCloud(count: number): ShearParticle[] {
+  return Array.from({ length: count }, () => ({ xf: Math.random(), yf: Math.random() }));
+}
+
+/** Behaviour-family note drawn on the canvas for the profile shape. */
+function shapeNote(n: number, tau0: number): string {
+  if (tau0 > 0) return "แกนแข็งตรงกลาง (plug) + เฉือนที่ผนัง";
+  if (n < 0.95) return "profile แบน/ป้าน (shear-thinning)";
+  if (n > 1.05) return "profile แหลม (shear-thickening)";
+  return "profile พาราโบลา (Newtonian)";
+}
 /** Default custom-fluid K and n when the learner enables the custom type. */
 const CUSTOM_DEFAULT = { k: 1.5, n: 0.7 };
 
@@ -135,10 +147,10 @@ export default function NonNewtonianSim() {
   const [typeIndex, setTypeIndex] = useState(0);
   const [custom, setCustom] = useState<CustomParams>(CUSTOM_DEFAULT);
 
-  // Particle layers seeded once, re-seeded on Reset.
-  const particlesRef = useRef<ShearParticle[]>(seedShearParticles(LAYERS, PER_LAYER));
-  // Top-plate horizontal offset (relative units), advanced by dt.
-  const plateRef = useRef(0);
+  // Particle cloud across the channel, re-seeded on Reset.
+  const particlesRef = useRef<ShearParticle[]>(seedCloud(PARTICLES));
+  // Dye-line phase (loops) so injected lines deform into the velocity profile.
+  const dyePhaseRef = useRef(0);
 
   // Active fluid behaviour: a preset, or the custom slider fluid.
   const isCustom = typeIndex < 0;
@@ -153,15 +165,16 @@ export default function NonNewtonianSim() {
 
   const tau = shearStress(gammaDot, activeK, activeN, activeTau0);
   const muApp = apparentViscosity(gammaDot, activeK, activeN, activeTau0);
+  const plug = plugFraction(activeTau0, activeK, activeN, gammaDot);
 
   // Keep the latest physics available to the per-frame draw closure.
-  const physicsRef = useRef({ gammaDot, color: activeColor, tau0: activeTau0 });
-  physicsRef.current = { gammaDot, color: activeColor, tau0: activeTau0 };
+  const physicsRef = useRef({ gammaDot, color: activeColor, tau0: activeTau0, n: activeN, plug });
+  physicsRef.current = { gammaDot, color: activeColor, tau0: activeTau0, n: activeN, plug };
 
-  // Re-seed layers & reset the plate when the user hits Reset.
+  // Re-seed particles & reset the dye phase when the user hits Reset.
   useEffect(() => {
-    particlesRef.current = seedShearParticles(LAYERS, PER_LAYER);
-    plateRef.current = 0;
+    particlesRef.current = seedCloud(PARTICLES);
+    dyePhaseRef.current = 0;
   }, [controls.resetNonce]);
 
   // Guided/Challenge presets arrive as a flat numeric record; `typeIndex` is a
@@ -179,116 +192,92 @@ export default function NonNewtonianSim() {
 
   const draw = ({ ctx, width, height, dt, theme: th }: DrawContext) => {
     const dark = th === "dark";
-    const { gammaDot: gd, color, tau0 } = physicsRef.current;
+    const { gammaDot: gd, color, tau0, n, plug } = physicsRef.current;
 
-    const margin = 16;
-    const cellX = margin;
-    const cellW = width - margin * 2;
-    const plateH = 12;
-    const top = height * 0.16;
-    const bottom = height * 0.86;
-    const cellH = bottom - top;
+    const margin = 18;
+    const left = margin;
+    const right = width - margin;
+    const chW = right - left;
+    const top = height * 0.22;
+    const bottom = height * 0.82;
+    const centerY = (top + bottom) / 2;
+    const halfH = (bottom - top) / 2;
+    const wallH = 10;
 
-    // The top plate moves right with speed proportional to γ̇ (du/dy = γ̇);
-    // its offset accumulates via dt so all motion stops on pause.
-    plateRef.current = (plateRef.current + gd * SPEED * dt) % 1;
-    const topVel = layerVelocity(1, gd);
-    const maxVel = Math.max(topVel, 1e-6);
+    // Overall speed scales with γ̇; the PROFILE SHAPE is set by the fluid (n, τ₀).
+    const uMaxN = clamp(0.18 + (gd / GAMMA_MAX) * 0.95, 0.18, 1.1);
+    const ynOf = (yf: number) => 2 * yf - 1; // yf 0(bottom)→1(top) ⇒ yn -1..1
+    const yOf = (yf: number) => bottom - yf * (bottom - top);
 
-    // Bingham: below yield the whole slab barely moves (near-rigid plug) until
-    // the shear stress exceeds τ₀. For τ₀ = 0 fluids it is always "yielded".
-    const yielded = tau0 === 0 || gd > 0.5;
+    // --- fluid tint ---
+    ctx.globalAlpha = dark ? 0.1 : 0.14;
+    ctx.fillStyle = color;
+    ctx.fillRect(left, top, chW, bottom - top);
+    ctx.globalAlpha = 1;
 
-    // --- cell fluid background ---
-    ctx.beginPath();
-    ctx.rect(cellX, top, cellW, cellH);
-    const grad = ctx.createLinearGradient(0, top, 0, bottom);
-    grad.addColorStop(0, dark ? "rgba(30,41,59,0.55)" : "rgba(203,213,225,0.5)");
-    grad.addColorStop(1, dark ? "rgba(15,23,42,0.7)" : "rgba(226,232,240,0.45)");
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // --- bottom plate (fixed, no-slip wall) ---
-    ctx.fillStyle = dark ? "#334155" : "#64748b";
-    ctx.fillRect(cellX - 2, bottom, cellW + 4, plateH);
-    drawLabel(ctx, "แผ่นล่างอยู่กับที่ (no-slip)", cellX + 4, bottom + plateH + 12, {
-      align: "left",
-      color: dark ? "#cbd5e1" : "#1e293b",
-      bg: dark ? "rgba(8,13,24,0.6)" : "rgba(255,255,255,0.8)",
-    });
-
-    // --- top plate (moves right ∝ γ̇) ---
-    ctx.fillStyle = dark ? "#475569" : "#475569";
-    ctx.fillRect(cellX - 2, top - plateH, cellW + 4, plateH);
-    // small arrows on the top plate showing direction & relative speed
-    const arrowLen = clamp(10 + topVel * 1.2, 10, cellW * 0.22);
-    for (const fx of [0.2, 0.5, 0.8]) {
-      const ax = cellX + cellW * fx - arrowLen / 2;
-      drawArrow(ctx, ax, top - plateH / 2, ax + arrowLen, top - plateH / 2, "#f8fafc", 2, 7);
+    // --- plug core band (yield-stress fluids move as a rigid plug) ---
+    if (plug > 0.02) {
+      const yT = centerY - plug * halfH;
+      const yB = centerY + plug * halfH;
+      ctx.fillStyle = dark ? "rgba(168,85,247,0.22)" : "rgba(168,85,247,0.16)";
+      ctx.fillRect(left, yT, chW, yB - yT);
+      ctx.strokeStyle = "rgba(168,85,247,0.65)";
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(left, yT); ctx.lineTo(right, yT);
+      ctx.moveTo(left, yB); ctx.lineTo(right, yB);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawLabel(ctx, "แกนแข็ง plug (ไม่เฉือน)", (left + right) / 2, centerY, { align: "center", font: "11px 'IBM Plex Sans Thai', sans-serif", color: "#fff", bg: "rgba(126,34,206,0.8)" });
     }
-    drawLabel(ctx, `แผ่นบนเคลื่อนที่ →  v ∝ γ̇`, cellX + cellW - 4, top - plateH - 10, {
-      align: "right",
-      color: dark ? "#f8fafc" : "#0f172a",
-      bg: color + (dark ? "cc" : "dd"),
-      font: "bold 11px 'IBM Plex Sans Thai', sans-serif",
-    });
 
-    // --- velocity-profile guide line (linear: u(y) = γ̇·y) ---
-    ctx.save();
-    ctx.strokeStyle = dark ? "rgba(148,163,184,0.5)" : "rgba(71,85,105,0.5)";
-    ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 1.4;
-    const profW = cellW * 0.34;
-    ctx.beginPath();
-    ctx.moveTo(cellX + 4, bottom); // u = 0 at bottom
-    ctx.lineTo(cellX + 4 + profW, top); // u = max at top
-    ctx.stroke();
-    ctx.restore();
+    // --- walls (no-slip) ---
+    ctx.fillStyle = dark ? "#334155" : "#64748b";
+    ctx.fillRect(left - 2, top - wallH, chW + 4, wallH);
+    ctx.fillRect(left - 2, bottom, chW + 4, wallH);
 
-    // --- particle layers (horizontal speed grows linearly with height) ---
-    const r = Math.max(2.2, cellH / (LAYERS * 3.2));
+    // --- flowing particles: horizontal speed follows the profile shape ---
     for (const p of particlesRef.current) {
-      const u = layerVelocity(p.yf, gd) / maxVel; // 0..1 relative
-      // Below yield, plug-flow: every layer drifts at the same slow rate.
-      const drift = yielded ? u : 0.04;
-      p.xf += drift * SPEED * dt;
-      if (p.xf > 1) {
-        p.xf -= 1;
-      }
-      const x = cellX + p.xf * cellW;
-      const y = bottom - p.yf * cellH;
-      // Spacing/colour conveys "thickness": faster layers glow brighter.
-      ctx.globalAlpha = controls.toggles.particles ? 0.95 : 0.16;
-      const trail = clamp(u * cellW * 0.06, 0, 14);
-      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(u), {
-        radius: r,
-        trail,
-        alpha: 0.95,
-        glow: u > 0.6,
-      });
+      const u = channelProfile(ynOf(p.yf), n, plug); // 0(wall)..1(centre)
+      p.xf += uMaxN * (0.05 + u) * SPEED * dt;
+      if (p.xf > 1) p.xf -= 1;
+      const x = left + p.xf * chW;
+      const y = yOf(p.yf);
+      ctx.globalAlpha = controls.toggles.particles ? 1 : 0.15;
+      const trail = clamp(u * uMaxN * chW * 0.12, 0, 30);
+      drawFlowParticle(ctx, x, y, 1, 0, velocityRampRGB(u), { radius: 2 + u * 1.1, trail, alpha: 0.9, glow: u > 0.6 });
       ctx.globalAlpha = 1;
     }
 
-    // overlay fluid tint so the cell reads as the active fluid's colour
-    ctx.globalAlpha = 0.06;
-    ctx.fillStyle = color;
-    ctx.fillRect(cellX, top, cellW, cellH);
-    ctx.globalAlpha = 1;
-
-    // --- readouts ---
-    drawLabel(ctx, `γ̇ = ${formatNumber(gd, 1)} 1/s`, cellX + 4, top + 14, {
-      align: "left",
-      color: dark ? "#e2e8f0" : "#0f172a",
-      bg: dark ? "rgba(8,13,24,0.7)" : "rgba(255,255,255,0.85)",
-    });
-    if (tau0 > 0 && !yielded) {
-      drawLabel(ctx, "ยังไม่เกิน yield stress → แทบไม่ไหล", width - 8, bottom - 8, {
-        align: "right",
-        color: "#fef3c7",
-        bg: "rgba(180,83,9,0.85)",
-        font: "bold 11px 'IBM Plex Sans Thai', sans-serif",
-      });
+    // --- velocity-profile diagram at the inlet (SHAPE changes with fluid) ---
+    const samples = 40;
+    const profW = chW * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(left + 2, yOf(0));
+    for (let i = 0; i <= samples; i++) {
+      const yf = i / samples;
+      const u = channelProfile(ynOf(yf), n, plug);
+      ctx.lineTo(left + 2 + u * profW, yOf(yf));
     }
+    ctx.lineTo(left + 2, yOf(1));
+    ctx.closePath();
+    ctx.fillStyle = dark ? "rgba(103,232,249,0.14)" : "rgba(8,145,178,0.14)";
+    ctx.fill();
+    ctx.strokeStyle = dark ? "#67e8f9" : "#0891b2";
+    ctx.lineWidth = 2.2;
+    ctx.stroke();
+    // velocity arrows along the profile (length ∝ local speed)
+    for (const yf of [0.15, 0.3, 0.5, 0.7, 0.85]) {
+      const u = channelProfile(ynOf(yf), n, plug);
+      const y = yOf(yf);
+      drawArrow(ctx, left + 2, y, left + 2 + Math.max(3, u * profW), y, "#f59e0b", 1.6, 6);
+    }
+    drawLabel(ctx, "รูปทรงความเร็ว v(y)", left + 2, yOf(1) - 2, { align: "left", font: "11px 'IBM Plex Sans Thai', sans-serif", color: dark ? "#67e8f9" : "#0891b2", bg: dark ? "rgba(8,13,24,0.7)" : "rgba(255,255,255,0.85)" });
+
+    // --- labels ---
+    drawLabel(ctx, `→ การไหลในท่อ · γ̇ = ${formatNumber(gd, 1)} 1/s`, right - 4, bottom - 6, { align: "right", color: dark ? "#e2e8f0" : "#0f172a", bg: dark ? "rgba(8,13,24,0.7)" : "rgba(255,255,255,0.85)" });
+    drawLabel(ctx, shapeNote(n, tau0), (left + right) / 2, top + 12, { align: "center", font: "bold 12px 'IBM Plex Sans Thai', sans-serif", color: "#fff", bg: color + (dark ? "cc" : "dd") });
   };
 
   // Adaptive explanation by behaviour family.
@@ -470,7 +459,7 @@ export default function NonNewtonianSim() {
             speed={controls.speed}
             theme={theme}
             className="block h-full w-full"
-            ariaLabel="เซลล์เฉือน แผ่นบนเคลื่อนที่ แผ่นล่างอยู่กับที่ ของไหลเป็นชั้นเคลื่อนเร็วขึ้นจากล่างขึ้นบน"
+            ariaLabel="การไหลในท่อ แสดงรูปทรงความเร็ว (velocity profile) ที่เปลี่ยนตามชนิดของไหล Newtonian/shear-thinning/thickening/Bingham"
           />
         </SimStage>
       }

@@ -168,3 +168,35 @@ export function seedShearParticles(layers: number, perLayer: number): ShearParti
 export function layerVelocity(yf: number, gammaDot: number): number {
   return gammaDot * yf;
 }
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+/**
+ * Plug-core fraction (0→1) for a yield-stress (Bingham/Herschel–Bulkley) fluid
+ * in pressure-driven channel flow: the central band where the stress is below
+ * τ₀ moves as a rigid plug. Ratio of yield stress to wall stress.
+ */
+export function plugFraction(tau0: number, k: number, n: number, gammaDot: number): number {
+  if (tau0 <= 0) return 0;
+  const tauWall = shearStress(Math.max(gammaDot, 1e-6), k, n, tau0);
+  return clamp01(tau0 / tauWall) * 0.92;
+}
+
+/**
+ * Normalised pressure-driven channel velocity profile (1 at centre, 0 at walls)
+ * as a function of yn ∈ [-1, 1]. The SHAPE depends on the fluid:
+ *   - Newtonian (n=1):     u = 1 − yn²            → parabola
+ *   - Shear-thinning (n<1): exponent > 2          → blunt / plug-like
+ *   - Shear-thickening (n>1): exponent < 2        → pointed
+ *   - Yield stress:        flat rigid plug in |yn| ≤ plug, sheared shoulders
+ */
+export function channelProfile(yn: number, n: number, plug: number): number {
+  const a = Math.min(1, Math.abs(yn));
+  const m = (n + 1) / n; // power-law profile exponent
+  if (plug > 0) {
+    if (a <= plug) return 1;
+    const t = (a - plug) / (1 - plug);
+    return clamp01(1 - Math.pow(t, m));
+  }
+  return clamp01(1 - Math.pow(a, m));
+}

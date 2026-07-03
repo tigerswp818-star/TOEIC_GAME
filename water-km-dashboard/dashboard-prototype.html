@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Water Operation KM Dashboard</title>
+</head>
+<body>
+<title>Water Operation KM Dashboard</title>
+<style>
+  :root {
+    --bg: #eef3f6;
+    --surface: #ffffff;
+    --surface-2: #e6edf2;
+    --ink: #10222e;
+    --ink-2: #46596577;
+    --ink-sec: #465965;
+    --muted: #74848f;
+    --line: #d3dde4;
+    --line-soft: #e2eaef;
+    --accent: #2a78d6;
+    --accent-deep: #1c5cab;
+    --accent-soft: #e3eefb;
+    --good: #0d8a56;
+    --good-soft: #e0f3ea;
+    --warn: #b47a00;
+    --warn-soft: #fbf0d7;
+    --crit: #ce3737;
+    --crit-soft: #fbe4e4;
+    --series-1: #2a78d6;
+    --series-2: #1baf7a;
+    --series-3: #eda100;
+    --series-4: #008300;
+    --chip-sample: #7a5c00;
+    --chip-sample-bg: #fdf3d0;
+    --shadow: 0 1px 3px rgba(16,34,46,.08), 0 4px 16px rgba(16,34,46,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c1319;
+      --surface: #121d27;
+      --surface-2: #1a2836;
+      --ink: #e7eef4;
+      --ink-sec: #a6b7c3;
+      --muted: #6d8191;
+      --line: #24343f;
+      --line-soft: #1d2b36;
+      --accent: #3987e5;
+      --accent-deep: #6da7ec;
+      --accent-soft: #16283e;
+      --good: #2cc98b;
+      --good-soft: #123227;
+      --warn: #f0b03a;
+      --warn-soft: #33270e;
+      --crit: #ee7272;
+      --crit-soft: #3a1a1a;
+      --series-1: #3987e5;
+      --series-2: #199e70;
+      --series-3: #c98500;
+      --series-4: #3fa73f;
+      --chip-sample: #f4cf6c;
+      --chip-sample-bg: #33270e;
+      --shadow: 0 1px 3px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eef3f6; --surface: #ffffff; --surface-2: #e6edf2; --ink: #10222e;
+    --ink-sec: #465965; --muted: #74848f; --line: #d3dde4; --line-soft: #e2eaef;
+    --accent: #2a78d6; --accent-deep: #1c5cab; --accent-soft: #e3eefb;
+    --good: #0d8a56; --good-soft: #e0f3ea; --warn: #b47a00; --warn-soft: #fbf0d7;
+    --crit: #ce3737; --crit-soft: #fbe4e4;
+    --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100; --series-4: #008300;
+    --chip-sample: #7a5c00; --chip-sample-bg: #fdf3d0;
+    --shadow: 0 1px 3px rgba(16,34,46,.08), 0 4px 16px rgba(16,34,46,.05);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1319; --surface: #121d27; --surface-2: #1a2836; --ink: #e7eef4;
+    --ink-sec: #a6b7c3; --muted: #6d8191; --line: #24343f; --line-soft: #1d2b36;
+    --accent: #3987e5; --accent-deep: #6da7ec; --accent-soft: #16283e;
+    --good: #2cc98b; --good-soft: #123227; --warn: #f0b03a; --warn-soft: #33270e;
+    --crit: #ee7272; --crit-soft: #3a1a1a;
+    --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500; --series-4: #3fa73f;
+    --chip-sample: #f4cf6c; --chip-sample-bg: #33270e;
+    --shadow: 0 1px 3px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", "Noto Sans Thai", "Leelawadee UI", "Sarabun", Thonburi, -apple-system, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  .app { display: flex; min-height: 100vh; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: 230px; flex: 0 0 230px;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    padding: 18px 12px;
+    display: flex; flex-direction: column; gap: 2px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .brand { padding: 4px 10px 14px; border-bottom: 1px solid var(--line-soft); margin-bottom: 10px; }
+  .brand .t1 { font-weight: 700; font-size: 15px; letter-spacing: .2px; }
+  .brand .t2 { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .brand .wave { color: var(--accent); font-size: 18px; line-height: 1; margin-bottom: 6px; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; text-align: left;
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-sec); font: inherit; font-size: 13.5px;
+    padding: 8px 10px; border-radius: 8px;
+  }
+  .nav-btn svg { width: 16px; height: 16px; flex: 0 0 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-btn:hover { background: var(--surface-2); color: var(--ink); }
+  .nav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .nav-btn.active { background: var(--accent-soft); color: var(--accent-deep); font-weight: 600; }
+  .nav-sep { font-size: 10.5px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding: 12px 10px 4px; }
+  .sidebar .foot { margin-top: auto; padding: 12px 10px 4px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line-soft); }
+
+  /* ---------- Main ---------- */
+  .main { flex: 1; min-width: 0; padding: 22px 28px 60px; }
+  .topbar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; margin-bottom: 20px; }
+  .topbar h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: .2px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; padding: 3px 10px; border-radius: 999px;
+    background: var(--surface-2); color: var(--ink-sec); border: 1px solid var(--line);
+  }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+  .pill.sample { background: var(--chip-sample-bg); color: var(--chip-sample); border-color: transparent; font-weight: 600; }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .pane > h2 { font-size: 17px; margin: 0 0 4px; }
+  .pane > .sub { color: var(--muted); font-size: 13px; margin: 0 0 18px; max-width: 70ch; }
+
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 14px; }
+  .cols-2 { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 18px; box-shadow: var(--shadow);
+    min-width: 0;
+  }
+  .card h3 { margin: 0 0 2px; font-size: 13.5px; font-weight: 700; }
+  .card .hint { color: var(--muted); font-size: 11.5px; margin: 0 0 12px; }
+
+  .kpi .label { font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+  .kpi .value { font-size: 26px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .kpi .value small { font-size: 13px; font-weight: 600; color: var(--ink-sec); }
+  .kpi .note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .kpi.accent .value { color: var(--accent-deep); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-family: ui-monospace, Consolas, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .scroll-x { overflow-x: auto; }
+
+  .badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; letter-spacing: .03em; white-space: nowrap; }
+  .badge.b-code { background: var(--accent-soft); color: var(--accent-deep); font-family: ui-monospace, Consolas, monospace; }
+  .badge.b-nodata { background: var(--surface-2); color: var(--muted); font-weight: 500; }
+  .badge.b-good { background: var(--good-soft); color: var(--good); }
+  .badge.b-warn { background: var(--warn-soft); color: var(--warn); }
+  .badge.b-sample { background: var(--chip-sample-bg); color: var(--chip-sample); }
+
+  .tankbar { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+  .tankbar .rail { flex: 1; height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+  .tankbar .fill { height: 100%; border-radius: 4px 0 0 4px; background: var(--series-1); }
+  .tankbar .pct { font-size: 11px; color: var(--ink-sec); font-variant-numeric: tabular-nums; width: 34px; text-align: right; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-sec); margin-top: 10px; }
+  .legend .key { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-sec);
+    font: inherit; font-size: 12.5px; padding: 5px 13px; border-radius: 999px; cursor: pointer;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent-deep); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  .search {
+    width: 100%; max-width: 420px; display: block;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 9px;
+    padding: 9px 14px; font: inherit; margin: 0 0 12px;
+  }
+  .search:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+
+  .km-card { border-left: 3px solid var(--accent); }
+  .km-card .cat { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-deep); }
+  .km-card h4 { margin: 4px 0 6px; font-size: 14.5px; }
+  .km-card p { margin: 0 0 8px; font-size: 13px; color: var(--ink-sec); }
+  .km-card .take { font-size: 12.5px; background: var(--surface-2); border-radius: 8px; padding: 8px 12px; color: var(--ink); }
+  .km-card .take b { color: var(--accent-deep); }
+  .km-card .meta { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  .empty {
+    border: 1.5px dashed var(--line); border-radius: 12px;
+    padding: 34px 24px; text-align: center; color: var(--muted); background: none;
+  }
+  .empty .big { font-size: 15px; font-weight: 600; color: var(--ink-sec); margin-bottom: 4px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #fff; border: none; border-radius: 9px;
+    padding: 9px 18px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { background: var(--accent-deep); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--ink-sec); border: 1px solid var(--line); }
+  .btn.ghost:hover { color: var(--accent-deep); border-color: var(--accent); background: var(--surface); }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+  .flowline { stroke: var(--series-2); stroke-width: 2.5; fill: none; }
+  .map-node { cursor: default; }
+  .map-node rect.body { fill: var(--surface); stroke: var(--line); rx: 8; }
+  .map-node text { fill: var(--ink); }
+  .map-label { fill: var(--muted); font-size: 10px; letter-spacing: .08em; }
+
+  svg text { font-family: inherit; }
+  .axis-t { fill: var(--muted); font-size: 10px; }
+  .gridline { stroke: var(--line-soft); stroke-width: 1; }
+
+  .decoder { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .decoder input {
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 9px; padding: 9px 14px; font-family: ui-monospace, Consolas, monospace;
+    font-size: 14px; width: 150px; text-transform: uppercase;
+  }
+  .decoder input:focus-visible { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .decode-out { font-size: 13.5px; padding: 10px 14px; border-radius: 9px; background: var(--accent-soft); color: var(--ink); }
+
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 50;
+    background: var(--ink); color: var(--bg);
+    font-size: 12px; padding: 6px 10px; border-radius: 7px;
+    box-shadow: var(--shadow); display: none; white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note-box { font-size: 12.5px; color: var(--ink-sec); background: var(--surface-2); border-radius: 9px; padding: 10px 14px; }
+  .warn-box { font-size: 12.5px; color: var(--warn); background: var(--warn-soft); border-radius: 9px; padding: 10px 14px; }
+
+  @media (max-width: 860px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; flex: none; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
+    .sidebar .foot, .nav-sep { display: none; }
+    .brand { border: none; margin: 0; width: 100%; padding-bottom: 6px; }
+    .main { padding: 16px 14px 60px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pane.active { animation: fadein .18s ease-out; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+
+<div class="app">
+  <nav class="sidebar" aria-label="เมนูหลัก">
+    <div class="brand">
+      <div class="wave">≋</div>
+      <div class="t1">Water Operation KM</div>
+      <div class="t2">ระบบจัดการองค์ความรู้งานสูบส่ง–สูบจ่ายน้ำ</div>
+    </div>
+    <div id="nav"></div>
+    <div class="foot">
+      ต้นแบบ (Prototype) จาก Master Data<br>
+      เวอร์ชัน <span id="f-ver"></span> · <span id="f-km"></span> องค์ความรู้
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="pane-title">Overview</h1>
+      <span class="pill"><span class="dot"></span>Master Data v<span id="h-ver"></span></span>
+      <span class="pill mono">SCADA Snapshot: 3 ก.ค. 2026 · 14:05</span>
+      <span class="pill sample" title="กราฟรายชั่วโมงเป็นข้อมูลตัวอย่างเพื่อสาธิตรูปแบบ">บางส่วนใช้ Sample Data</span>
+    </div>
+    <div id="panes"></div>
+  </main>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+window.MASTER = {"projectName": "Water Operation KM Dashboard", "projectNameTh": "ระบบจัดการองค์ความรู้งานสูบส่งและสูบจ่ายน้ำ", "lastUpdate": "2026-07-03", "dataVersion": 7, "changeLog": [{"version": 1, "date": "2026-07-03", "detail": "ตั้งต้น Master Data: ระบบสูบส่ง 4 + สถานีสูบจ่าย 10"}, {"version": 2, "date": "2026-07-03", "detail": "ชุดที่ 1: ภาพ SCADA เทพอุโมงค์ (Smart Tunnel) 3 ก.ค. 2026 14:05, แผนที่ระบบส่ง-จ่ายน้ำ กปน. (ปรับปรุง 6 ก.พ. 69), รายงานองค์ความรู้ระบบส่ง-จ่ายน้ำ"}, {"version": 3, "date": "2026-07-03", "detail": "ชุดที่ 2: องค์ความรู้จากบันทึกการเรียนรู้งาน ณ กคจ. — ปรัชญาระบบ, ไฮดรอลิกอุโมงค์, SCADA/RTU/RCV เชิงลึก, Step Test/Water Balance, GIS, CP"}, {"version": 4, "date": "2026-07-03", "detail": "ชุดที่ 3: โครงสร้างบริหาร (ชั้น 6/ชั้น 4, Set Point), การควบคุมด้วย Curve ขอบบน-ล่าง, การวิเคราะห์ Demand/ตรวจจับท่อแตกจากกราฟ, ขอบเขตท่อประธาน ≥400 มม., Water Balance และข้อจำกัด, การจัดการวิกฤตไฟดับ/น้ำเค็ม"}, {"version": 5, "date": "2026-07-03", "detail": "ชุดที่ 4: ขยายความ Manage (ชั้น 6) vs Operate (ชั้น 4/สถานี) — บทบาท, Set Point, โลจิสติกส์น้ำ (6 ล้าน→จ่าย 5 ล้าน ลบ.ม.), การตัดสินใจช่วงวิกฤตคุณภาพน้ำ, วาล์ว Front/Discharge, รันปั๊มขนาน, โซนนิคมอุตสาหกรรม"}, {"version": 6, "date": "2026-07-03", "detail": "ชุดที่ 5: การจ่ายน้ำปกติ vs การผันน้ำ (Diversion) — วัตถุประสงค์, เครื่องมือ (ปั๊ม vs RCV/By-pass), ทิศทางการไหล/การส่งน้ำข้ามโซน, ตารางเปรียบเทียบ"}, {"version": 7, "date": "2026-07-03", "detail": "ชุดที่ 6: Smart Waterworks Playbook (สไลด์ 10 หน้า) — สัดส่วนกำลังผลิตโรงผลิต 4 แห่ง, Journey of Water 4 Stage, Interdependence Rule, SCADA Chain (RTU→DNP3→OPC), RTU Nomenclature (UZ 0114), Pressure Optimization Curve (±0.5m), Diagnostic Signatures, RCV Diversion Scenario"}], "waterTreatmentPlants": [{"plantCode": "BK", "plantName": "โรงผลิตน้ำบางเขน", "highlight": "ใหญ่ที่สุด กำลังการผลิต ~4.2 ล้าน ลบ.ม./วัน (~67% ของระบบ)", "rawWaterSource": "ยังไม่มีข้อมูล", "feedsSystems": ["TR1", "TR2", "TR3"], "note": "บนจอ SCADA แสดงเป็นฝั่ง BK จ่ายเข้าอุโมงค์ TR1 / TR2 / TR3", "capacityShare": "~67% ของระบบ / ~4.2 ล้านหน่วย (Playbook)"}, {"plantCode": "MH", "plantName": "โรงผลิตน้ำมหาสวัสดิ์", "highlight": "ใหม่ที่สุด กำลังการผลิต ~1.9 ล้าน ลบ.ม./วัน (~30% ของระบบ)", "rawWaterSource": "แม่น้ำแม่กลอง (ฝั่งตะวันตก)", "feedsSystems": ["MH"], "note": "ยังไม่มีข้อมูลกำลังการผลิต", "capacityShare": "~30% ของระบบ / ~1.9 ล้านหน่วย (Playbook)"}, {"plantCode": "SS", "plantName": "โรงผลิตน้ำสามเสน", "highlight": "เก่าแก่ที่สุด จุดเริ่มต้นของการประปา", "rawWaterSource": "ยังไม่มีข้อมูล", "feedsSystems": [], "note": "ปรากฏบนจอ SCADA (SS, SS1-SS4) — รอยืนยันบทบาทในระบบสูบส่ง", "capacityShare": "~3-4% ของระบบ (Playbook)"}, {"plantCode": "TB", "plantName": "โรงผลิตน้ำธนบุรี", "highlight": "เล็กที่สุด ผลิตและสูบจ่ายเฉพาะพื้นที่ฝั่งธนบุรี", "rawWaterSource": "ยังไม่มีข้อมูล", "feedsSystems": [], "note": "ปรากฏบนจอ SCADA เป็น TB (ถัง 3,857 Sqm, Max 4.80) — รอยืนยันบทบาท", "capacityShare": "<1% ของระบบ (Playbook)"}], "mainTransmissionSystems": [{"systemCode": "MH", "systemName": "มหาสวัสดิ์", "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ / ท่อส่งน้ำมหาสวัสดิ์)", "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำมหาสวัสดิ์เข้าระบบอุโมงค์/ท่อส่งน้ำ", "source": "โรงผลิตน้ำมหาสวัสดิ์ (น้ำดิบจากแม่น้ำแม่กลอง)", "connectedStations": [], "flow": "40010 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)", "pressure": "4.05 (ค่าอ่านจาก SCADA — รอยืนยันหน่วยและตำแหน่งวัด)", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "note": "ค่าอื่นบนจอฝั่ง MH: 21.94, 23807, 27.97, 15761, 8046, 8017 — รอยืนยันความหมาย / จุดวัดแรงดัน P051 อยู่ใกล้ MH", "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"}, {"systemCode": "TR1", "systemName": "TR1 บางเขน", "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)", "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ", "source": "โรงผลิตน้ำบางเขน (BK)", "connectedStations": [], "flow": "46476 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)", "pressure": "33.22 (ค่าอ่านจาก SCADA ฝั่ง TR1 — รอยืนยันหน่วยและตำแหน่งวัด)", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "note": "BK03 คือชุดวาล์ว/จุดเชื่อมฝั่ง TR1-TR2 (รอยืนยัน)", "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"}, {"systemCode": "TR2", "systemName": "TR2 บางเขน", "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)", "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ", "source": "โรงผลิตน้ำบางเขน (BK)", "connectedStations": [], "flow": "46840 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)", "pressure": "36.06 (ค่าอ่านจาก SCADA ฝั่ง TR2 — รอยืนยันหน่วยและตำแหน่งวัด)", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "note": "ค่า 3.44 และ BK04 ปรากฏใกล้ TR2/TR3 — รอยืนยันความหมาย / UZ1609 เป็นจุดอุปกรณ์ใกล้เคียง", "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"}, {"systemCode": "TR3", "systemName": "TR3 บางเขน", "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)", "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ", "source": "โรงผลิตน้ำบางเขน (BK)", "connectedStations": [], "flow": "52580 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)", "pressure": "25.09 (ค่าอ่านจาก SCADA ฝั่งขวาแนว TR3 — รอยืนยันหน่วยและตำแหน่งวัด)", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "note": "ยังไม่มีข้อมูล", "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"}], "pumpingStations": [{"stationCode": "SR", "stationName": "สถานีสูบจ่ายสำโรง", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "3.31", "maxLevelM": "5.63", "areaSqm": "14,081", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ตำแหน่งบนผัง: ฝั่งตะวันออกตอนล่าง ใกล้ BP"}, {"stationCode": "KT", "stationName": "สถานีสูบจ่ายคลองเตย", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.69", "maxLevelM": "5.63", "areaSqm": "8,120", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "มี คลองเตย VC (Valve Chamber) บนแนวอุโมงค์"}, {"stationCode": "BP", "stationName": "สถานีสูบจ่ายบางพลี", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.61", "maxLevelM": "5.90", "areaSqm": "11,000", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ยังไม่มีข้อมูล"}, {"stationCode": "LK", "stationName": "สถานีสูบจ่ายลาดกระบัง", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.42", "maxLevelM": "5.63", "areaSqm": "9,000", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ยังไม่มีข้อมูล"}, {"stationCode": "MB", "stationName": "สถานีสูบจ่ายมีนบุรี", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "5.47", "maxLevelM": "7.10", "areaSqm": "7,745", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "บนจอมีช่อง LV และพื้นที่ 4,216 Sqm เพิ่มอีกหนึ่งค่า — อาจมีถัง 2 ใบ รอยืนยัน"}, {"stationCode": "LP", "stationName": "สถานีสูบจ่ายลุมพินี", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.13", "maxLevelM": "5.70", "areaSqm": "8,570", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "มี ลุมพินี VC (Valve Chamber) บนแนวอุโมงค์"}, {"stationCode": "LA", "stationName": "สถานีสูบจ่ายลาดพร้าว", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.29", "maxLevelM": "5.63", "areaSqm": "13,815", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ยังไม่มีข้อมูล"}, {"stationCode": "TP", "stationName": "สถานีสูบจ่ายท่าพระ", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "5.29", "maxLevelM": "5.63", "areaSqm": "8,120", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกของแม่น้ำเจ้าพระยา"}, {"stationCode": "RB", "stationName": "สถานีสูบจ่ายราษฎร์บูรณะ", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "5.4", "maxLevelM": "5.60", "areaSqm": "10,025", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกตอนล่าง"}, {"stationCode": "PK", "stationName": "สถานีสูบจ่ายเพชรเกษม", "sourceSystem": "ยังไม่มีข้อมูล", "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)", "pressureIn": "ยังไม่มีข้อมูล", "pressureOut": "ยังไม่มีข้อมูล", "maxFlowToday": "ยังไม่มีข้อมูล", "maxPressureToday": "ยังไม่มีข้อมูล", "serviceArea": "ยังไม่มีข้อมูล", "rtu": "ยังไม่มีข้อมูล", "status": "ยังไม่มีข้อมูล", "issue": "ยังไม่มีข้อมูล", "clearWaterTank": {"levelM": "4.97", "maxLevelM": "6.70", "areaSqm": "10,500", "asOf": "2026-07-03 14:05 (SCADA)"}, "note": "ตำแหน่งบนผัง: ฝั่งตะวันตก ใกล้แนวท่อส่งน้ำมหาสวัสดิ์ (เส้นสีเขียวบนแผนที่)"}], "otherNodesOnScada": [{"code": "TB", "name": "ธนบุรี", "tank": {"levelM": "2.86", "maxLevelM": "4.80", "areaSqm": "3,857"}, "otherValues": ["5001", "6.4"], "note": "โรงผลิตน้ำธนบุรี — ไม่อยู่ในสถานีสูบจ่าย 10 แห่ง รอยืนยันว่าจะรวมใน Dashboard หรือไม่"}, {"code": "SS", "name": "สามเสน", "tank": null, "otherValues": ["SS1", "SS2", "SS4", "3044", "2261", "-88", "RCV54"], "note": "โรงผลิตน้ำสามเสน — มีผังจ่ายน้ำของโรงงานผลิตน้ำสามเสนแทรกอยู่ในแผนที่ รอยืนยันบทบาท"}, {"code": "PY", "name": "พหลโยธิน", "tank": null, "otherValues": ["6718", "8.4", "32769"], "note": "มีกล่อง Bypass — จุดจ่ายน้ำแบบ Bypass จากอุโมงค์เข้าท่อประธาน (รอยืนยัน) ไม่อยู่ในสถานีสูบจ่าย 10 แห่ง"}], "rtuList": [], "flowPressureData": [{"recordType": "SCADA Snapshot (ค่าดิบ รอยืนยันความหมายของแต่ละตำแหน่งตัวเลข)", "date": "2026-07-03", "time": "14:05", "source": "จอ SCADA เทพอุโมงค์ (Smart Tunnel) กองควบคุมระบบส่งและสูบจ่ายน้ำ", "mainSystems": [{"systemCode": "MH", "largeValues": ["40010", "23807", "15761", "8046", "8017"], "smallValues": ["4.05", "27.97", "21.94"]}, {"systemCode": "TR1", "largeValues": ["46476", "3081", "5400", "5874"], "smallValues": ["33.22"]}, {"systemCode": "TR2", "largeValues": ["46840", "9470", "262"], "smallValues": ["36.06", "3.44"]}, {"systemCode": "TR3", "largeValues": ["52580"], "smallValues": ["25.09"]}], "stations": [{"stationCode": "PK", "largeValues": ["16409", "12688", "4521", "8167", "2535", "4281", "4855"], "smallValues": ["18.64", "13.02"]}, {"stationCode": "TP", "largeValues": ["11701", "11671"], "smallValues": ["11.98", "9.54"]}, {"stationCode": "RB", "largeValues": ["13335", "14491", "5063", "9428"], "smallValues": ["12.35", "16.3"]}, {"stationCode": "LP", "largeValues": ["13143", "15149", "6017", "9132"], "smallValues": ["12.19", "6.78"]}, {"stationCode": "KT", "largeValues": ["8323", "312", "4289", "490", "3231"], "smallValues": ["13.22", "4.97", "-4"]}, {"stationCode": "SR", "largeValues": ["19439", "19926", "13404", "6522"], "smallValues": ["5.03", "14.43"]}, {"stationCode": "BP", "largeValues": ["24521", "22712", "7567", "7377", "7768"], "smallValues": ["7.93", "19.59"]}, {"stationCode": "LK", "largeValues": ["13311", "11417", "4084", "7333"], "smallValues": ["8.3", "7.26"]}, {"stationCode": "MB", "largeValues": ["18118", "16919", "4895", "5429", "6595", "3721"], "smallValues": ["6.45", "14.09"]}, {"stationCode": "LA", "largeValues": ["171", "13600", "9879"], "smallValues": ["18.88", "11"]}], "branchReadings": [{"point": "ประชานุกูล", "percent": "44%", "value": "3186"}, {"point": "เอลิมพันธ์ (รอยืนยันชื่อ)", "percent": "15%", "value": "828.00"}, {"point": "ประดิพัทธ์", "percent": "15%", "value": "null"}, {"point": "สามเสน", "percent": "16%", "value": "1485"}, {"point": "พหลโยธิน", "percent": "24%", "value": "ยังไม่มีข้อมูล"}, {"point": "สี่พระยา", "percent": "10%", "value": "970"}, {"point": "ลอดแม่น้ำ", "percent": "5%", "value": "ยังไม่มีข้อมูล"}, {"point": "มัยลาภ", "percent": "29%", "value": "2230"}, {"point": "นวมินทร์", "percent": "40%", "value": "4929"}, {"point": "พระราม9", "percent": "0%", "value": "0 (มีค่า -3370 บนแนวเดียวกัน)"}, {"point": "ราชมนตรี", "percent": "0%", "value": "null"}], "pressureRecorderChart": {"point": "P051", "currentValue": "2.25", "range": "2.5-5.0", "comparedDates": ["2026-07-03", "2026-07-02", "2026-07-01", "2026-06-26"]}, "note": "สมมติฐานการตีความ (ยังไม่ยืนยัน): ตัวเลข 5 หลัก = Flow, ทศนิยม 2 ตำแหน่ง = Pressure/ระดับน้ำ, % = เปอร์เซ็นต์เปิดวาล์ว/RCV"}], "shiftHandoverData": [], "knowledgeBase": [{"category": "โครงสร้างพื้นฐาน", "topic": "โรงผลิตน้ำหลัก 4 แห่ง", "description": "บางเขน = ใหญ่ที่สุด (~4 ล้าน ลบ.ม./วัน), มหาสวัสดิ์ = ใหม่ที่สุด (น้ำดิบจากแม่น้ำแม่กลอง ฝั่งตะวันตก), สามเสน = เก่าแก่ที่สุด (จุดเริ่มต้นของการประปา), ธนบุรี = เล็กที่สุด (จ่ายเฉพาะฝั่งธนบุรี)", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "แหล่งผลิตน้ำต้นทางของระบบสูบส่งทั้งหมดมาจากโรงผลิตน้ำ 4 แห่งที่มีขนาดและบทบาทต่างกัน"}, {"category": "คำศัพท์", "topic": "การสูบส่ง (Transmission)", "description": "การส่งน้ำที่ผลิตเสร็จแล้วจากโรงผลิต ผ่านอุโมงค์ส่งน้ำขนาดใหญ่ (เส้นผ่านศูนย์กลางสูงสุด 3,200 มม.) ไปยังสถานีสูบจ่ายน้ำต่าง ๆ", "example": "อุโมงค์ MH, TR1, TR2, TR3", "relatedStation": "", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "สูบส่ง = โรงผลิต → สถานีสูบจ่าย ผ่านอุโมงค์"}, {"category": "คำศัพท์", "topic": "การสูบจ่าย (Distribution)", "description": "การสูบน้ำจากโรงผลิตหรือสถานีสูบจ่ายน้ำ ผ่านท่อประธานและท่อบริการ ไปยังบ้านเรือนผู้ใช้น้ำโดยตรง", "example": "สถานีสูบจ่าย 10 แห่ง จ่ายน้ำเข้าท่อประธาน", "relatedStation": "SR, KT, BP, LK, MB, LP, LA, TP, RB, PK", "relatedSystem": "", "keyTakeaway": "สูบจ่าย = สถานี → ผู้ใช้น้ำ ผ่านท่อประธาน/ท่อบริการ"}, {"category": "หน่วยงาน", "topic": "กคจ. (กองควบคุมการส่งและจ่ายน้ำ) — สมองของระบบ", "description": "มอนิเตอร์และควบคุมปริมาณน้ำ/แรงดันให้เพียงพอ, บริหารสมดุลน้ำไม่ให้ล้นถังเก็บน้ำใสและมีน้ำสำรองพอช่วง Peak, สั่งการโรงผลิตและสถานีสูบจ่าย, ประสานงานเหตุฉุกเฉิน (ท่อแตก ไฟดับ) เพื่อผันน้ำจากพื้นที่อื่นมาชดเชย", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "กคจ. เปรียบเสมือน 'สมอง' ของระบบประปา"}, {"category": "อุปกรณ์/กระบวนการ", "topic": "ถังเก็บน้ำใส (Clear Water Tank) = Buffer", "description": "เก็บสำรองน้ำช่วงการใช้น้ำต่ำ (Off-peak) และนำออกมาใช้ช่วงการใช้น้ำสูงเกินกว่าปริมาณที่รับเข้าจากอุโมงค์ได้ / โรงผลิตน้ำเองก็มีถังพักน้ำเป็น Buffer ใช้ในการคำนวณปริมาณการผลิตให้สอดคล้องกับ Demand", "example": "ระดับน้ำในถังแสดงบนจอ SCADA พร้อมค่า Max และพื้นที่ถัง (Sqm)", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "ถังเก็บน้ำใสคือกันชนระหว่างน้ำเข้า (อุโมงค์) กับน้ำออก (ผู้ใช้)"}, {"category": "กระบวนการ", "topic": "การควบคุมด้วยกราฟมาตรฐาน (PTC Curve / Curve ขอบบน-ขอบล่าง)", "description": "สถานีสูบจ่ายสูบน้ำโดยอ้างอิงกราฟมาตรฐานเพื่อให้แรงดันที่จุดวัดปลายทางเป็นไปตามที่กำหนดในแต่ละช่วงเวลา กราฟมีขอบบนและขอบล่าง (Gap) เพื่อให้หน้างานปรับรอบปั๊มได้ยืดหยุ่น เพราะในทางปฏิบัติควบคุมแรงดันให้เป็นเส้นตรงเป๊ะตลอดเวลาไม่ได้เนื่องจากการสวิงของอุปกรณ์ (ในอดีต ~20 ปีก่อน ควบคุมด้วยตัวเลขปริมาณน้ำรวม) / กรอบบน-ขอบล่าง (Gap) สำคัญมากในโซนที่มีนิคมอุตสาหกรรม ซึ่งมีการใช้น้ำเป็นก้อนใหญ่ทำให้แรงดันสวิงตลอดเวลา — ทีม Operate ทำงานได้โดยไม่ต้องเกร็งกับการรักษาแรงดันเป็นเส้นตรงเป๊ะ / กราฟกำหนดล่วงหน้าตามช่วงเวลา (Peak/Off-peak) โดยอ้างอิงสถิติความต้องการใช้น้ำในอดีต / รายละเอียดจาก Playbook: Tolerance Band ±0.5 ม., ต้องเร่งแรงดันล่วงหน้าก่อนช่วงตื่นนอนเช้า (~05:00), การไต่ระดับแบบค่อยเป็นค่อยไปช่วยกัน Water Hammer/Pipe Shear จากการสตาร์ทปั๊มกะทันหัน, และการลดแรงดันช่วงกลางคืน (Demand ต่ำ) ประหยัดพลังงานได้มาก", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "คุมด้วย Curve ที่มีขอบบน-ล่าง ไม่ใช่เส้นตรงเส้นเดียว — ยืดหยุ่นและปฏิบัติได้จริง"}, {"category": "กระบวนการ", "topic": "การวางแผนเดินปั๊มเพื่อประหยัดพลังงาน", "description": "วางแผนการเดินเครื่องสูบน้ำให้เหมาะสมกับปริมาณน้ำในถัง การรักษาความสูงของระดับน้ำในถังช่วยลดภาระปั๊มและประหยัดพลังงาน", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "ระดับน้ำในถังสูง = Head ฝั่งดูดช่วยปั๊ม = ประหยัดพลังงาน"}, {"category": "กระบวนการ", "topic": "ระบบ By-pass", "description": "กรณีปั๊มสูบจ่ายทำงานไม่ได้ หรือต้องการลดการใช้พลังงาน สามารถใช้แรงดันจากอุโมงค์ส่งน้ำจ่ายเข้าท่อประธานโดยตรงผ่านวาล์ว By-pass / เป็นหนึ่งในเครื่องมือหลักของการผันน้ำ (Diversion) ยามฉุกเฉิน คู่กับ RCV", "example": "กล่อง Bypass ปรากฏบนจอ SCADA บริเวณ PY (พหลโยธิน)", "relatedStation": "PY (รอยืนยัน)", "relatedSystem": "", "keyTakeaway": "By-pass = จ่ายน้ำด้วยแรงดันอุโมงค์โดยไม่ใช้ปั๊ม"}, {"category": "คำศัพท์", "topic": "RTU (Remote Terminal Unit)", "description": "ตู้เครื่องวัดที่ติดตั้งบนท่อประธานกว่า 210 จุดทั่วกรุงเทพฯ และปริมณฑล ส่งข้อมูลกลับศูนย์ควบคุม แบ่งเป็น รหัส P = วัดแรงดันอย่างเดียว, รหัส UZ (Ultra) = วัดทั้ง Flow และ Pressure การตั้งชื่อขึ้นต้นด้วยรหัสสาขา เช่น 01 (บางกอกน้อย), 17 (สมุทรปราการ) / U/UZ ย่อจาก Ultrasonic (มิเตอร์อัลตราโซนิก) / วิธีอ่านรหัส: UZ 0114 = Ultrasonic Flow Meter + โซนบางกอกน้อย (01) + Node 14 — อ่านรหัสแล้วระบุตำแหน่งและประเภทความผิดปกติได้ทันที", "example": "P051 (จุดวัดแรงดันใกล้ MH), UZ1609 (ฝั่งบางเขน) / บนแผนที่มีจุดอุปกรณ์ส่งข้อมูลระยะไกล 81 จุด (U/P) — จำนวน 210 vs 81 รอยืนยัน", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "RTU คือตาและหูของ กคจ. ในภาคสนาม — P วัดแรงดัน, UZ วัดทั้ง Flow และ Pressure"}, {"category": "คำศัพท์", "topic": "RCV (Remote Control Valve)", "description": "วาล์วควบคุมระยะไกล สั่งเปิด-ปิดหรือปรับเปอร์เซ็นต์การไหลผ่านคอมพิวเตอร์ที่ศูนย์ควบคุม ปรับแรงดันได้ละเอียดกว่าการใช้คนหมุนวาล์วแบบแมนนวล ใช้สำหรับการผันน้ำ (Diversion) เปลี่ยนทิศทางน้ำช่วยพื้นที่ขาดแคลนหรือกรณีไฟดับ", "example": "บนแผนที่มี RCV 28 ตัว (และ RCV แบบ New เพิ่มเติม) เช่น RCV54 ใกล้สามเสน / ค่า % บนจอ SCADA เช่น นวมินทร์ 40%, มัยลาภ 29% (สมมติฐาน: % เปิดวาล์ว — รอยืนยัน)", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "RCV ทำให้ผันน้ำ/ปรับการไหลได้จากส่วนกลางโดยไม่ต้องส่งคนไปหน้างาน"}, {"category": "คำศัพท์", "topic": "DMA (District Metering Area)", "description": "การแบ่งพื้นที่จ่ายน้ำเป็นโซนย่อย เพื่อตรวจสอบปริมาณน้ำสูญเสียและควบคุมแรงดันแต่ละพื้นที่ให้ทั่วถึง / รายละเอียดจาก Playbook: ท่อบริการใน DMA มีขนาด <400 มม. และ 1 DMA ครอบคลุมผู้ใช้น้ำประมาณ 1,000 ราย", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "DMA ช่วยหาน้ำสูญเสียและคุมแรงดันรายโซน"}, {"category": "หน่วยงาน", "topic": "การทำงานร่วมกัน 3 กอง (ระบบท่อประธาน)", "description": "1) กคจ. วางแผน สั่งการ บริหารแรงดัน/ปริมาณน้ำ 2) กรจ. (กองบำรุงรักษา) เปิด-ปิดประตูน้ำหน้างาน ปรับผันน้ำ ทำ Step Test หาจุดรั่ว 3) กซร. (กองซ่อมท่อประธาน) ซ่อมแซม ตัดบรรจบ เปลี่ยนท่อตามที่ กรจ. แจ้ง", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "กคจ. = สั่งการ / กรจ. = หน้างาน+หาจุดรั่ว / กซร. = ซ่อม"}, {"category": "เหตุฉุกเฉิน", "topic": "กรณีไฟดับ", "description": "ต้องรู้วิธีสับเปลี่ยนแหล่งจ่ายไฟฟ้า และขั้นตอนการปิดน้ำเข้าเพื่อป้องกันน้ำล้นถังกรณีสูบจ่ายออกไม่ได้ / หากสถานีหนึ่งไฟดับจนเดินปั๊มไม่ได้ กคจ. จะสั่งการให้สถานีข้างเคียงเร่งรอบปั๊มและเปิดวาล์วผันน้ำ (ผ่าน RCV) เพื่อส่งน้ำชดเชยพื้นที่ที่ได้รับผลกระทบ", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "ไฟดับ → สับไฟสำรอง + กันถังล้น + สถานีข้างเคียงเร่งปั๊ม/ผันน้ำชดเชย"}, {"category": "การบำรุงรักษา", "topic": "Test ปั๊มก่อน Overhaul", "description": "ทดสอบปั๊มก่อนการ Overhaul เพื่อเก็บสถิติประสิทธิภาพเครื่องก่อนและหลังการซ่อมบำรุง", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "เก็บ Baseline ก่อนซ่อม เพื่อวัดผลหลังซ่อม"}, {"category": "คำศัพท์", "topic": "Step Test", "description": "กระบวนการหาจุดท่อรั่วโดย กรจ. ใช้หลัก Water Balance (น้ำเข้า - น้ำออก) ปิดประตูน้ำเป็นท่อน ๆ เพื่อแยกท่อประธานออกเป็นส่วนย่อย แล้วดูการเปลี่ยนแปลงของอัตราการไหล หากน้ำเข้ายังสูงแต่ไม่มีที่ไป แสดงว่ามีจุดรั่วในท่อนนั้น", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "Step Test = ปิดวาล์วแยกท่อนท่อ + ดู Flow เพื่อชี้จุดรั่ว"}, {"category": "ปรัชญาระบบ", "topic": "ระบบประปาคือกลไกฟันเฟือง", "description": "ทุกส่วนสำคัญเกี่ยวเนื่องกัน หากส่วนใดขัดข้องจะกระทบเป็นทอด ๆ — โรงผลิตขนาดใหญ่ผลิตได้ถึง 5 ล้าน ลบ.ม. (พบข้อมูลไม่ตรงกับชุดที่ 1 ที่ระบุบางเขน ~4 ล้าน ลบ.ม./วัน — รอยืนยัน) กับสถานีสูบจ่ายเล็กวอลุ่ม 100,000 ลบ.ม. มีความสำคัญเท่ากันต่อเสถียรภาพระบบ / Interdependence Rule (Playbook): การปรับการรับน้ำที่สถานีหนึ่งกระทบแรงดัน Manifold และความพร้อมน้ำของโซนข้างเคียงทันที — เช่น หากเพชรเกษมรับน้ำเต็มกำลัง ท่าพระและบางกอกน้อยจะเจอแรงดันขาเข้าตกทันที", "example": "หาก สจ.เพชรเกษม (PK) ทำงานไม่ได้ แรงดันในพื้นที่จะตกและไม่มีน้ำส่งต่อให้ประชาชนในพื้นที่รับผิดชอบ", "relatedStation": "PK (ตัวอย่าง), ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "ไม่มีสถานีไหนสำคัญน้อย — ขาดหนึ่งจุด กระทบทั้งโครงข่าย"}, {"category": "ปรัชญาระบบ", "topic": "แนวคิดวิศวกรรมอุตสาหการ (IE) กับการจัดการน้ำ", "description": "การจัดการน้ำคือการบริหารทรัพยากรที่มีจำกัดให้เกิดประโยชน์สูงสุด เป้าหมายหลักคือทำให้ Loss (น้ำสูญเสีย) น้อยที่สุด", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "เป้าหมายสูงสุดของระบบ = Loss ต่ำสุด"}, {"category": "ไฮดรอลิก", "topic": "ความสัมพันธ์ของแรงดันในอุโมงค์ส่งน้ำ", "description": "หากสถานีสูบจ่ายหลายแห่ง (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์ส่งน้ำจะเพิ่มสูงขึ้นทันที เพราะน้ำไม่มีที่ไป — กคจ. ต้องประสานโรงผลิตปรับกำลังการผลิตให้สอดคล้องกับ Demand", "example": "TP + RB หรี่รับน้ำพร้อมกัน → แรงดันอุโมงค์พุ่ง", "relatedStation": "TP, RB", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "หรี่รับน้ำพร้อมกันหลายสถานี = แรงดันอุโมงค์พุ่งทันที ต้องประสานต้นทาง"}, {"category": "คำศัพท์", "topic": "SCADA (Supervisory Control and Data Acquisition)", "description": "ระบบรวบรวมข้อมูลจากภาคสนาม แปลงสัญญาณเป็นดิจิทัล ให้เจ้าหน้าที่มอนิเตอร์กราฟการจ่ายน้ำและควบคุมแรงดันให้อยู่ในเกณฑ์ที่กำหนด / โครงข่ายข้อมูล 4 ขั้น: ท่อประธาน → RTU → DNP3 Protocol → OPC Server → SCADA Dashboard — เปลี่ยนโลจิสติกส์น้ำทางกายภาพให้เป็น Digital Intelligence แบบเรียลไทม์", "example": "จอ 'เทพอุโมงค์ (Smart Tunnel)' ของกองควบคุมระบบส่งและสูบจ่ายน้ำ", "relatedStation": "ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "SCADA = ศูนย์รวมตา-หู-มือของการควบคุมระยะไกล"}, {"category": "กระบวนการ", "topic": "จุดควบคุม: Critical Point / Influence Point", "description": "การเลือกจุดวัดแรงดันเลือกที่ 'ปลายโซน' หรือจุด Critical Point / จุดตัวแทนพื้นที่ (Influence Point) เพื่อตรวจสอบว่าแรงดันที่ส่งไปถึงจุดไกลสุด/สูงสุดยังเพียงพอ — เกณฑ์เชิงปฏิบัติ: ส่งน้ำขึ้นถึงชั้น 2 ของบ้านเรือนได้", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "คุมแรงดันที่ปลายโซน — ถ้าปลายพอ ทั้งเส้นก็พอ"}, {"category": "คำศัพท์", "topic": "GIS (Geographic Information System)", "description": "ระบบสารสนเทศภูมิศาสตร์เก็บข้อมูลตำแหน่งท่อ ประตูน้ำ และรายละเอียดอุปกรณ์ใต้ดินทั้งหมด ซึ่งเป็นทรัพย์สินหลักขององค์กร", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "GIS = สมุดทรัพย์สินใต้ดินขององค์กร"}, {"category": "คำศัพท์", "topic": "CP (Cathodic Protection)", "description": "ระบบป้องกันการกัดกร่อนของท่อเหล็กใต้ดิน โดยจ่ายกระแสไฟฟ้า/อิเล็กตรอนเข้าไปในท่อ เพื่อไม่ให้ท่อเสียอิเล็กตรอนให้ดินซึ่งเป็นสาเหตุของสนิม", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "CP = เติมอิเล็กตรอนให้ท่อ กันสนิมจากภายนอก"}, {"category": "โครงสร้างบริหาร", "topic": "การแบ่งงานระดับบริหาร (ชั้น 6) กับระดับปฏิบัติการ (ชั้น 4)", "description": "Manage (ชั้น 6) = 'สมอง'/ส่วนวางแผน มองภาพรวมทั้งระบบ: วางแผน (Planning), จัดการ (Organizing), มอบหมายงาน (Assign), กำหนด Set Point (ค่าแรงดันเป้าหมาย) ส่งให้สถานี, บริหารโลจิสติกส์น้ำทั้งระบบ (เช่น บริหารน้ำที่มีอยู่ 6 ล้าน ลบ.ม. เพื่อจ่ายให้ได้ 5 ล้าน ลบ.ม.), และตัดสินใจระดับนโยบายช่วงวิกฤต (คุณภาพน้ำไม่ดี มีสาหร่าย น้ำเค็ม → ลดกำลังการผลิตหรือไม่ ผันน้ำอย่างไร) / Operate (สถานี/ชั้น 4) = ผู้ลงมือทำตามโจทย์: ปรับรอบปั๊ม ปรับวาล์ว (Front Valve, Discharge Valve) คุมแรงดันให้สม่ำเสมอ, เปิดวาล์วรับน้ำเข้าถังเก็บน้ำใส, จัดการปั๊มสูบจ่าย, รันปั๊มแบบขนาน (Parallel) ให้แรงดันจ่ายออกตรง Set Point, แก้ปัญหาเฉพาะหน้า (ไฟดับ → เร่งรอบปั๊มตัวอื่น/เปิดวาล์วเชื่อมต่อชดเชยแรงดัน) / หลักการสำคัญ: ชั้น 6 ไม่ลงไปยุ่งกับ 'วิธีการ' (Process) ของสถานี ดูเพียงว่าแรงดันผลลัพธ์สอดคล้องกับแผนหรือไม่", "example": "ชั้น 6 ส่ง Set Point แรงดันให้สถานี → สถานีเลือกเองว่าจะใช้ปั๊มตัวไหน กี่ตัว รอบเท่าไร วาล์วเปิดกี่ %", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "Manage ให้ 'โจทย์' (Set Point) + ดูภาพรวม / Operate หา 'วิธีทำ' — แยกส่วนชัดเจน ไม่ก้าวก่ายกัน"}, {"category": "กระบวนการ", "topic": "การวิเคราะห์ Demand จากการตอบสนองของ Flow", "description": "เร่งแรงดันแล้ว Flow เพิ่ม = ยังมี Demand / เร่งแรงดันแล้ว Flow นิ่ง = จ่ายแรงดันเกินความจำเป็น", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "ใช้ Flow เป็นตัวบอกว่าแรงดันที่จ่าย 'พอดี' หรือ 'เกิน'"}, {"category": "กระบวนการ", "topic": "การตรวจจับสิ่งผิดปกติจากรูปแบบกราฟ", "description": "Flow พุ่งขึ้นเร็วและชันผิดปกติ = อาจเป็นท่อประธานแตก / Flow ค่อย ๆ ขึ้นช่วงเช้ามืด = Demand จริงจากผู้ใช้น้ำ / Diagnostic Signature จาก Playbook: Demand ปกติ = ค่อยเป็นค่อยไป คาดการณ์ได้ Flow-Pressure สัมพันธ์แบบผกผัน / ท่อประธานแตก = เบี่ยงเบนรุนแรงฉับพลัน Pressure ดิ่งลงพร้อม Flow พุ่งขึ้น (Simultaneous Divergence) ภายในไม่กี่นาที — ต้องอ่าน 'รูปร่าง' ของกราฟ ไม่ใช่แค่ตัวเลข", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "ความชันของกราฟ Flow แยก 'ท่อแตก' ออกจาก 'คนตื่นมาใช้น้ำ'"}, {"category": "โครงสร้างพื้นฐาน", "topic": "ขอบเขตความรับผิดชอบท่อ: กคจ. vs สาขา", "description": "กคจ. บริหารท่อประธานขนาดตั้งแต่ 400 มม. ขึ้นไป ส่วนท่อขนาดเล็กกว่า (Service Pipes) เป็นหน้าที่ของสำนักงานประปาสาขา", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "≥400 มม. = กคจ. / เล็กกว่า = สาขา"}, {"category": "กระบวนการ", "topic": "Water Balance และข้อจำกัดของการวัดน้ำสูญเสีย", "description": "หลักการ: น้ำเข้า - น้ำออก = น้ำสูญเสีย แต่น้ำเข้ามีข้อมูลเรียลไทม์ ส่วนน้ำออก (ผู้ใช้ใช้จริง) ต้องอาศัยการจดมิเตอร์รายเดือนจากสาขาแล้วเฉลี่ยรายวัน จึงเห็น Loss เรียลไทม์ที่แม่นยำ 100% ไม่ได้ และเครื่องวัดทุกตัวมี Error ~5% ในตัวเอง", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "Loss เรียลไทม์แท้จริงยังวัดไม่ได้ — น้ำออกเป็นค่าเฉลี่ยรายเดือน + Error มิเตอร์ ~5%"}, {"category": "เหตุฉุกเฉิน/คุณภาพน้ำ", "topic": "ปัญหาน้ำเค็ม", "description": "ปัญหาคุณภาพน้ำที่แก้ยากที่สุดเพราะเป็นปัจจัยภายนอก โรงผลิตทำได้เพียงบริหารจัดการน้ำเพื่อเจือจางความเค็ม (ต้นฉบับใช้คำว่า 'Blackout' — คาดว่าหมายถึงการบริหารจัดการน้ำ/Blending รอยืนยันคำที่ถูกต้อง) ไม่สามารถกำจัดความเค็มออกได้ทั้งหมด / การตัดสินใจช่วงวิกฤตคุณภาพน้ำ (น้ำเค็ม สาหร่าย) เป็นอำนาจของชั้น 6 (Manage): ตัดสินว่าจะลดกำลังการผลิตหรือไม่ และวางแผนผันน้ำอย่างไร", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "น้ำเค็มกำจัดไม่ได้ ทำได้แค่เจือจาง — ต้องบริหารน้ำดิบให้ดี"}, {"category": "กระบวนการ", "topic": "งาน Operate ภายในสถานี: วาล์วสำคัญและการรันปั๊มขนาน", "description": "เจ้าหน้าที่ Operate ปรับรอบปั๊มและวาล์วเพื่อคุมแรงดันให้สม่ำเสมอ — วาล์วสำคัญ: วาล์วด้านหน้า (Front Valve), วาล์วทางจ่าย (Discharge Valve) / ขั้นตอนครอบคลุมตั้งแต่เปิดวาล์วรับน้ำเข้าถังเก็บน้ำใส จัดการปั๊มสูบจ่าย และรันปั๊มแบบขนาน (Parallel) เพื่อให้แรงดันจ่ายออกสอดคล้อง Set Point", "example": "ยังไม่มีข้อมูล", "relatedStation": "ทุกสถานี", "relatedSystem": "", "keyTakeaway": "คุมแรงดัน = ศิลปะการผสมรอบปั๊ม + วาล์ว (Front/Discharge) + จำนวนปั๊มที่รันขนาน"}, {"category": "ไฮดรอลิก", "topic": "โซนนิคมอุตสาหกรรม: การใช้น้ำเป็นก้อนใหญ่", "description": "พื้นที่ที่มีนิคมอุตสาหกรรมมีการใช้น้ำเป็นก้อนใหญ่ (Batch) ทำให้แรงดัน/Flow สวิงตลอดเวลา การควบคุมจึงต้องอาศัยกรอบบน-ขอบล่าง (Gap) ของกราฟควบคุมแทนการยึดเส้นตรงเส้นเดียว", "example": "ยังไม่มีข้อมูล", "relatedStation": "ยังไม่มีข้อมูล (รอระบุว่าสถานีใดครอบคลุมโซนนิคมฯ)", "relatedSystem": "", "keyTakeaway": "Demand ก้อนใหญ่ = สวิงแรง → ต้องคุมแบบมี Gap"}, {"category": "เหตุฉุกเฉิน/คุณภาพน้ำ", "topic": "วิกฤตคุณภาพน้ำ: สาหร่าย", "description": "ปัญหาคุณภาพน้ำที่อาจนำไปสู่การตัดสินใจลดกำลังการผลิตโดยชั้น 6 (Manage) พร้อมวางแผนผันน้ำชดเชย", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "วิกฤตคุณภาพน้ำ = การตัดสินใจเชิงนโยบาย ไม่ใช่แค่เรื่องหน้างาน"}, {"category": "กระบวนการ", "topic": "การจ่ายน้ำปกติ vs การผันน้ำ (Diversion)", "description": "การจ่ายน้ำปกติ = ทำตามแผน: เดินตามกราฟ PTC (ขอบบน-ล่าง) ที่กำหนดล่วงหน้าจากสถิติ ใช้การปรับรอบปั๊ม+วาล์วในสถานีคุมแรงดันตาม Set Point ของ กคจ. ทิศทางน้ำไหลต้นน้ำ→ปลายน้ำ (โรงผลิต → อุโมงค์ → สถานีสูบจ่าย → ท่อประธาน) แรงดันลดหลั่นตามระยะทางและแรงเสียดทาน / การผันน้ำ (Diversion) = กลยุทธ์บริหารวิกฤต: 'เปลี่ยนทางน้ำ' เฉพาะกิจเมื่อท่อแตก งานซ่อมบำรุง ไฟดับ หรือน้ำเค็ม เพื่อชดเชยแรงดันพื้นที่กระทบ ใช้ RCV และ By-pass เป็นเครื่องมือหลัก สั่งการแบบ Case by case อาจย้อนทิศทางน้ำหรือส่งน้ำข้ามโซน (เช่น ฝั่งตะวันออกข้ามมาช่วยฝั่งตะวันตกผ่านจุดเชื่อมต่อ) โดย กคจ. ประสานงานร่วมกับหน่วยซ่อมและบำรุงรักษา / Scenario จาก Playbook: หากบางเขนลดกำลังผลิตเพราะน้ำดิบเค็ม/สาหร่าย (-2 ล้านหน่วย) เจ้าหน้าที่ใช้ RCV ดึงแรงดันจากอุโมงค์และผันน้ำจากโซนที่ไม่กระทบ เพื่อรักษาสมดุลปลายน้ำ — RCV คือเครื่องมือผันน้ำเชิงกลยุทธ์ ไม่ใช่แค่ตัวปิดน้ำ", "example": "ตารางเปรียบเทียบ: เกณฑ์คุม (PTC vs Case by case), เครื่องมือ (ปั๊มในสถานี vs RCV/By-pass), สถานการณ์ (Daily Operation vs ฉุกเฉิน/ไฟดับ/ท่อแตก/น้ำเค็ม)", "relatedStation": "ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "จ่ายปกติ = ทำตามแผนให้ระบบเสถียร / ผันน้ำ = บริหารวิกฤตให้ผู้ใช้น้ำกระทบน้อยที่สุด"}, {"category": "คำศัพท์", "topic": "Water Hammer / Pipe Shear (ค้อนน้ำ)", "description": "แรงกระแทกในท่อจากการเปลี่ยนความเร็วน้ำกะทันหัน เช่น สตาร์ท/หยุดปั๊มทันที หรือเร่งแรงดันเร็วเกินไป อาจทำให้ท่อฉีกเสียหายรุนแรง — ป้องกันโดยการไต่แรงดันแบบค่อยเป็นค่อยไป (Gradual Ramping)", "example": "กราฟ Pressure Optimization: การพุ่งของแรงดันช่วง 05:00 เกิน Tolerance Band = ความเสี่ยง Water Hammer", "relatedStation": "ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "เร่งแรงดันเร็วเกิน = เสี่ยงท่อฉีก — ไต่ทีละนิดเสมอ"}, {"category": "โครงสร้างพื้นฐาน", "topic": "Journey of Water: เส้นทางน้ำ 4 Stage", "description": "Stage 1 Production (โรงผลิต 4 แห่ง) → Stage 2 Transmission (อุโมงค์/TR Lines = Main Arteries) → Stage 3 Distribution (สถานีสูบจ่าย) → Stage 4 Delivery (DMA, ท่อบริการ <400 มม., ~1,000 ผู้ใช้/DMA)", "example": "บางเขน ~67% (4.2 ล้านหน่วย), มหาสวัสดิ์ ~30% (1.9 ล้านหน่วย), สามเสน 3-4%, ธนบุรี <1%", "relatedStation": "ทุกสถานี", "relatedSystem": "MH, TR1, TR2, TR3", "keyTakeaway": "มองระบบเป็น 4 ช่วง: ผลิต → ส่ง → จ่าย → ถึงมือผู้ใช้"}, {"category": "ปรัชญาระบบ", "topic": "กรอบแนวคิด 4 ด้านสู่ System Equilibrium", "description": "Playbook จัดองค์ความรู้เป็น 4 ด้านรอบแกนกลาง 'System Equilibrium': 1) The Physical Grid (ท่อผลิต-จ่าย) 2) Digital Nervous System (SCADA/RTU Telemetry) 3) Operational Logistics (Pressure Curves, Diversion, Valves) 4) Strategic Directives (ความปลอดภัย เครื่องมือสมัยใหม่ ค่านิยมหลัก)", "example": "ยังไม่มีข้อมูล", "relatedStation": "", "relatedSystem": "", "keyTakeaway": "เป้าหมายร่วมของทุกด้านคือรักษาสมดุลของระบบ (System Equilibrium)"}], "pumpData": [], "systemMapReference": {"scadaScreen": {"title": "เทพอุโมงค์ (Smart Tunnel)", "owner": "กองควบคุมระบบส่งและสูบจ่ายน้ำ โทร. 02-2782860-1", "layout": "MH ฝั่งซ้าย (ตะวันตกของแม่น้ำเจ้าพระยา) / BK ฝั่งขวา จ่าย TR1, TR2, TR3 — เส้นเขียว = Tunnel, เส้นน้ำเงิน = Trunk Main", "legend": ["RTU", "Alert Mode", "ผังอุโมงค์", "Non-Actived Pump", "Actived Pump (สีแดง)", "Tunnel (เขียว)", "Trunk Main (น้ำเงิน)", "Recorder", "Level Prediction"], "westSideNodes": ["PK", "TP", "RB", "TB (ธนบุรี)"], "eastSideNodes": ["LP", "KT", "SR", "BP", "LK", "MB", "LA", "SS (สามเสน)", "PY (พหลโยธิน + Bypass)"], "valveChambers": ["ลุมพินี VC", "คลองเตย VC"], "features": ["เลือกวัน-เวลาย้อนหลังได้", "กราฟ Pressure Recorder เทียบหลายวัน (เช่น P051)", "ปุ่ม Reset"]}, "networkMap": {"title": "ระบบส่งและจ่ายน้ำการประปานครหลวง", "publisher": "ฝ่ายควบคุมการส่งและจ่ายน้ำ", "lastRevision": "6 ก.พ. 69", "legend": ["จุดวัดแรงดันประเมินผล Tris — 28 จุด (สัญลักษณ์ P)", "จุดอุปกรณ์ส่งข้อมูลระยะไกล — 81 จุด (U = Ultra Flow Meter, P = Pressure Meter)", "Remote Control Valve (New) — เขียว", "Remote Control Valve — 28 ตัว (เหลือง)", "ท่อโครงการ (น้ำเงินประ)", "อุโมงค์ส่งน้ำ (ส้ม)", "ท่อส่งน้ำมหาสวัสดิ์ (เขียว)", "Ultra Flow Meter (แดง)", "Pressure Recorder (เหลือง)", "Rising Structure", "Valve Chamber (VC)", "Valve Chamber ที่มีการจ่ายน้ำเข้าระบบ"], "insetDiagrams": ["บางเขน (BK03/BK04, TR1-TR3)", "มีนบุรี", "ลาดพร้าว", "พหลโยธิน", "โรงงานผลิตน้ำสามเสน", "เพชรเกษม (ZM1105, ZM1108)", "ท่าพระ", "ราษฎร์บูรณะ", "ลุมพินี", "คลองเตย", "ลาดกระบัง", "สำโรง", "บางพลี", "ธนบุรี", "มหาสวัสดิ์ Transmission Pump Station"], "districtsOnMap": ["บางบัวทอง", "ประชาชื่น", "บางเขน", "นนทบุรี", "มหาสวัสดิ์", "มีนบุรี", "ลาดพร้าว", "พญาไท", "บางกอกน้อย", "ภาษีเจริญ", "ทุ่งมหาเมฆ", "สุขุมวิท", "พระโขนง", "เพชรเกษม", "ตากสิน", "ราษฎร์บูรณะ", "สุขสวัสดิ์", "สำโรง", "สมุทรปราการ", "บางพลี", "สุวรรณภูมิ", "ลาดกระบัง"]}}, "dashboardRequirements": [{"menu": ["Overview", "System Map", "Main Transmission", "Pumping Stations", "Flow & Pressure Analytics", "RTU Monitoring", "Shift Handover", "KM Library", "Data Upload"], "techStack": "React + Tailwind CSS + Recharts + Lucide React", "capabilities": ["แสดงภาพรวมระบบผลิตน้ำ → MH/TR → สถานีสูบจ่ายน้ำ → พื้นที่จ่ายน้ำ", "แสดงข้อมูลสถานีสูบจ่ายน้ำ 10 แห่ง", "แสดง Flow และ Pressure พร้อม Max Flow / Max Pressure", "แสดง RTU Monitoring", "แสดงข้อมูลรับ–ส่งเวร", "แสดงองค์ความรู้สำหรับพนักงานใหม่", "อัปโหลดข้อมูล CSV / JSON", "Export ข้อมูล", "Reset เป็น Sample Data"], "systemMapDesignNotes": ["โครง System Map ควรอิงผัง SCADA จริง: แม่น้ำเจ้าพระยาแบ่งกลาง, MH ฝั่งตะวันตก, BK (TR1-TR3) ฝั่งตะวันออก", "สัญลักษณ์ควรรองรับ: Tunnel/Trunk Main, Actived/Non-Actived Pump, RTU, Recorder, ระดับน้ำถัง + Max, Bypass, VC", "มีมิติเวลา: ดูค่าย้อนหลัง + กราฟ Pressure Recorder เทียบหลายวัน"]}], "pendingConfirmations": ["ความหมายและหน่วยของตัวเลขบนจอ SCADA: เลข 5 หลัก = Flow (หน่วยอะไร: ลบ.ม./ชม.?), เลขทศนิยม = Pressure หรือระดับน้ำ (หน่วย ม.?)", "ค่า % ตามจุดต่าง ๆ (เช่น นวมินทร์ 40%, มัยลาภ 29%) คือ % เปิดวาล์ว RCV ใช่หรือไม่", "แต่ละสถานีรับน้ำจากระบบใด (sourceSystem: MH / TR1 / TR2 / TR3) — จากภาพยังสรุปแน่ชัดไม่ได้", "จะรวม TB (ธนบุรี), SS (สามเสน), PY (พหลโยธิน) เข้าใน Dashboard ด้วยหรือไม่ (ไม่อยู่ใน Master 10 สถานี)", "MB มีถัง 2 ใบหรือไม่ (มีค่า LV และพื้นที่ 4,216 Sqm เพิ่ม)", "ชื่อจุด 'เอลิมพันธ์' อ่านจากภาพอาจคลาดเคลื่อน", "จำนวนจุด RTU: Playbook ยืนยัน 'Over 210 tracking points' สอดคล้องบันทึกการเรียนรู้ — ส่วน 81 จุดบน Legend แผนที่คาดว่าเป็นชุดย่อยที่แสดงบนแผนที่ (รอยืนยันขั้นสุดท้าย)", "คำว่า 'Blackout' ในการจัดการน้ำเค็ม — น่าจะเป็น Blending หรือการบริหารจัดการน้ำดิบ รอยืนยันคำที่ถูกต้อง", "บทบาท 'บางกอกน้อย' ใน Interdependence Rule: Playbook กล่าวถึงเสมือนเป็นโหนดรับน้ำข้างเคียงเพชรเกษม/ท่าพระ แต่ไม่อยู่ใน 10 สถานีสูบจ่ายหลัก (เป็นชื่อสาขา/โซน 01) — รอยืนยันสถานะ"], "futureAddOn": ["Pump Capacity", "Alarm History", "Maintenance", "AI Chatbot"], "rtuNetworkOverview": {"totalPoints": "กว่า 210 จุด ทั่วกรุงเทพฯ และปริมณฑล (ยืนยันโดย Playbook: 'Over 210 tracking points') — Legend แผนที่แสดง 81 จุด คาดว่าเป็นชุดย่อยที่แสดงบนแผนที่ รอยืนยันขั้นสุดท้าย", "types": [{"code": "P", "meaning": "วัดแรงดัน (Pressure) อย่างเดียว"}, {"code": "U / UZ (Ultrasonic)", "meaning": "มิเตอร์อัลตราโซนิก วัดทั้งอัตราการไหล (Flow) และแรงดัน (Pressure)"}], "namingConvention": "Prefix (P / U / UZ) + รหัสสาขา 2 หลัก + Node ID — เช่น UZ 0114 = Ultrasonic Flow Meter, โซนบางกอกน้อย (01), Node 14 / รหัสสาขาตัวอย่าง: 01 บางกอกน้อย, 17 สมุทรปราการ", "pointSelection": "เลือกจุดปลายโซน / Critical Point / Influence Point (ตัวแทนพื้นที่) เพื่อยืนยันว่าแรงดันปลายทางเพียงพอ (ส่งน้ำขึ้นถึงชั้น 2 ของบ้านได้)", "dataChain": "Physical Pipe (ท่อประธาน >400 มม. วัด Flow/Pressure ดิบ) → RTU Hardware (210+ จุด) → DNP3 Protocol (ส่งข้อมูลไร้สายแบบปลอดภัย) → OPC Server (แสดงผล SCADA Dashboard ส่วนกลาง)"}, "systemOverview": {"totalCapacity": "~6 ล้าน ลบ.ม./วัน (กำลังการผลิตรวม)", "dailyDemand": "~5 ล้าน ลบ.ม./วัน (ความต้องการใช้จริง)", "journeyOfWater": ["Stage 1 - Production: โรงผลิตน้ำ 4 แห่ง (BK ~67%, MH ~30%, SS 3-4%, TB <1%)", "Stage 2 - Transmission: อุโมงค์ส่งน้ำและ TR Lines (Main Arteries)", "Stage 3 - Distribution: สถานีสูบจ่ายน้ำ (เช่น เพชรเกษม, ท่าพระ)", "Stage 4 - Delivery: DMA (District Metering Areas) — ท่อบริการ <400 มม., ~1,000 ผู้ใช้น้ำต่อ 1 DMA"], "source": "Smart Waterworks Playbook (ชุดที่ 6)"}, "resolvedConfirmations": ["กำลังการผลิต (คลี่คลายโดย Playbook ชุดที่ 6): บางเขน ~4.2 ล้าน ลบ.ม./วัน (~67%), มหาสวัสดิ์ ~1.9 ล้าน (~30%), สามเสน 3-4%, ธนบุรี <1% → กำลังผลิตรวมทั้งระบบ ~6 ล้าน, Demand รายวัน ~5 ล้าน — ตัวเลข '4 ล้าน' (ชุด 1) คือบางเขนแห่งเดียว ส่วน '5-6 ล้าน' (ชุด 2/4) คือภาพรวมระบบ"]};
+</script>
+<script>
+(function () {
+  "use strict";
+  const M = window.MASTER;
+  const $ = (sel, el) => (el || document).querySelector(sel);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const NODATA = "ยังไม่มีข้อมูล";
+  const isNoData = v => !v || String(v).indexOf(NODATA) === 0;
+  const fmt = n => Number(n).toLocaleString("en-US");
+
+  /* ---------- icons (hand-drawn, lucide-style strokes) ---------- */
+  const IC = {
+    gauge: '<circle cx="12" cy="13" r="8"/><path d="M12 13l3.5-3.5"/><path d="M5 5l1.5 1.5M19 5l-1.5 1.5"/>',
+    map: '<path d="M9 4L4 6v14l5-2 6 2 5-2V4l-5 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+    tunnel: '<path d="M4 19V11a8 8 0 0 1 16 0v8"/><path d="M4 19h16"/><path d="M9 19v-4a3 3 0 0 1 6 0v4"/>',
+    station: '<path d="M4 20h16M6 20V9l6-5 6 5v11"/><circle cx="12" cy="13" r="2.5"/>',
+    chart: '<path d="M4 4v16h16"/><path d="M7 14l3.5-4 3 2.5L18 7"/>',
+    radio: '<circle cx="12" cy="12" r="1.6"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7"/><path d="M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/>',
+    shift: '<path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 12h8M8 16h5"/>',
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+    upload: '<path d="M4 17v3h16v-3"/><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/>'
+  };
+  const icon = k => '<svg viewBox="0 0 24 24" aria-hidden="true">' + IC[k] + "</svg>";
+
+  /* ---------- navigation ---------- */
+  const MENUS = [
+    { id: "overview", t: "Overview", ic: "gauge" },
+    { id: "sysmap", t: "System Map", ic: "map" },
+    { id: "transmission", t: "Main Transmission", ic: "tunnel" },
+    { id: "stations", t: "Pumping Stations", ic: "station" },
+    { id: "analytics", t: "Flow & Pressure Analytics", ic: "chart" },
+    { id: "rtu", t: "RTU Monitoring", ic: "radio" },
+    { id: "shift", t: "Shift Handover", ic: "shift" },
+    { id: "km", t: "KM Library", ic: "book" },
+    { id: "upload", t: "Data Upload", ic: "upload" }
+  ];
+  const navEl = $("#nav"), panesEl = $("#panes");
+  navEl.innerHTML = MENUS.map(m =>
+    `<button class="nav-btn" data-pane="${m.id}" type="button">${icon(m.ic)}<span>${m.t}</span></button>`).join("");
+  panesEl.innerHTML = MENUS.map(m => `<section class="pane" id="pane-${m.id}" aria-label="${m.t}"></section>`).join("");
+
+  function show(id) {
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.pane === id));
+    document.querySelectorAll(".pane").forEach(p => p.classList.toggle("active", p.id === "pane-" + id));
+    $("#pane-title").textContent = MENUS.find(m => m.id === id).t;
+  }
+  navEl.addEventListener("click", e => {
+    const b = e.target.closest(".nav-btn");
+    if (b) show(b.dataset.pane);
+  });
+
+  $("#h-ver").textContent = M.dataVersion;
+  $("#f-ver").textContent = M.dataVersion;
+  $("#f-km").textContent = M.knowledgeBase.length;
+
+  /* ---------- shared tooltip ---------- */
+  const tip = $("#tooltip");
+  function tipShow(html, x, y) {
+    tip.innerHTML = html; tip.style.display = "block";
+    const pad = 14, w = tip.offsetWidth;
+    tip.style.left = Math.min(x + pad, innerWidth - w - 8) + "px";
+    tip.style.top = (y + pad) + "px";
+  }
+  function tipHide() { tip.style.display = "none"; }
+
+  /* ---------- station helpers ---------- */
+  const tankPct = st => {
+    const t = st.clearWaterTank;
+    if (!t) return null;
+    const lv = parseFloat(t.levelM), mx = parseFloat(t.maxLevelM);
+    return (isFinite(lv) && isFinite(mx) && mx > 0) ? Math.round(lv / mx * 100) : null;
+  };
+  const shortName = st => st.stationName.replace("สถานีสูบจ่าย", "");
+
+  /* ============================================================
+     OVERVIEW
+  ============================================================ */
+  (function overview() {
+    const p = $("#pane-overview");
+    const plants = [
+      { code: "BK", name: "บางเขน", share: 67, cap: "~4.2 ล้าน ลบ.ม./วัน", c: "var(--series-1)" },
+      { code: "MH", name: "มหาสวัสดิ์", share: 30, cap: "~1.9 ล้าน ลบ.ม./วัน", c: "var(--series-2)" },
+      { code: "SS", name: "สามเสน", share: 3.5, cap: "~3–4% ของระบบ", c: "var(--series-3)" },
+      { code: "TB", name: "ธนบุรี", share: 0.8, cap: "<1% ของระบบ", c: "var(--series-4)" }
+    ];
+
+    /* donut */
+    let acc = 0; const total = plants.reduce((s, d) => s + d.share, 0);
+    const R = 62, CX = 80, CY = 80, SW = 26;
+    const arcs = plants.map(d => {
+      const a0 = acc / total * Math.PI * 2 - Math.PI / 2; acc += d.share;
+      const a1 = acc / total * Math.PI * 2 - Math.PI / 2;
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const x0 = CX + R * Math.cos(a0), y0 = CY + R * Math.sin(a0);
+      const x1 = CX + R * Math.cos(a1), y1 = CY + R * Math.sin(a1);
+      return `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}"
+        fill="none" stroke="${d.c}" stroke-width="${SW}"
+        data-tip="${d.code} ${d.name} · ${d.share}%"></path>`;
+    }).join("");
+
+    /* tunnel flow bars */
+    const flows = [
+      { code: "MH", v: 40010 }, { code: "TR1", v: 46476 },
+      { code: "TR2", v: 46840 }, { code: "TR3", v: 52580 }
+    ];
+    const maxF = 56000, bw = 44, gap = 26, x0 = 46, h0 = 150, top = 16;
+    const bars = flows.map((d, i) => {
+      const h = d.v / maxF * h0, x = x0 + i * (bw + gap), y = top + h0 - h;
+      return `<rect x="${x}" y="${y.toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" rx="4"
+          fill="var(--series-1)" data-tip="${d.code} · ${fmt(d.v)}"></rect>
+        <text x="${x + bw / 2}" y="${(y - 6).toFixed(1)}" text-anchor="middle" class="axis-t" style="fill:var(--ink-sec);font-weight:600">${fmt(d.v)}</text>
+        <text x="${x + bw / 2}" y="${top + h0 + 16}" text-anchor="middle" class="axis-t" style="fill:var(--ink)">${d.code}</text>`;
+    }).join("");
+
+    const tanks = M.pumpingStations.map(st => {
+      const pct = tankPct(st), t = st.clearWaterTank;
+      return `<tr>
+        <td><span class="badge b-code">${st.stationCode}</span></td>
+        <td>${esc(shortName(st))}</td>
+        <td class="num">${t ? esc(t.levelM) + " / " + esc(t.maxLevelM) : "–"}</td>
+        <td><div class="tankbar"><div class="rail"><div class="fill" style="width:${pct || 0}%"></div></div><span class="pct">${pct == null ? "–" : pct + "%"}</span></div></td>
+      </tr>`;
+    }).join("");
+
+    p.innerHTML = `
+      <h2>ภาพรวมระบบผลิต–ส่ง–จ่ายน้ำ</h2>
+      <p class="sub">โรงผลิตน้ำ 4 แห่ง → อุโมงค์ส่งน้ำ 4 เส้น (MH, TR1–TR3) → สถานีสูบจ่ายน้ำ 10 แห่ง → พื้นที่จ่ายน้ำ (DMA ละ ~1,000 ผู้ใช้)</p>
+      <div class="grid kpis">
+        <div class="card kpi accent"><div class="label">กำลังการผลิตรวม</div><div class="value">~6 <small>ล้าน ลบ.ม./วัน</small></div><div class="note">โรงผลิตน้ำ 4 แห่ง</div></div>
+        <div class="card kpi accent"><div class="label">Demand ต่อวัน</div><div class="value">~5 <small>ล้าน ลบ.ม./วัน</small></div><div class="note">ความต้องการใช้จริง</div></div>
+        <div class="card kpi"><div class="label">สถานีสูบจ่ายน้ำ</div><div class="value">10 <small>แห่ง</small></div><div class="note">SR KT BP LK MB LP LA TP RB PK</div></div>
+        <div class="card kpi"><div class="label">จุด RTU ในระบบ</div><div class="value">210+ <small>จุด</small></div><div class="note">บนท่อประธาน ≥400 มม.</div></div>
+        <div class="card kpi"><div class="label">องค์ความรู้สะสม</div><div class="value">${M.knowledgeBase.length} <small>เรื่อง</small></div><div class="note">ใน KM Library</div></div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>สัดส่วนกำลังการผลิต — โรงผลิตน้ำ 4 แห่ง</h3>
+          <p class="hint">ที่มา: Smart Waterworks Playbook (ชุดข้อมูลที่ 6)</p>
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+            <svg viewBox="0 0 160 160" width="150" height="150" role="img" aria-label="สัดส่วนกำลังการผลิตโรงผลิตน้ำ">${arcs}
+              <text x="80" y="76" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--ink)">4</text>
+              <text x="80" y="94" text-anchor="middle" style="font-size:10px;fill:var(--muted)">โรงผลิต</text>
+            </svg>
+            <div style="flex:1;min-width:200px">
+              ${plants.map(d => `<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid var(--line-soft);font-size:13px">
+                <span class="sw" style="width:11px;height:11px;border-radius:3px;background:${d.c};flex:none"></span>
+                <b style="width:30px">${d.code}</b><span style="flex:1">${d.name}</span>
+                <span class="mono" style="color:var(--ink-sec)">${d.share}%</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);padding:2px 0 4px 20px">${d.cap}</div>`).join("")}
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>อัตราการไหลระบบสูบส่งหลัก</h3>
+          <p class="hint">ค่าดิบจาก SCADA 3 ก.ค. 2026 14:05 — หน่วยรอยืนยัน</p>
+          <svg viewBox="0 0 330 196" style="width:100%;max-width:360px" role="img" aria-label="อัตราการไหลของอุโมงค์ทั้งสี่">
+            <line x1="36" y1="${top + h0}" x2="320" y2="${top + h0}" class="gridline" style="stroke:var(--line)"/>
+            ${bars}
+          </svg>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>ระดับน้ำถังเก็บน้ำใส (Clear Water Tank) — 10 สถานี</h3>
+        <p class="hint">ระดับน้ำ / ระดับสูงสุด (ม.) · อ่านจากจอ SCADA — ระดับสูง = มีน้ำสำรอง (Buffer) มาก</p>
+        <div class="scroll-x"><table>
+          <thead><tr><th>รหัส</th><th>สถานี</th><th>ระดับ / Max (ม.)</th><th>เทียบความจุ</th></tr></thead>
+          <tbody>${tanks}</tbody>
+        </table></div>
+      </div>`;
+  })();
+
+  /* ============================================================
+     SYSTEM MAP
+  ============================================================ */
+  (function sysmap() {
+    const p = $("#pane-sysmap");
+    const pos = {
+      PK: [70, 205], TP: [70, 330], RB: [70, 455],
+      LA: [590, 130], MB: [810, 130], LK: [810, 265], KT: [590, 265],
+      LP: [560, 420], SR: [700, 420], BP: [830, 505]
+    };
+    const byCode = {}; M.pumpingStations.forEach(s => byCode[s.stationCode] = s);
+
+    function node(code) {
+      const st = byCode[code], [x, y] = pos[code];
+      const pct = tankPct(st) || 0, t = st.clearWaterTank;
+      return `<g class="map-node" data-tip="${code} ${esc(shortName(st))} · ถัง ${t ? esc(t.levelM) + "/" + esc(t.maxLevelM) + " ม." : "–"}">
+        <rect class="body" x="${x}" y="${y}" width="128" height="64" rx="9" style="stroke:var(--line);fill:var(--surface)"/>
+        <text x="${x + 12}" y="${y + 22}" style="font-weight:700;font-size:13px">${code}</text>
+        <text x="${x + 12}" y="${y + 38}" style="font-size:10.5px;fill:var(--ink-sec)">${esc(shortName(st))}</text>
+        <rect x="${x + 12}" y="${y + 46}" width="104" height="7" rx="3.5" style="fill:var(--surface-2)"/>
+        <rect x="${x + 12}" y="${y + 46}" width="${(pct / 100 * 104).toFixed(1)}" height="7" rx="3.5" style="fill:var(--series-1)"/>
+      </g>`;
+    }
+    const edge = (x1, y1, x2, y2) =>
+      `<path class="flowline" d="M${x1} ${y1} L${x1} ${(y1 + y2) / 2} L${x2} ${(y1 + y2) / 2} L${x2} ${y2}"/>`;
+
+    p.innerHTML = `
+      <h2>ผังระบบ (อิงเลย์เอาต์จอ SCADA จริง)</h2>
+      <p class="sub">แม่น้ำเจ้าพระยาแบ่งระบบเป็น 2 ฝั่ง — MH (มหาสวัสดิ์) เลี้ยงฝั่งตะวันตก · BK (บางเขน) จ่ายเข้าอุโมงค์ TR1–TR3 เลี้ยงฝั่งตะวันออก · แถบสีน้ำเงินในกล่องสถานี = ระดับน้ำถังเก็บน้ำใส</p>
+      <div class="card">
+        <div class="scroll-x">
+        <svg viewBox="0 0 1000 600" style="width:100%;min-width:760px" role="img" aria-label="ผังระบบสูบส่งและสูบจ่ายน้ำ">
+          <rect x="430" y="0" width="56" height="600" rx="10" style="fill:var(--accent-soft)"/>
+          <text x="458" y="300" text-anchor="middle" class="map-label" transform="rotate(90 458 300)" style="letter-spacing:.35em">CHAO PHRAYA RIVER</text>
+
+          <g data-tip="MH มหาสวัสดิ์ · Flow 40010 · P 4.05">
+            <rect x="40" y="52" width="180" height="66" rx="10" style="fill:var(--accent-soft);stroke:var(--accent)"/>
+            <text x="58" y="80" style="font-weight:700;font-size:15px">MH มหาสวัสดิ์</text>
+            <text x="58" y="100" class="mono" style="font-size:11.5px;fill:var(--ink-sec)">Flow 40,010 · P 4.05</text>
+          </g>
+          <g data-tip="BK บางเขน → TR1 46476 · TR2 46840 · TR3 52580">
+            <rect x="540" y="30" width="420" height="66" rx="10" style="fill:var(--accent-soft);stroke:var(--accent)"/>
+            <text x="558" y="56" style="font-weight:700;font-size:15px">BK บางเขน</text>
+            <text x="558" y="78" class="mono" style="font-size:11.5px;fill:var(--ink-sec)">TR1 46,476 · TR2 46,840 · TR3 52,580</text>
+          </g>
+
+          ${edge(130, 118, 134, 205)}
+          ${edge(130, 118, 134, 330)}
+          ${edge(130, 118, 134, 455)}
+          ${edge(660, 96, 654, 130)}
+          ${edge(860, 96, 874, 130)}
+          ${edge(860, 96, 874, 265)}
+          ${edge(660, 96, 654, 265)}
+          ${edge(660, 96, 624, 420)}
+          ${edge(760, 96, 764, 420)}
+          ${edge(860, 96, 894, 505)}
+          <path class="flowline" d="M220 85 L430 85" stroke-dasharray="7 5"/>
+          <path class="flowline" d="M486 85 L540 63" stroke-dasharray="7 5"/>
+          <text x="330" y="74" text-anchor="middle" class="map-label">ลอดแม่น้ำ</text>
+
+          ${Object.keys(pos).map(node).join("")}
+
+          <g style="font-size:10.5px">
+            <rect x="40" y="548" width="330" height="36" rx="8" style="fill:var(--surface-2)"/>
+            <line x1="56" y1="566" x2="86" y2="566" class="flowline"/>
+            <text x="94" y="570" style="fill:var(--ink-sec)">อุโมงค์/ท่อส่งน้ำ</text>
+            <rect x="196" y="561" width="26" height="8" rx="4" style="fill:var(--series-1)"/>
+            <text x="230" y="570" style="fill:var(--ink-sec)">ระดับน้ำถังเก็บน้ำใส</text>
+          </g>
+        </svg>
+        </div>
+        <div class="note-box" style="margin-top:12px">โครงเส้นเชื่อม MH/TR → สถานี เป็นการจัดวางตามผังจอ SCADA เท่านั้น — <b>เส้นทางรับน้ำจริงของแต่ละสถานี (sourceSystem) ยังไม่มีข้อมูล</b> รอยืนยันเพื่อวาดเส้นเชื่อมที่ถูกต้อง</div>
+      </div>`;
+  })();
+
+  /* ============================================================
+     MAIN TRANSMISSION
+  ============================================================ */
+  (function transmission() {
+    const p = $("#pane-transmission");
+    const cards = M.mainTransmissionSystems.map(s => {
+      const flowNum = (s.flow.match(/^[\d,]+/) || [""])[0];
+      const pNum = (s.pressure.match(/^[\d.]+/) || [""])[0];
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+          <h3 style="font-size:15px">${esc(s.systemCode)} · ${esc(s.systemName)}</h3>
+          <span class="badge b-nodata">${esc(s.status)}</span>
+        </div>
+        <p class="hint">${esc(s.type)}</p>
+        <div style="display:flex;gap:26px;margin:10px 0 12px">
+          <div><div class="kpi label" style="font-size:11px;color:var(--muted)">Flow (SCADA)</div>
+            <div class="mono" style="font-size:21px;font-weight:700;color:var(--accent-deep)">${fmt(flowNum.replace(/,/g, ""))}</div></div>
+          <div><div style="font-size:11px;color:var(--muted)">Pressure (SCADA)</div>
+            <div class="mono" style="font-size:21px;font-weight:700">${pNum}</div></div>
+        </div>
+        <table style="font-size:12.5px">
+          <tr><td style="color:var(--muted);width:96px">แหล่งน้ำ</td><td>${esc(s.source)}</td></tr>
+          <tr><td style="color:var(--muted)">หน้าที่</td><td>${esc(s.mainFunction)}</td></tr>
+          <tr><td style="color:var(--muted)">หมายเหตุ</td><td>${isNoData(s.note) ? '<span class="badge b-nodata">ยังไม่มีข้อมูล</span>' : esc(s.note)}</td></tr>
+        </table>
+      </div>`;
+    }).join("");
+    p.innerHTML = `
+      <h2>ระบบสูบส่งหลัก 4 ระบบ</h2>
+      <p class="sub">ค่า Flow/Pressure เป็นค่าดิบจากจอ SCADA ณ 3 ก.ค. 2026 14:05 — ความหมายและหน่วยของตัวเลขอยู่ระหว่างรอยืนยัน</p>
+      <div class="grid cols-2">${cards}</div>
+      <div class="card km-card" style="margin-top:14px">
+        <div class="cat">Key Learning</div>
+        <h4>ไฮดรอลิกของอุโมงค์ส่งน้ำ</h4>
+        <p>${esc(M.mainTransmissionSystems[0].keyLearning)}</p>
+      </div>`;
+  })();
+
+  /* ============================================================
+     PUMPING STATIONS
+  ============================================================ */
+  (function stations() {
+    const p = $("#pane-stations");
+    const rows = M.pumpingStations.map(st => {
+      const t = st.clearWaterTank, pct = tankPct(st);
+      return `<tr>
+        <td><span class="badge b-code">${st.stationCode}</span></td>
+        <td>${esc(shortName(st))}</td>
+        <td>${isNoData(st.sourceSystem) ? '<span class="badge b-nodata">ยังไม่มีข้อมูล</span>' : esc(st.sourceSystem)}</td>
+        <td class="num">${t ? esc(t.levelM) : "–"}</td>
+        <td class="num">${t ? esc(t.maxLevelM) : "–"}</td>
+        <td class="num">${t ? esc(t.areaSqm) : "–"}</td>
+        <td><div class="tankbar"><div class="rail"><div class="fill" style="width:${pct || 0}%"></div></div><span class="pct">${pct == null ? "–" : pct + "%"}</span></div></td>
+        <td style="font-size:12px;color:var(--ink-sec)">${isNoData(st.note) ? "–" : esc(st.note)}</td>
+      </tr>`;
+    }).join("");
+    p.innerHTML = `
+      <h2>สถานีสูบจ่ายน้ำ 10 แห่ง</h2>
+      <p class="sub">ข้อมูลถังเก็บน้ำใสอ่านจากจอ SCADA · Flow / Pressure In–Out / พื้นที่จ่ายน้ำ ยังรอข้อมูลยืนยัน</p>
+      <div class="card">
+        <div class="scroll-x"><table>
+          <thead><tr><th>รหัส</th><th>สถานี</th><th>รับน้ำจาก</th><th>ระดับถัง (ม.)</th><th>Max (ม.)</th><th>พื้นที่ถัง (Sqm)</th><th>ระดับเทียบ Max</th><th>หมายเหตุ</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:14px">
+        <div class="card km-card">
+          <div class="cat">บทบาทของถังเก็บน้ำใส</div>
+          <h4>Buffer ของระบบ</h4>
+          <p>เก็บสำรองน้ำช่วง Off-peak แล้วนำออกใช้ช่วง Peak ที่ความต้องการสูงกว่าน้ำที่รับเข้าจากอุโมงค์ — การรักษาระดับน้ำให้สูงช่วยลดภาระปั๊มและประหยัดพลังงาน</p>
+        </div>
+        <div class="card km-card">
+          <div class="cat">Interdependence Rule</div>
+          <h4>สถานีทั้งหมดพึ่งพากัน</h4>
+          <p>การปรับการรับน้ำที่สถานีหนึ่งกระทบแรงดันของโซนข้างเคียงทันที — เช่น หากเพชรเกษม (PK) รับน้ำเต็มกำลัง ท่าพระ (TP) และบางกอกน้อยจะเจอแรงดันขาเข้าตกทันที</p>
+        </div>
+      </div>`;
+  })();
+
+  /* ============================================================
+     FLOW & PRESSURE ANALYTICS
+  ============================================================ */
+  (function analytics() {
+    const p = $("#pane-analytics");
+
+    /* --- sample pressure optimization curve (labeled Sample) --- */
+    const H = 210, W = 560, PX = 44, PY = 18, PB = 34;
+    const iw = W - PX - 14, ih = H - PY - PB;
+    const base = t => {   /* smooth daily pressure shape 0-24h */
+      const morning = 1.55 * Math.exp(-Math.pow((t - 6.4) / 2.1, 2));
+      const evening = 0.85 * Math.exp(-Math.pow((t - 18.5) / 2.6, 2));
+      return 1.35 + morning + evening + 0.12 * Math.sin(t / 24 * Math.PI * 2);
+    };
+    const X = t => PX + t / 24 * iw;
+    const Y = v => PY + ih - (v - 0.5) / 3.2 * ih;
+    const pts = []; for (let t = 0; t <= 24; t += 0.5) pts.push([t, base(t)]);
+    const line = pts.map((d, i) => (i ? "L" : "M") + X(d[0]).toFixed(1) + " " + Y(d[1]).toFixed(1)).join("");
+    const bandTop = pts.map((d, i) => (i ? "L" : "M") + X(d[0]).toFixed(1) + " " + Y(d[1] + 0.5).toFixed(1)).join("");
+    const bandBot = pts.slice().reverse().map(d => "L" + X(d[0]).toFixed(1) + " " + Y(d[1] - 0.5).toFixed(1)).join("");
+    const hours = [0, 4, 8, 12, 16, 20, 24];
+    const curveSvg = `
+      <svg id="curve-svg" viewBox="0 0 ${W} ${H}" style="width:100%" role="img" aria-label="กราฟตัวอย่าง Pressure Optimization Curve">
+        ${[1, 2, 3].map(v => `<line x1="${PX}" y1="${Y(v)}" x2="${W - 14}" y2="${Y(v)}" class="gridline"/>
+          <text x="${PX - 8}" y="${Y(v) + 3}" text-anchor="end" class="axis-t">${v.toFixed(1)}</text>`).join("")}
+        ${hours.map(hh => `<text x="${X(hh)}" y="${H - 12}" text-anchor="middle" class="axis-t">${String(hh).padStart(2, "0")}:00</text>`).join("")}
+        <path d="${bandTop} ${bandBot} Z" fill="var(--accent)" opacity="0.13"/>
+        <path d="${line}" fill="none" stroke="var(--series-1)" stroke-width="2.2"/>
+        <line x1="${X(5)}" y1="${PY}" x2="${X(5)}" y2="${PY + ih}" stroke="var(--warn)" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <text x="${X(5) + 5}" y="${PY + 12}" class="axis-t" style="fill:var(--warn);font-weight:700">05:00 เร่งล่วงหน้า</text>
+        <circle id="curve-dot" r="4.5" fill="var(--series-1)" stroke="var(--surface)" stroke-width="2" style="display:none"/>
+        <rect id="curve-hit" x="${PX}" y="${PY}" width="${iw}" height="${ih}" fill="transparent"/>
+      </svg>`;
+
+    /* --- rupture signature (sample, small multiples) --- */
+    const sig = (title, mkP, mkF, tag) => {
+      const w = 250, h = 128, px = 10, py = 12, iw2 = w - 2 * px, ih2 = h - py - 24;
+      const P = [], F = [];
+      for (let i = 0; i <= 40; i++) { const t = i / 40; P.push([t, mkP(t)]); F.push([t, mkF(t)]); }
+      const ln = (arr, col) => `<path d="${arr.map((d, i) => (i ? "L" : "M") + (px + d[0] * iw2).toFixed(1) + " " + (py + ih2 - d[1] * ih2).toFixed(1)).join("")}" fill="none" stroke="${col}" stroke-width="2"/>`;
+      return `<div>
+        <div style="font-size:12.5px;font-weight:700;margin-bottom:4px">${title} <span class="badge b-sample">Sample</span></div>
+        <svg viewBox="0 0 ${w} ${h}" style="width:100%;max-width:280px" role="img" aria-label="${title}">
+          <line x1="${px}" y1="${py + ih2}" x2="${w - px}" y2="${py + ih2}" class="gridline" style="stroke:var(--line)"/>
+          ${ln(F, "var(--series-2)")}${ln(P, "var(--series-1)")}
+          <text x="${px}" y="${h - 4}" class="axis-t">${tag}</text>
+        </svg>
+      </div>`;
+    };
+    const normal = sig("Demand ปกติ (เช้าตรู่)",
+      t => 0.72 - 0.3 / (1 + Math.exp(-(t - 0.5) * 9)),
+      t => 0.25 + 0.42 / (1 + Math.exp(-(t - 0.5) * 9)),
+      "ค่อยเป็นค่อยไป · Flow–Pressure ผกผัน");
+    const rupture = sig("ท่อประธานแตก",
+      t => t < 0.45 ? 0.78 : Math.max(0.1, 0.78 - (t - 0.45) * 5.2),
+      t => t < 0.45 ? 0.3 : Math.min(0.92, 0.3 + (t - 0.45) * 6.0),
+      "ฉับพลัน · เบี่ยงเบนพร้อมกันรุนแรง");
+
+    /* --- SCADA snapshot table --- */
+    const snap = M.flowPressureData[0];
+    const snapRows = snap.stations.map(s => {
+      const st = M.pumpingStations.find(x => x.stationCode === s.stationCode);
+      return `<tr>
+        <td><span class="badge b-code">${s.stationCode}</span> ${st ? esc(shortName(st)) : ""}</td>
+        <td class="num">${s.largeValues.slice(0, 2).map(fmtRaw).join(" · ")}</td>
+        <td class="num">${s.smallValues.join(" · ")}</td>
+      </tr>`;
+    }).join("");
+    function fmtRaw(v) { return /^\d+$/.test(v) ? fmt(v) : esc(v); }
+
+    p.innerHTML = `
+      <h2>วิเคราะห์ Flow และ Pressure</h2>
+      <p class="sub">กราฟรายชั่วโมงด้านล่างเป็น <b>ข้อมูลตัวอย่าง (Sample Data)</b> เพื่อสาธิตรูปแบบการควบคุม — ข้อมูลจริงที่มีขณะนี้คือ Snapshot 1 จุดเวลา</p>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline">
+          <h3>Pressure Optimization Curve — กรอบควบคุมขอบบน/ขอบล่าง</h3>
+          <span class="badge b-sample">Sample Data</span>
+        </div>
+        <p class="hint">Tolerance Band ±0.5 ม. · เร่งแรงดันล่วงหน้าก่อน Peak เช้า (~05:00) · ลดแรงดันกลางคืนเพื่อประหยัดพลังงาน · การไต่ระดับช้า ๆ ป้องกัน Water Hammer</p>
+        ${curveSvg}
+        <div class="legend">
+          <span class="key"><span class="sw" style="background:var(--series-1)"></span>แรงดันเป้าหมาย (Set Point Curve)</span>
+          <span class="key"><span class="sw" style="background:var(--accent);opacity:.25"></span>Tolerance Band ±0.5 ม.</span>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:14px">
+        <div class="card">
+          <h3>Diagnostic Signatures — อ่าน "รูปร่าง" ของกราฟ</h3>
+          <p class="hint">สีน้ำเงิน = Pressure · สีเขียวอมฟ้า = Flow</p>
+          <div style="display:flex;gap:18px;flex-wrap:wrap">${normal}${rupture}</div>
+        </div>
+        <div class="card">
+          <h3>SCADA Snapshot — ค่าดิบรายสถานี</h3>
+          <p class="hint">3 ก.ค. 2026 14:05 · คอลัมน์ซ้าย = ตัวเลขชุดใหญ่ (คาดว่า Flow) · ขวา = ตัวเลขทศนิยม (คาดว่า Pressure/ระดับ) — <b>รอยืนยันความหมาย</b></p>
+          <div class="scroll-x"><table>
+            <thead><tr><th>สถานี</th><th>ค่าชุดใหญ่</th><th>ค่าทศนิยม</th></tr></thead>
+            <tbody>${snapRows}</tbody>
+          </table></div>
+        </div>
+      </div>`;
+
+    /* crosshair tooltip on curve */
+    const svg = $("#curve-svg", p), dot = $("#curve-dot", p), hit = $("#curve-hit", p);
+    hit.addEventListener("mousemove", e => {
+      const r = svg.getBoundingClientRect();
+      const sx = W / r.width;
+      const t = Math.max(0, Math.min(24, ((e.clientX - r.left) * sx - PX) / iw * 24));
+      const v = base(t);
+      dot.setAttribute("cx", X(t)); dot.setAttribute("cy", Y(v)); dot.style.display = "";
+      const hh = Math.floor(t), mm = String(Math.round(t % 1 * 60)).padStart(2, "0");
+      tipShow(`${String(hh).padStart(2, "0")}:${mm} น. · เป้า ${v.toFixed(2)} ม. (±0.5)`, e.clientX, e.clientY);
+    });
+    hit.addEventListener("mouseleave", () => { dot.style.display = "none"; tipHide(); });
+  })();
+
+  /* ============================================================
+     RTU MONITORING
+  ============================================================ */
+  (function rtu() {
+    const p = $("#pane-rtu");
+    const ov = M.rtuNetworkOverview;
+    const chainSteps = ov.dataChain.split("→").map(s => s.trim());
+    const BRANCHES = { "01": "บางกอกน้อย", "17": "สมุทรปราการ" };
+
+    p.innerHTML = `
+      <h2>RTU Monitoring</h2>
+      <p class="sub">โครงข่ายเครื่องวัดระยะไกลกว่า 210 จุดบนท่อประธาน — ข้อมูล RTU รายตัว (สถานะ Online/Offline, Alarm, Last Update) ยังไม่มีข้อมูล</p>
+      <div class="grid kpis">
+        <div class="card kpi accent"><div class="label">จุดติดตั้งทั้งหมด</div><div class="value">210+ <small>จุด</small></div><div class="note">ยืนยันโดย Playbook</div></div>
+        <div class="card kpi"><div class="label">ประเภท P</div><div class="value">Pressure</div><div class="note">วัดแรงดันอย่างเดียว</div></div>
+        <div class="card kpi"><div class="label">ประเภท U / UZ</div><div class="value">Ultrasonic</div><div class="note">วัดทั้ง Flow และ Pressure</div></div>
+        <div class="card kpi"><div class="label">โปรโตคอลสื่อสาร</div><div class="value">DNP3</div><div class="note">ไร้สายแบบปลอดภัย → OPC Server</div></div>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>เส้นทางข้อมูล (Data Chain)</h3>
+          <p class="hint">จากท่อประธานสู่จอ SCADA</p>
+          ${chainSteps.map((s, i) => `
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:7px 0;${i < chainSteps.length - 1 ? "border-bottom:1px solid var(--line-soft)" : ""}">
+              <span class="badge b-code" style="margin-top:2px">${i + 1}</span>
+              <span style="font-size:13px">${esc(s)}</span>
+            </div>`).join("")}
+        </div>
+        <div class="card">
+          <h3>ตัวถอดรหัสชื่อ RTU</h3>
+          <p class="hint">Prefix (ประเภท) + รหัสสาขา 2 หลัก + Node ID — ลองพิมพ์ เช่น UZ0114, P051, UZ1609</p>
+          <div class="decoder">
+            <input id="rtu-in" value="UZ0114" maxlength="8" aria-label="รหัส RTU">
+            <button class="btn" id="rtu-go" type="button">ถอดรหัส</button>
+          </div>
+          <div class="decode-out" id="rtu-out"></div>
+          <p class="hint" style="margin-top:12px">รหัสสาขาที่ทราบแล้ว: 01 = บางกอกน้อย, 17 = สมุทรปราการ — สาขาอื่นยังไม่มีข้อมูล</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>หลักการเลือกจุดวัด</h3>
+        <p style="font-size:13px;color:var(--ink-sec);margin:0">${esc(ov.pointSelection)}</p>
+      </div>
+      <div class="empty" style="margin-top:14px">
+        <div class="big">ทะเบียน RTU รายตัวยังไม่มีข้อมูล</div>
+        เมื่อได้รับรายการ RTU (ชื่อ, สถานี, ค่าที่ Monitor, สถานะ, Alarm) หน้านี้จะแสดงตารางสถานะแบบเรียลไทม์
+      </div>`;
+
+    function decode() {
+      const v = $("#rtu-in").value.trim().toUpperCase().replace(/\s+/g, "");
+      const m = v.match(/^(UZ|U|P)(\d{2})(\d{1,3})$/) || v.match(/^(UZ|U|P)(\d{2})$/);
+      const out = $("#rtu-out");
+      if (!m) { out.innerHTML = "รูปแบบไม่ตรง — ตัวอย่างที่ถูกต้อง: <b>UZ0114</b> (Prefix + สาขา 2 หลัก + Node)"; return; }
+      const type = m[1] === "P" ? "Pressure Meter (วัดแรงดันอย่างเดียว)" : "Ultrasonic Flow Meter (วัด Flow + Pressure)";
+      const br = BRANCHES[m[2]] ? "สาขา" + BRANCHES[m[2]] : "สาขารหัส " + m[2] + " (ยังไม่มีข้อมูลชื่อสาขา)";
+      out.innerHTML = `<b class="mono">${esc(v)}</b> → ${type} · ${esc(br)}${m[3] ? " · Node " + esc(m[3]) : ""}`;
+    }
+    $("#rtu-go").addEventListener("click", decode);
+    $("#rtu-in").addEventListener("keydown", e => { if (e.key === "Enter") decode(); });
+    decode();
+  })();
+
+  /* ============================================================
+     SHIFT HANDOVER
+  ============================================================ */
+  (function shift() {
+    const p = $("#pane-shift");
+    const fields = [
+      ["วันที่ / เวลา", "date, time"], ["ผู้ส่งเวร → ผู้รับเวร", "shiftFrom → shiftTo"],
+      ["สถานะระบบ", "systemStatus"], ["Alarm ที่เกิดขึ้น", "alarms[]"],
+      ["งานค้าง", "pendingTasks[]"], ["งานที่เสร็จแล้ว", "completedTasks[]"],
+      ["สถานีที่ต้องเฝ้าระวัง", "stationsToMonitor[]"], ["ประเด็น Flow/Pressure", "flowPressureIssues[]"],
+      ["สิ่งที่ต้องทำต่อ", "nextActions[]"], ["หมายเหตุ", "note"]
+    ];
+    p.innerHTML = `
+      <h2>บันทึกรับ–ส่งเวร</h2>
+      <p class="sub">ยังไม่มีข้อมูลบันทึกรับ–ส่งเวร — โครงสร้างข้อมูลเตรียมพร้อมแล้วตามรูปแบบด้านล่าง</p>
+      <div class="empty" style="margin-bottom:14px">
+        <div class="big">ยังไม่มีบันทึกรับ–ส่งเวร</div>
+        เมื่อได้รับข้อมูลเวรชุดแรก หน้านี้จะแสดงไทม์ไลน์การส่งเวร พร้อม Alarm งานค้าง และสิ่งที่ต้องติดตาม
+      </div>
+      <div class="card">
+        <h3>โครงสร้างข้อมูลที่รองรับแล้ว</h3>
+        <p class="hint">ตาม Master Data schema — ส่งข้อมูลตามหัวข้อเหล่านี้ได้เลย</p>
+        <div class="scroll-x"><table>
+          <thead><tr><th>หัวข้อ</th><th>Field</th></tr></thead>
+          <tbody>${fields.map(f => `<tr><td>${f[0]}</td><td class="num" style="color:var(--muted)">${f[1]}</td></tr>`).join("")}</tbody>
+        </table></div>
+      </div>`;
+  })();
+
+  /* ============================================================
+     KM LIBRARY
+  ============================================================ */
+  (function km() {
+    const p = $("#pane-km");
+    const cats = ["ทั้งหมด", ...new Set(M.knowledgeBase.map(k => k.category))];
+    p.innerHTML = `
+      <h2>คลังองค์ความรู้ (${M.knowledgeBase.length} เรื่อง)</h2>
+      <p class="sub">สะสมจากบันทึกการเรียนรู้งาน ณ กคจ. และ Smart Waterworks Playbook — ค้นหาหรือกรองตามหมวดได้</p>
+      <input class="search" id="km-q" type="search" placeholder="ค้นหา เช่น RTU, ผันน้ำ, น้ำเค็ม…" aria-label="ค้นหาองค์ความรู้">
+      <div class="chips" id="km-chips">${cats.map((c, i) =>
+        `<button class="chip${i === 0 ? " on" : ""}" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join("")}</div>
+      <div class="grid cols-2" id="km-list"></div>`;
+
+    let cat = "ทั้งหมด", q = "";
+    function render() {
+      const list = M.knowledgeBase.filter(k => {
+        const okCat = cat === "ทั้งหมด" || k.category === cat;
+        const hay = (k.topic + " " + k.description + " " + k.keyTakeaway + " " + k.category).toLowerCase();
+        return okCat && (!q || hay.indexOf(q) >= 0);
+      });
+      $("#km-list").innerHTML = list.length ? list.map(k => `
+        <div class="card km-card">
+          <div class="cat">${esc(k.category)}</div>
+          <h4>${esc(k.topic)}</h4>
+          <p>${esc(k.description)}</p>
+          ${isNoData(k.example) ? "" : `<p style="font-size:12px;color:var(--muted)">ตัวอย่าง: ${esc(k.example)}</p>`}
+          <div class="take"><b>จำให้ขึ้นใจ:</b> ${esc(k.keyTakeaway)}</div>
+          ${(k.relatedStation || k.relatedSystem) ? `<div class="meta">เกี่ยวข้อง: ${esc([k.relatedStation, k.relatedSystem].filter(Boolean).join(" · "))}</div>` : ""}
+        </div>`).join("")
+        : `<div class="empty" style="grid-column:1/-1"><div class="big">ไม่พบองค์ความรู้ที่ตรงเงื่อนไข</div>ลองเปลี่ยนคำค้นหรือเลือกหมวด "ทั้งหมด"</div>`;
+    }
+    $("#km-chips").addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      cat = b.dataset.cat;
+      document.querySelectorAll("#km-chips .chip").forEach(c => c.classList.toggle("on", c === b));
+      render();
+    });
+    $("#km-q").addEventListener("input", e => { q = e.target.value.trim().toLowerCase(); render(); });
+    render();
+  })();
+
+  /* ============================================================
+     DATA UPLOAD
+  ============================================================ */
+  (function upload() {
+    const p = $("#pane-upload");
+    p.innerHTML = `
+      <h2>Data Upload &amp; Export</h2>
+      <p class="sub">ต้นแบบนี้ฝังข้อมูลจาก Master Data v${M.dataVersion} — ดาวน์โหลด JSON ได้ทันที ส่วนการอัปโหลด CSV/JSON และ Reset เป็น Sample Data จะพร้อมในเวอร์ชัน React</p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Export ข้อมูล</h3>
+          <p class="hint">ดาวน์โหลด Master Data ทั้งชุดเป็นไฟล์ JSON</p>
+          <button class="btn" id="btn-export" type="button">ดาวน์โหลด master-data.json</button>
+        </div>
+        <div class="card">
+          <h3>ความสามารถที่วางแผนไว้ (เวอร์ชันเต็ม)</h3>
+          <table style="font-size:13px">
+            <tr><td>อัปโหลด CSV / JSON เพื่ออัปเดตค่าสถานี</td><td><span class="badge b-warn">วางแผนแล้ว</span></td></tr>
+            <tr><td>Reset เป็น Sample Data</td><td><span class="badge b-warn">วางแผนแล้ว</span></td></tr>
+            <tr><td>Pump Capacity · Alarm History · Maintenance</td><td><span class="badge b-nodata">Future Add-on</span></td></tr>
+            <tr><td>AI Chatbot ตอบจากคลังองค์ความรู้</td><td><span class="badge b-nodata">Future Add-on</span></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>ประเด็นที่รอการยืนยัน (${M.pendingConfirmations.length} ข้อ)</h3>
+        <p class="hint">ข้อมูลที่พบความไม่สอดคล้องหรือยังตีความไม่ได้ — ระบบจะไม่เดาข้อมูลจริง</p>
+        ${M.pendingConfirmations.map(c => `<div class="warn-box" style="margin-bottom:8px">${esc(c)}</div>`).join("")}
+      </div>`;
+    $("#btn-export").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(M, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "master-data-v" + M.dataVersion + ".json";
+      a.click(); URL.revokeObjectURL(a.href);
+    });
+  })();
+
+  /* ---------- generic data-tip hover ---------- */
+  document.addEventListener("mousemove", e => {
+    const t = e.target.closest("[data-tip]");
+    if (t) tipShow(esc(t.getAttribute("data-tip")), e.clientX, e.clientY);
+    else if (!e.target.closest("#curve-hit")) tipHide();
+  });
+
+  show("overview");
+})();
+</script>
+
+</body>
+</html>

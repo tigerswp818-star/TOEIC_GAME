@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Water KM Dashboard — ระบบสูบส่ง–สูบจ่ายน้ำ</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="hero">
+  <h1 id="app-title">💧 ระบบสูบส่ง–สูบจ่ายน้ำ</h1>
+  <p id="app-subtitle"></p>
+  <div class="docref" id="app-docref"></div>
+</header>
+
+<nav class="topnav" id="topnav">
+  <a href="#overview">ภาพรวมระบบ</a>
+  <a href="#tiers">โครงสร้าง 5 ชั้น</a>
+  <a href="#compare">สูบส่ง vs สูบจ่าย</a>
+  <a href="#station">กายวิภาคสถานี</a>
+  <a href="#scada">RTU &amp; SCADA</a>
+  <a href="#ptc">PTC Curve</a>
+  <a href="#triad">3 หน่วยงาน</a>
+  <a href="#emergency">ภาวะฉุกเฉิน</a>
+  <a href="#dma">DMA &amp; น้ำสูญเสีย</a>
+  <a href="#network">ข้อมูลจริงหน่วยเรา</a>
+  <a href="#handover">รับ–ส่งเวร</a>
+  <a href="#addons">คลังความรู้ Add-on</a>
+</nav>
+
+<main>
+
+  <!-- ================= ภาพรวม ================= -->
+  <section class="panel" id="overview">
+    <h2><span class="chip" style="background:var(--s-blue)">1</span> ภาพรวมระบบ: จากโรงงานผลิตถึงก๊อกน้ำ</h2>
+    <p class="lead">
+      เส้นทางของน้ำ 1 หยด: <b>โรงงานผลิตน้ำ → อุโมงค์ส่งน้ำ (สูบส่ง) → สถานีสูบจ่าย →
+      ท่อประธาน (สูบจ่าย) → DMA → บ้านผู้ใช้น้ำ</b> — คลิกที่กล่องในแผนภาพเพื่อดูรายละเอียดแต่ละจุด
+    </p>
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="card flowwrap" style="margin-top:1rem">
+      <div id="flow-diagram"></div>
+      <div class="flow-detail" id="flow-detail"><b>แตะ / คลิก</b> กล่องใดก็ได้ในแผนภาพ เพื่อดูข้อมูลของจุดนั้น</div>
+    </div>
+  </section>
+
+  <!-- ================= โครงสร้าง 5 ชั้น ================= -->
+  <section class="panel" id="tiers">
+    <h2><span class="chip" style="background:var(--s-blue)">2</span> โครงสร้างพื้นฐาน 5 ชั้น</h2>
+    <p class="lead">มองทั้งระบบเป็นบันได 5 ขั้น จากแหล่งผลิตขนาดมหึมา ไล่ลงมาถึงท่อฝอยหน้าบ้าน</p>
+    <div class="tiers" id="tier-list"></div>
+  </section>
+
+  <!-- ================= สูบส่ง vs สูบจ่าย ================= -->
+  <section class="panel" id="compare">
+    <h2><span class="chip" style="background:var(--s-aqua)">3</span> หัวใจของงาน: สูบส่ง vs สูบจ่าย</h2>
+    <p class="lead">สองคำนี้ต่างกันชัดเจน — <b>สูบส่ง</b>คือขนน้ำปริมาณมหาศาลระหว่างโรงงานกับสถานี
+      ส่วน<b>สูบจ่าย</b>คือส่งน้ำเข้าเมืองให้แรงดันพอดีกับการใช้งานจริง</p>
+    <div class="duo" id="compare-duo"></div>
+  </section>
+
+  <!-- ================= กายวิภาคสถานี ================= -->
+  <section class="panel" id="station">
+    <h2><span class="chip" style="background:var(--s-aqua)">4</span> กายวิภาคสถานีสูบจ่ายน้ำ</h2>
+    <p class="lead">ภายในสถานีมี 4 ส่วนหลักทำงานร่วมกัน เพื่อยกแรงดันน้ำจากขาเข้า ~15 ม. เป็นขาออก ~20 ม.</p>
+    <div class="station-grid">
+      <div class="card">
+        <div class="comp-list" id="comp-list"></div>
+      </div>
+      <div class="card">
+        <div class="gauges">
+          <div class="gauge">
+            <canvas id="gauge-in" width="150" height="105"></canvas>
+            <div class="glabel">แรงดันขาเข้า (จากอุโมงค์)</div>
+          </div>
+          <div class="gauge">
+            <canvas id="gauge-out" width="150" height="105"></canvas>
+            <div class="glabel">แรงดันขาออก (เข้าท่อประธาน)</div>
+          </div>
+        </div>
+        <div class="rpm-row">
+          <label for="rpm">ทดลองปรับรอบปั๊ม (RPM) — เหมือนที่พนักงานสถานีทำจริง</label>
+          <input type="range" id="rpm" min="500" max="720" value="610" step="5" />
+          <div class="rpm-out" id="rpm-out"></div>
+        </div>
+        <div class="pumps" id="pump-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SCADA ================= -->
+  <section class="panel" id="scada">
+    <h2><span class="chip" style="background:var(--s-violet)">5</span> ระบบประสาทดิจิทัล: RTU &amp; SCADA</h2>
+    <p class="lead" id="rtu-lead"></p>
+    <div class="rtu-grid">
+      <div class="card">
+        <h3 style="font-size:0.98rem;margin-bottom:0.5rem">การอ่านรหัส RTU</h3>
+        <table class="codes">
+          <thead><tr><th>รหัส</th><th>ความหมาย</th></tr></thead>
+          <tbody id="rtu-codes"></tbody>
+        </table>
+        <p style="font-size:0.84rem;color:var(--ink-2);margin-top:0.7rem" id="rtu-ps"></p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:0.98rem;margin-bottom:0.9rem">วงจรป้อนกลับ SCADA (หมุนวนตลอด 24 ชม.)</h3>
+        <div class="loop" id="scada-loop"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PTC ================= -->
+  <section class="panel" id="ptc">
+    <h2><span class="chip" style="background:var(--s-blue)">6</span> PTC Curve — เป้าแรงดันราย 24 ชั่วโมง</h2>
+    <p class="lead">แรงดันน้ำไม่ได้ตั้งค่าเดียวทั้งวัน แต่เดินตาม "เส้นโค้งเป้าหมาย" ที่ล้อกับพฤติกรรมคนเมือง
+      — ชี้ / แตะบนกราฟเพื่ออ่านค่าแต่ละชั่วโมง (แถบจาง ๆ คือกรอบ tolerance ที่ผู้ปฏิบัติขยับได้)</p>
+    <div class="card">
+      <div class="chartwrap">
+        <canvas id="ptc-chart" height="380"></canvas>
+        <div class="viz-tooltip" id="ptc-tip"></div>
+      </div>
+      <ul class="ptc-notes" id="ptc-notes"></ul>
+    </div>
+  </section>
+
+  <!-- ================= 3 หน่วยงาน ================= -->
+  <section class="panel" id="triad">
+    <h2><span class="chip" style="background:var(--s-yellow)">7</span> สามหน่วยงานขับเคลื่อนระบบ</h2>
+    <p class="lead">สมอง–กล้ามเนื้อ–ปลายประสาท: กคจ. คิดและสั่งการ, สถานีลงมือปรับเครื่องจักร, สาขาดูแลผู้ใช้น้ำในพื้นที่</p>
+    <div class="triad" id="triad-grid"></div>
+  </section>
+
+  <!-- ================= ฉุกเฉิน ================= -->
+  <section class="panel" id="emergency">
+    <h2><span class="chip" style="background:var(--s-red)">8</span> ภาวะฉุกเฉิน: ผันน้ำ &amp; แผนวิกฤต</h2>
+    <p class="lead">เมื่อไฟดับ น้ำดิบเค็ม หรือกำลังผลิตหายฉับพลัน ระบบต้องปรับตัวได้ในไม่กี่นาที</p>
+    <div class="emg-grid">
+      <div class="card">
+        <h3 id="divert-title"></h3>
+        <p id="divert-trigger"></p>
+        <p id="divert-how" style="margin-top:0.4rem"></p>
+        <div class="divert-demo">
+          <button id="divert-btn">⚡ จำลองเหตุ: ไฟดับที่โรงงาน B</button>
+          <div id="divert-svg"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 id="crisis-title"></h3>
+        <p id="crisis-scenario"></p>
+        <ol id="crisis-actions"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DMA ================= -->
+  <section class="panel" id="dma">
+    <h2><span class="chip" style="background:var(--s-aqua)">9</span> DMA &amp; การตามล่าน้ำสูญเสีย</h2>
+    <p class="lead" id="dma-lead"></p>
+    <div class="card">
+      <h3 style="font-size:0.95rem;margin-bottom:0.6rem">แรงดันลดหลั่นตามระยะทาง (ทำไมห้องควบคุมเห็น 20 ม. แต่บ้านสุดซอยเหลือ 2 ม.)</h3>
+      <div class="pressure-chain" id="pressure-chain"></div>
+    </div>
+    <div class="card step-sim" id="step-sim">
+      <h3 style="font-size:0.95rem" id="steptest-title"></h3>
+      <p style="font-size:0.84rem;color:var(--ink-2);margin:0.3rem 0 0.7rem" id="steptest-logic"></p>
+      <div class="controls" id="step-controls"></div>
+      <div class="meter">มาตรวัดหลักของ DMA: <b id="step-flow">100</b> หน่วย</div>
+      <div class="verdict" id="step-verdict"></div>
+    </div>
+    <div class="duo" style="margin-top:1rem">
+      <div class="card"><h3 style="font-size:0.92rem">🗺 GIS</h3><p style="font-size:0.85rem;color:var(--ink-2)" id="gis-text"></p></div>
+      <div class="card"><h3 style="font-size:0.92rem">🛡 Cathodic Protection</h3><p style="font-size:0.85rem;color:var(--ink-2)" id="cp-text"></p></div>
+    </div>
+  </section>
+
+  <!-- ================= ข้อมูลจริง ================= -->
+  <section class="panel" id="network">
+    <h2><span class="chip" style="background:var(--s-yellow)">10</span> ข้อมูลจริงของหน่วยเรา
+      <span class="badge example">โครงให้กรอก — แก้ไขได้</span></h2>
+    <p class="lead">
+      ส่วนนี้คือ "สมุดพกหน้างาน" — TR ทั้ง 3 (มหาสวัสดิ์ / บางเขน T1 / บางเขน T2) และสถานีสูบจ่าย 10 แห่ง
+      กดปุ่ม <b>โหมดแก้ไข</b> แล้วพิมพ์ชื่อสถานี, Flow, Pressure, รหัส RTU ของจริงลงตารางได้เลย
+      (ข้อมูลบันทึกในเครื่องอัตโนมัติ และส่งออกเป็นไฟล์ได้)
+    </p>
+    <div class="net-toolbar">
+      <button id="net-edit" class="primary">✏️ โหมดแก้ไข: ปิด</button>
+      <button id="net-export">⬇️ ส่งออกข้อมูล (JSON)</button>
+      <button id="net-reset">♻️ ล้างข้อมูลที่แก้ไข</button>
+      <span class="hint">แตะช่องสีเหลืองเพื่อแก้ไขเมื่อเปิดโหมดแก้ไข</span>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem;margin-bottom:0.5rem">ระบบสูบส่ง (TR) — 3 ชุด</h3>
+      <div class="tablewrap"><table class="net" id="tr-table"></table></div>
+      <h3 style="font-size:0.95rem;margin:1.1rem 0 0.5rem">สถานีสูบจ่ายน้ำ (สจ.) — 10 แห่ง</h3>
+      <div class="tablewrap"><table class="net" id="sj-table"></table></div>
+    </div>
+  </section>
+
+  <!-- ================= รับส่งเวร ================= -->
+  <section class="panel" id="handover">
+    <h2><span class="chip" style="background:var(--s-aqua)">11</span> บันทึกรับ–ส่งเวร</h2>
+    <p class="lead">แบบฟอร์มมาตรฐานสำหรับส่งต่อสถานะระหว่างเวร — บันทึกเก็บในเครื่อง เรียกดูย้อนหลัง และส่งออกได้</p>
+    <div class="ho-grid">
+      <div class="card ho-form">
+        <h3 style="font-size:0.95rem">ลงบันทึกเวรใหม่</h3>
+        <div class="row2">
+          <div><label>วันที่</label><input type="date" id="ho-date" /></div>
+          <div><label>เวร</label><select id="ho-shift"></select></div>
+        </div>
+        <div class="row2">
+          <div><label>ผู้ส่งเวร</label><input type="text" id="ho-from" placeholder="ชื่อ-สกุล" /></div>
+          <div><label>ผู้รับเวร</label><input type="text" id="ho-to" placeholder="ชื่อ-สกุล" /></div>
+        </div>
+        <div class="row2">
+          <div><label>แรงดันขาออกตอนส่งเวร (ม.)</label><input type="number" step="0.1" id="ho-pressure" placeholder="เช่น 20.0" /></div>
+          <div><label>ปั๊มที่เดิน / Standby</label><input type="text" id="ho-pumps" placeholder="เช่น เดิน 4 : สำรอง 1" /></div>
+        </div>
+        <label>เหตุการณ์ในเวร / งานค้างส่งต่อ</label>
+        <textarea id="ho-note" placeholder="เช่น 14:20 กคจ. สั่งปรับ PTC ลด 0.3 ม. / ปั๊ม #3 เสียงผิดปกติ รอช่างพรุ่งนี้"></textarea>
+        <button class="save" id="ho-save">💾 บันทึกการส่งเวร</button>
+        <div class="ho-check">
+          <b>เช็คลิสต์ก่อนส่งเวร:</b>
+          <ul id="ho-checklist"></ul>
+        </div>
+      </div>
+      <div>
+        <div class="net-toolbar">
+          <button id="ho-export">⬇️ ส่งออกบันทึกเวร (CSV)</button>
+        </div>
+        <div id="ho-log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= addons ================= -->
+  <section class="panel" id="addons">
+    <h2><span class="chip" style="background:var(--s-yellow)">12</span> คลังความรู้ Add-on</h2>
+    <p class="lead">พื้นที่สำหรับต่อยอด — ความรู้ใหม่ทุกเรื่อง (เช่น Pump Capacity, คู่มือ RTU รายตัว) เพิ่มเป็นการ์ดที่นี่ได้เรื่อย ๆ</p>
+    <div class="addon-grid" id="addon-grid"></div>
+    <div class="card addon-howto">
+      <b>วิธีเพิ่มความรู้ใหม่ (ทำได้ 2 ทาง):</b>
+      <ol style="padding-left:1.2rem;margin-top:0.4rem;display:grid;gap:0.3rem">
+        <li>แก้ไฟล์ <code>js/data.js</code> — เพิ่ม object ใน <code>KM_DATA.addons</code> (มีตัวอย่างให้ในไฟล์) แล้ว refresh หน้า</li>
+        <li>หัวข้อใหญ่ที่มีข้อมูลเชิงตาราง เช่น Pump Capacity — เพิ่ม field ใหม่ใน <code>KM_DATA.network.stations</code> แล้วเพิ่มคอลัมน์ในตาราง (ดูตัวอย่างใน <code>js/app.js</code> ฟังก์ชัน <code>renderNetwork</code>)</li>
+      </ol>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  จัดทำโดยทีมพนักงานฝึกงาน — สร้างด้วยความช่วยเหลือของ AI (ดูวิธีเขียน Prompt ได้ใน PROMPT.md)<br />
+  ข้อมูลป้าย <span class="badge pdf">จากเอกสาร</span> อ้างอิงสไลด์สรุปบทเรียน · ข้อมูลป้าย <span class="badge example">ตัวอย่าง</span> ต้องยืนยันค่าจริงจากหน้างานก่อนใช้ปฏิบัติการ
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

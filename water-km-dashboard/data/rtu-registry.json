@@ -1,0 +1,1742 @@
+{
+ "meta": {
+  "source": "หน้า 'RTU รายจุด' (scadamap_new_pgim.htm) กองควบคุมระบบส่งและสูบจ่ายน้ำ — ผู้ใช้ส่งมอบ 3 ก.ค. 2026",
+  "totalPoints": 236,
+  "byType": {
+   "P": 23,
+   "U": 99,
+   "UZ": 113,
+   "อื่น ๆ": 1
+  },
+  "branchMap": {
+   "01": "บางกอกน้อย",
+   "02": "ตากสิน",
+   "03": "พญาไท",
+   "04": "นนทบุรี",
+   "05": "ทุ่งมหาเมฆ",
+   "06": "แม้นศรี",
+   "07": "สุขุมวิท",
+   "11": "ภาษีเจริญ",
+   "12": "ลาดพร้าว",
+   "13": "พระโขนง",
+   "15": "ประชาชื่น",
+   "16": "บางเขน",
+   "17": "สมุทรปราการ",
+   "53": "มีนบุรี",
+   "54": "บางบัวทอง"
+  },
+  "note": "สาขา 02 ตากสิน แบ่งเป็นตากสิน 1 / ตากสิน 2 บนหน้าเลือกพื้นที่ · รหัส UZ55xx/UZ56xx ยังไม่พบชื่อสาขา (รอยืนยัน) · การผูก RTU กับสถานีสูบจ่ายอยู่ในไฟล์ rtu_code_pgim.js ซึ่งยังไม่ได้รับ"
+ },
+ "rtuPoints": [
+  {
+   "code": "P019",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองมหาศร ถ.เพชรเกษม(ปลายเส้นท่อ}"
+  },
+  {
+   "code": "P021",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสรรพสามิต ถ.สุขสวัสดิ์ ปลายเส้นท่อ"
+  },
+  {
+   "code": "P032",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางพึง ถ.ราษฏร์บูรณะ ปลายเส้นท่อ"
+  },
+  {
+   "code": "P036",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "วัดทุ่งครุ ถ.ประชาอุทิศ ปลายเส้นท่อ"
+  },
+  {
+   "code": "P038",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางกอกน้อย ถ.บรมราชชนนี(ก่อนข้ามคลอง)"
+  },
+  {
+   "code": "P046",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ปลายเส้นท่อ ถ.บรมราชชนนี"
+  },
+  {
+   "code": "P050",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองเจ็ก ถ.บางกรวย ไทรน้อย"
+  },
+  {
+   "code": "P051",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางบอน ถ.เอกกชัย (ปลายเส้นท่อ)"
+  },
+  {
+   "code": "P052",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ซอยแสมดำ ถ.พระราม2 (ปลายเส้นท่อ)"
+  },
+  {
+   "code": "P113",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานใหม่ ถ.พหลโยธิน"
+  },
+  {
+   "code": "P125",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางนา ถ.สุขุมวิท"
+  },
+  {
+   "code": "P146",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองเกร็ด ถ.คู้บอน"
+  },
+  {
+   "code": "P149",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "เชิงสะพานพระราม 7"
+  },
+  {
+   "code": "P167",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางนา ถ.ศรีนครินทร์"
+  },
+  {
+   "code": "P169",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "แยก ถ.ออเงิน ตัด ถ.สายไหม"
+  },
+  {
+   "code": "P170",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ต้น ถ.สุวินทวงศ์มีนบุรี"
+  },
+  {
+   "code": "P171",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สุด ถ.ปู่่เจ้าสมิงพราย"
+  },
+  {
+   "code": "P173",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.สายลวด"
+  },
+  {
+   "code": "P174",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สุด ถ.ท้ายบ้าน"
+  },
+  {
+   "code": "P175",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "แยก ถ.แพรกษา ตัด ถ.กิ่งแก้ว"
+  },
+  {
+   "code": "P176",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "วัดตำหรุ ถ.สุขุมวิท"
+  },
+  {
+   "code": "P177A",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "หลัง booster ถ.ปานวิถี"
+  },
+  {
+   "code": "P177B",
+   "type": "P (Pressure เท่านั้น)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "หน้าโรงไฟฟ้า EPEC ถ.สุขุมวิท"
+  },
+  {
+   "code": "U001",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองมอญ ถ.จรัญสนิทวงศ์"
+  },
+  {
+   "code": "U002",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองมอญ ถ.อิสรภาพ"
+  },
+  {
+   "code": "U004",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานเจริญพาสน์ ถ.อิสรภาพ"
+  },
+  {
+   "code": "U005",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานเนาวจำเนียร ถ.อินทรพิทักษ์"
+  },
+  {
+   "code": "U006",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานเนาวจำเนียร ถ.อินทรพิทักษ์"
+  },
+  {
+   "code": "U014",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ซอย สุขสวัสดิ์53 ถ.สุขสวัสดิ์"
+  },
+  {
+   "code": "U016",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางบอน ถ.วงแหวนรอบนอก"
+  },
+  {
+   "code": "U017",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.บางค้อ ถ.กาญจนาภิเษก"
+  },
+  {
+   "code": "U018",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางเชือกหนัง ถ.วงแหวนรอบนอก"
+  },
+  {
+   "code": "U019",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ราชมนตรี ถ.เอกชัย"
+  },
+  {
+   "code": "U020",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางกอกใหญ่ ถ.รัชดาภิเษก"
+  },
+  {
+   "code": "U022",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองมหาสวัสดิ์ ถ.วงแหวนรอบน"
+  },
+  {
+   "code": "U023",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ทางรถไฟ ถ.เทอดพระเกีียรติ"
+  },
+  {
+   "code": "U024",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.เตย ถ.จรัญสนิทวงศ์"
+  },
+  {
+   "code": "U025",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.ตากสิน เพชรเกษม"
+  },
+  {
+   "code": "U027",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ราชมนตรี ถ.กัลปพฤกษ์"
+  },
+  {
+   "code": "U028",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ราชมนตรี ถ.กัลปพฤกษ์"
+  },
+  {
+   "code": "U029",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.มหาสวัสดิ์ ถ.ราชพฤกษ์"
+  },
+  {
+   "code": "U030",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานพระราม4"
+  },
+  {
+   "code": "U031",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.เจริญนครใต้สะพานข้ามคลองดาวคนอง"
+  },
+  {
+   "code": "U032",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "พระราม2 ซอย 33 ซอยพุทธบูชา 24"
+  },
+  {
+   "code": "U033",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "พระราม2 ซอย 33 ถนนสมานมิตรพัฒนา"
+  },
+  {
+   "code": "U039",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานพระนั่งเกล้า ถ.รัตนาธิเบศน์"
+  },
+  {
+   "code": "U040",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "พุฑมณฑลสาย 3"
+  },
+  {
+   "code": "U101",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.เปรมประชากร ถ.แจ้งวัฒนะ"
+  },
+  {
+   "code": "U103",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.บางบัว ถ.พหลโยธิน"
+  },
+  {
+   "code": "U105",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองเปรม ถ.งามวงศ์วาน"
+  },
+  {
+   "code": "U108",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.ประชาราษฎร์ ค.บางซื่อ"
+  },
+  {
+   "code": "U109",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "กองระบบน้ำดิบ ถ.เตชะวนิช"
+  },
+  {
+   "code": "U110",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองลาดพร้าว ถ.ลาดพร้าว"
+  },
+  {
+   "code": "U111",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองแสนแสบ ถ.ศรีนครินทร์"
+  },
+  {
+   "code": "U112",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสามเสน ถ.สามเสน"
+  },
+  {
+   "code": "U118",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.พระราม 6 ค.สามเสน"
+  },
+  {
+   "code": "U119",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสามเสน ถ.พหลโยธิน"
+  },
+  {
+   "code": "U120",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสามเสน ถ.ดินแดง"
+  },
+  {
+   "code": "U121",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสามเสน ถ.อโศกดินแดง"
+  },
+  {
+   "code": "U122",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ซ.รามคำแหง 53 ถ.รามคำแหง"
+  },
+  {
+   "code": "U125",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.เพชรบุรี ทางรถไฟ"
+  },
+  {
+   "code": "U128",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานสาธร ถ.เจริญกรุง"
+  },
+  {
+   "code": "U134",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ใต้ทางด่วน ถ.พระราม 4"
+  },
+  {
+   "code": "U137",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองพระโขนง ถ.สุขุมวิท"
+  },
+  {
+   "code": "U138",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ประเวศ, ถ.พัฒนาการ"
+  },
+  {
+   "code": "U139",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองเปรม ถ.สรงประภา"
+  },
+  {
+   "code": "U140",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.แสนแสบ ถ.สุขาภิบาล 1"
+  },
+  {
+   "code": "U141",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.บางชัน ถ.สุขาภิบาล 2"
+  },
+  {
+   "code": "U142",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ประเวศบุรีรมย์ ถ.ศรีนครินทร์"
+  },
+  {
+   "code": "U144",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางบัว เคหะบางบัว"
+  },
+  {
+   "code": "U145",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองลาดยาว ถ.งามวงศ์วาน"
+  },
+  {
+   "code": "U148",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.แสนแสบ ถ.รามคำแหง 21"
+  },
+  {
+   "code": "U151",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.พระราม9 คลองแสนแสบ"
+  },
+  {
+   "code": "U172",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สุด ถ.สวนส้ม"
+  },
+  {
+   "code": "U201",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ติดห้าง Robinson สีลม"
+  },
+  {
+   "code": "U202",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองผดุงกรุงเกษม ถ.มหาพฤ"
+  },
+  {
+   "code": "U203",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ผดุงกรุงเกษม ซ.เจริญกรุง 24"
+  },
+  {
+   "code": "U204",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสำโรง ถ.หน้ากรม"
+  },
+  {
+   "code": "U205",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสำโรง ถ.สุขุมวิท"
+  },
+  {
+   "code": "U206",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสำโรง ถ.ศรีนครินทร์"
+  },
+  {
+   "code": "U207",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองลาดพร้า ถ.ประชาอุทิศ"
+  },
+  {
+   "code": "U208",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองเปรม ถ.ทหาร"
+  },
+  {
+   "code": "U209",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองประปา ถ.งามวงศ์วาน"
+  },
+  {
+   "code": "U212",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองประปา แจ้งวัฒนะ"
+  },
+  {
+   "code": "U215",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางเขน ถ.ประชาืชื่น"
+  },
+  {
+   "code": "U216",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางเขน ถ.กรุงเทพ นนท์"
+  },
+  {
+   "code": "U217",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางเขน ถ.พิบูลย์สงคราม"
+  },
+  {
+   "code": "U219",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ลาดพร้าว ซ.เสนานิคม"
+  },
+  {
+   "code": "U220",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ซอยนวลจันทร์ ถ.รามอินทรา"
+  },
+  {
+   "code": "U222",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองตาพุก ถ.อ่อนนุช"
+  },
+  {
+   "code": "U223",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "หน้าปั้มปิโตรเอเชีย ถ.กิ่งแก้ว"
+  },
+  {
+   "code": "U226",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองสำโรง ถ.กิ่งแก้ว"
+  },
+  {
+   "code": "U227",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองจระเ้ข้ ถ.บางนา ตราด"
+  },
+  {
+   "code": "U230",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานชิดชน ถ.วิภาวดี"
+  },
+  {
+   "code": "U231",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานชิดชน ถ.วิภาวดี"
+  },
+  {
+   "code": "U232",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "BK03 แจ้งวัฒนะ"
+  },
+  {
+   "code": "U233",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ฺBK03 งามวงศ์วาน"
+  },
+  {
+   "code": "U234",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองบางชัน ถ.รามอินทรา"
+  },
+  {
+   "code": "U235",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ลาดพร้าว ทางด่วนรามอินทรา"
+  },
+  {
+   "code": "U236",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ทางรถไฟ ถ.เพลินจิต"
+  },
+  {
+   "code": "U237",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.บางขวด ทางด่วนรามอินทรา"
+  },
+  {
+   "code": "U238",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองแสนแสบ ใกล้นิด้า"
+  },
+  {
+   "code": "U239",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.วัดลาดปลาเค้า"
+  },
+  {
+   "code": "U240",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ศรีวารีน้อย สุวรรณ 5"
+  },
+  {
+   "code": "U241",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.สามเสน ถ.เอกมัย"
+  },
+  {
+   "code": "U242",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองแม่่จันทร์ ถ.วงแหวนตะวันออก"
+  },
+  {
+   "code": "U243",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองแสนแสบ วงแหวนรอบนอก"
+  },
+  {
+   "code": "U245",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ค.ลาดบัวขาว ถ.สุขาภิบาล 3"
+  },
+  {
+   "code": "U246",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองประเวศ ถ.วงแหวนตะวันออก"
+  },
+  {
+   "code": "U247",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ซอย รามคำแหง 39"
+  },
+  {
+   "code": "U248",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สรงประภา ศรีสมาน"
+  },
+  {
+   "code": "U249",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.หลวงแพ่ง"
+  },
+  {
+   "code": "U250",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.เกษตร สุขาภิบาล"
+  },
+  {
+   "code": "U251",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.รัชดา ใกล้ตลาดปีนัง"
+  },
+  {
+   "code": "U252",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ใกล้แยกประชานุกูล"
+  },
+  {
+   "code": "U253",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ใต้สะพานพระราม 5 ถ.พิบูลย์สงคราม นนทบุรี."
+  },
+  {
+   "code": "U254",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "เชิงสะพานวัดเสมียนนารี"
+  },
+  {
+   "code": "U255",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "การท่าอากาศยาน ถ.กำแพงเพชร 5"
+  },
+  {
+   "code": "U256",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ใกล้สถานฑูตเยอรมัน ถ.สาทรใต้"
+  },
+  {
+   "code": "U259",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "ถ.จตุรโชคชัย คลองสำโรง วัดหลวงพ่อโต"
+  },
+  {
+   "code": "U260",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "คลองแสนแสบ ถ.อโศกดินแดง"
+  },
+  {
+   "code": "U263",
+   "type": "U (Ultra Flow Meter)",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "สะพานนนทบุรี1 ฝั่งตะวันตก"
+  },
+  {
+   "code": "UZ0102",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.จรัลสนิทวงศ์ ข้ามค.บางกอกน้อย"
+  },
+  {
+   "code": "UZ0105",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.บางกอกน้อย-ตลิ่งชัน บริเวณค.ชักพระ"
+  },
+  {
+   "code": "UZ0106",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.บรมราชชนนีตัดกับ ถ.ราชพฤกษ์ฝั่งตะวันตก"
+  },
+  {
+   "code": "UZ0108",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.บรมราชชนนีตัดกับ ถ.พุทธมณฑล สาย 3"
+  },
+  {
+   "code": "UZ0112",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.พรานนกตัดใหม่ ตัด ถ.บรมราชชนนี ฝั่งตะวันออก"
+  },
+  {
+   "code": "UZ0114",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "01",
+   "branchName": "บางกอกน้อย",
+   "location": "ถ.พรานนกตัดใหม่ ตัด ถ.บรมราชชนนี ฝั่งตะวันตก"
+  },
+  {
+   "code": "UZ0201",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "ถ.อนามัยงานเจริญ"
+  },
+  {
+   "code": "UZ0202",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "ค.ดาวคะนอง สุขสวัสดิ์ (211)"
+  },
+  {
+   "code": "UZ0204",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "สุขสวัสดิ์ 72 ซ. 1 (สุเหร่า)"
+  },
+  {
+   "code": "UZ0206",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "ถ.เอกชัย จอมทอง"
+  },
+  {
+   "code": "UZ0207",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "ประชาอุทิศ 74"
+  },
+  {
+   "code": "UZ0208",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "ตากสินเพชรเกษมตัดวุฒากาศ"
+  },
+  {
+   "code": "UZ0210",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "สยามนิเวศน์ ประชาอุทิศ"
+  },
+  {
+   "code": "UZ0218",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "พระราม 2 ซอย 31 ท่อ 1200"
+  },
+  {
+   "code": "UZ0219",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "พระราม 2 ซอย 31 ท่อ 800"
+  },
+  {
+   "code": "UZ0220",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "02",
+   "branchName": "ตากสิน",
+   "location": "คลองบางมด ถนนพระรามที่ 2"
+  },
+  {
+   "code": "UZ0301",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "03",
+   "branchName": "พญาไท",
+   "location": "แยกเกษตร"
+  },
+  {
+   "code": "UZ0303",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "03",
+   "branchName": "พญาไท",
+   "location": "กำแพงเพชร 2"
+  },
+  {
+   "code": "UZ0307",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "03",
+   "branchName": "พญาไท",
+   "location": "ถ.วิภาวดีรังสิต ข้ามคลองบางซื่อ"
+  },
+  {
+   "code": "UZ0309",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "03",
+   "branchName": "พญาไท",
+   "location": "ถ.รัชดาภิเษก ข้ามคลองบางซื่อ"
+  },
+  {
+   "code": "UZ0323",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "03",
+   "branchName": "พญาไท",
+   "location": "ถ.พหลโยธิน ข้ามคลองบางซื่อ"
+  },
+  {
+   "code": "UZ0409",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "04",
+   "branchName": "นนทบุรี",
+   "location": "คลองประปา line 1800 เมืองทองธานี"
+  },
+  {
+   "code": "UZ0507",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "05",
+   "branchName": "ทุ่งมหาเมฆ",
+   "location": "ถ.สาธุประดิษฐ์ ตัดถ.จันทร์"
+  },
+  {
+   "code": "UZ0513",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "05",
+   "branchName": "ทุ่งมหาเมฆ",
+   "location": "ถ.รัชดาภิเษก ตัดถ.สาธุประดิษฐ์ ทางทิศ ต.อ."
+  },
+  {
+   "code": "UZ0514",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "05",
+   "branchName": "ทุ่งมหาเมฆ",
+   "location": "ถ.สาธุประดิษฐ์ ใกล้ปากซ.สาธุประดิษฐ์ 49 ทางทิศใต้"
+  },
+  {
+   "code": "UZ0601",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.บรรทัดทอง ข้ามค.มหานาค"
+  },
+  {
+   "code": "UZ0602",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.พญาไท ข้ามค.มหานาค"
+  },
+  {
+   "code": "UZ0603",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.ราชดำริ ข้ามค.แสนแสบ"
+  },
+  {
+   "code": "UZ0606",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.พระราม 4 หน้าหัวลำโพง"
+  },
+  {
+   "code": "UZ0608",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งเหนือ"
+  },
+  {
+   "code": "UZ0609",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งใต้"
+  },
+  {
+   "code": "UZ0611",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.พระราม4 หน้าหัวลำโพง"
+  },
+  {
+   "code": "UZ0613",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.นครสวรรค์ ตัด ถ.พะเนียง"
+  },
+  {
+   "code": "UZ0615",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.สามเสน ตัด กรุงเกษม"
+  },
+  {
+   "code": "UZ0616",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "สะพานผ่านฟ้าลีลาส"
+  },
+  {
+   "code": "UZ0617",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.บำรุงเมือง ใกล้แยกแม้นศรี"
+  },
+  {
+   "code": "UZ0619",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "สะพานข้ามคลองรอบกรุง"
+  },
+  {
+   "code": "UZ0620",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.วรจักร ตัด ถ.หลวง"
+  },
+  {
+   "code": "UZ0622",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ใต้ทางด่วนมหานคร ตัดถ.พระราม4"
+  },
+  {
+   "code": "UZ0624",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งเหนือ"
+  },
+  {
+   "code": "UZ0625",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "06",
+   "branchName": "แม้นศรี",
+   "location": "ถ.จักวรรติ์ สะพานพิธภิมุข"
+  },
+  {
+   "code": "UZ1101",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "11",
+   "branchName": "ภาษีเจริญ",
+   "location": "ถ.เพชรเกษม หมวดการทาง ZM1108"
+  },
+  {
+   "code": "UZ1102",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "11",
+   "branchName": "ภาษีเจริญ",
+   "location": "ถ.เพชรเกษม คลองบางกอกใหญ่ ZM1101"
+  },
+  {
+   "code": "UZ1103",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "11",
+   "branchName": "ภาษีเจริญ",
+   "location": "คลองบางกอกใหญ่ ถนนบางแวก (ซ.พานิชธนฯ )"
+  },
+  {
+   "code": "UZ1110",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "11",
+   "branchName": "ภาษีเจริญ",
+   "location": "ซอย เพชรเกษม 69"
+  },
+  {
+   "code": "UZ1204",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "ถ.ประดิษฐ์มนูธรรม ตัด เกษตรนวมินทร์"
+  },
+  {
+   "code": "UZ1207",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "ถ.ประดิษฐ์มนูธรรม ใกล้ปากซ.สุขา"
+  },
+  {
+   "code": "UZ1210",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "วงแหวนตะวันออก"
+  },
+  {
+   "code": "UZ1213",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "ถ.วัดคู้บอน (สสมบ กับ สสล)"
+  },
+  {
+   "code": "UZ1214",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "คลองโครกคราม ซ.รามอินทรา 14 (มัยลาภ)"
+  },
+  {
+   "code": "UZ1218",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "ถ.ประดิษฐ์มนูธรรม ตัด ถ.ลาดพร้าว ทิศเหนือ"
+  },
+  {
+   "code": "UZ1219",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "คลองครุ ถนนประเสริฐมนูกิจ"
+  },
+  {
+   "code": "UZ1220",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "คลองเสือน้อย ถนนประดิษฐ์มนูธรรม"
+  },
+  {
+   "code": "UZ1231",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "12",
+   "branchName": "ลาดพร้าว",
+   "location": "คลองระหัส ถนนเสรีไทย"
+  },
+  {
+   "code": "UZ1301",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ซ.สุขุมวิท 77 (อ่อนนุช)ตัดกับถ.สุขุมวิท"
+  },
+  {
+   "code": "UZ1302",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ซ.สุขุมวิท 103 (อุดมสุข)ตัดกับถ.สุขุมวิท"
+  },
+  {
+   "code": "UZ1303",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ถ.สุขุมวิทตัดกับถ. บางนา – ตราด"
+  },
+  {
+   "code": "UZ1304",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ถ.ศรีนครินทร์ตัดกับซ.สุขุมวิท 77 (อ่อนนุช) ทิศใต้"
+  },
+  {
+   "code": "UZ1305",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ซ.สุขุมวิท 105 (ลาซาล)ตัดกับถ.ศรีนครินทร์"
+  },
+  {
+   "code": "UZ1307",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ซ.อ่อนนุช 44/1"
+  },
+  {
+   "code": "UZ1309",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "13",
+   "branchName": "พระโขนง",
+   "location": "ทางหลวงกาญจนาภิเษก (วงแหวนรอบนอก ตะวันออก) ตัดถนนบางนา-ตราด"
+  },
+  {
+   "code": "UZ1501",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.งามวงศ์วาน เยื้อง ซ.ชินเขต 2"
+  },
+  {
+   "code": "UZ1502",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.ประชาชื่น ระหว่าง ซ. 21 กับทางรถไฟ"
+  },
+  {
+   "code": "UZ1504",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.ประชาราษฎร์ สาย 1ตัดกับ ถ.ประชาราษฎร์ สาย2"
+  },
+  {
+   "code": "UZ1505",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.ประชาราษฎร์ สาย 1 บริเวณค.ส้มปอย"
+  },
+  {
+   "code": "UZ1506",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.กรุงเทพฯ-นนทบุรี ระหว่าง ซ. 27 กับ ซ. 38"
+  },
+  {
+   "code": "UZ1507",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "15",
+   "branchName": "ประชาชื่น",
+   "location": "ถ.วัดเวฬุวนาราม (วัดไผ่เขียว) บริเวณซ.ไผ่เขียว 6"
+  },
+  {
+   "code": "UZ1603",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "ถ.พหลโยธินตัดกับ ถ.รามอินทรา ท่อ 600 มม"
+  },
+  {
+   "code": "UZ1604",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "ถ.พหลโยธินตัดกับ ถ.รามอินทรา ท่อ 1200 มม"
+  },
+  {
+   "code": "UZ1605",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "ถ.จันทรุเบกษาตัดกับ ถ.พหลโยธิน (ดอนเมือง 1)"
+  },
+  {
+   "code": "UZ1607",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "ถ.วิภาวดีรังสิต คลองวัดหลักสี่"
+  },
+  {
+   "code": "UZ1608",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "สุขาภิบาล 5 ซอย 88 ถนนออเงิน (ถนนสุขาภิบาล 5)"
+  },
+  {
+   "code": "UZ1609",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "16",
+   "branchName": "บางเขน",
+   "location": "ถ.แจ้งวัฒนะ ซอย 1"
+  },
+  {
+   "code": "UZ1702",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.เทพารักษ์ตัดกับ ถ.สุขุวิท"
+  },
+  {
+   "code": "UZ1703",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.สุขุมวิทตัดกับ ถ.ประโคนชัย"
+  },
+  {
+   "code": "UZ1705",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.ศรีนครินทร์ตัดกับ ซ.จักรศรี"
+  },
+  {
+   "code": "UZ1706",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.เทพารักษ์ตัดกับ ถ.ศรีนครินทร์ ฝั่งตะวันออก"
+  },
+  {
+   "code": "UZ1707",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.แพรกษา ตรงข้าม ซ.เทศบาลบางปู 20"
+  },
+  {
+   "code": "UZ1708",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.สุขุมวิทตัดกับ ซ.เทศบาลบางปู 108 ฝั่งทิศ ต.ต."
+  },
+  {
+   "code": "UZ1709",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.เทพารักษ์ตัดกับ ซ.ชุบรุ่งเรือง"
+  },
+  {
+   "code": "UZ1711",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "นิคมอุตสาหกรรมบางปู ถ.สุขุมวิท"
+  },
+  {
+   "code": "UZ1712",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "นิคมอุตสาหกรรมบางปู ถ.แพรกษา"
+  },
+  {
+   "code": "UZ1716",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "บ้านคลองดำหรุ บางกระบือ"
+  },
+  {
+   "code": "UZ1718",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.เลียบคลองระบายน้ำสุวรรณภูมิ ตัด ถ.สุขุมวิทสายเก่า"
+  },
+  {
+   "code": "UZ1719",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "17",
+   "branchName": "สมุทรปราการ",
+   "location": "ถ.สุขุมวิทสายเก่าตัด ถ.เมืองใหม่บางพลี"
+  },
+  {
+   "code": "UZ5301",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ.นิมิตรใหม่"
+  },
+  {
+   "code": "UZ5303",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ.นิมิตรใหม่ตัดกับ ถ.ประชาร่วมใจ ทิศใต้"
+  },
+  {
+   "code": "UZ5304",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ.สุวินทวงศ์ตัดกับ ถ.รามคำแหง"
+  },
+  {
+   "code": "UZ5306",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ.รามคำแหงตัดกับ ถ.ร่มเกล้า"
+  },
+  {
+   "code": "UZ5307",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ. ฉลองกรุงตัดกับ ถ. สุวินทวงศ์"
+  },
+  {
+   "code": "UZ5308",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ.วงแหวนรอบนอก (กรุงเทพ-ชลบุรี)ตัดกับ ถ.ฉลองกรุง"
+  },
+  {
+   "code": "UZ5309",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ถ. ฉลองกรุง เหนือ ถ. เจ้าคุณทหาร ฯ"
+  },
+  {
+   "code": "UZ5310",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "53",
+   "branchName": "มีนบุรี",
+   "location": "ลาดกระบัง คลองหัวตะเข้"
+  },
+  {
+   "code": "UZ5407",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.ราชพฤกษ์ตัดกับ ถ.รัตนาธิเบศร์ ทิศใต้"
+  },
+  {
+   "code": "UZ5408",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.บางกรวยไทรน้อย ตัด ถ.กาณจนาภิเษก"
+  },
+  {
+   "code": "UZ5410",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.บางกรวย-ไทรน้อยตัดกับ ถ.รัตนาธิเบศร์ ทิศใต้"
+  },
+  {
+   "code": "UZ5411",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.กาญจนาภิเษก ช่วงก่อนข้ามค.บางไผ่ (โซน54-03,04)"
+  },
+  {
+   "code": "UZ5412",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.บางไผ่-หนองเพรางามตัดกับ ถ.กาญจนาภิเษก ทิศ ต.ต."
+  },
+  {
+   "code": "UZ5413",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.บ้านกล้วย-ไทรน้อยตัดกับ ถ.กาญจนาภิเษก ทิศ ต.ต."
+  },
+  {
+   "code": "UZ5414",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.ตลิ่งชัน-สุวรรณบุรี ตัด ถ.กาญจนาภิเษก ทิศตะวันตก"
+  },
+  {
+   "code": "UZ5415",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "54",
+   "branchName": "บางบัวทอง",
+   "location": "ถ.นครอินทร์ คลองบางคูเวียง"
+  },
+  {
+   "code": "UZ5501",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "บริเวณหน้าโรงงานฟุตบอลไทยสปอร์ตติ้งกู๊ดส์ จำกัด ถนนฉลองกรุง"
+  },
+  {
+   "code": "UZ5502",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "ยังไม่มีข้อมูล"
+  },
+  {
+   "code": "UZ5503",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "ซอยเคหะร่มเกล้า 66 ถ.ราษฏร์พัฒนา"
+  },
+  {
+   "code": "UZ5505",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "คลองสำโรง ถ.เลียบคลองระบายน้ำสุวรรณภูมิ"
+  },
+  {
+   "code": "UZ5506",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "คลองสำโรง สป.1006"
+  },
+  {
+   "code": "UZ5507",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "คลองสำโรง ถ.ทางหลวงหมายเลข 3413"
+  },
+  {
+   "code": "UZ5508",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "ยังไม่มีข้อมูล"
+  },
+  {
+   "code": "UZ5509",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "คลองแม่จันทร์ ถนนศรีนคริทร์-ร่มเกล้า"
+  },
+  {
+   "code": "UZ5510",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "55",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "ท่อ 1000 คลองบางแก้วใหญ่"
+  },
+  {
+   "code": "UZ5601",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "56",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "ถ.รัตนโชติ"
+  },
+  {
+   "code": "UZ5604",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "56",
+   "branchName": "รอยืนยันชื่อสาขา",
+   "location": "เลียบคลองประปาฝั่งตะวันตก"
+  },
+  {
+   "code": "UZ_RWT",
+   "type": "UZ (Flow + Pressure)",
+   "branchCode": "",
+   "branchName": "ท่อน้ำดิบ (Raw Water)",
+   "location": "ท่่อน้ำดิบ คลองสามเสน ถ.พระราม5"
+  },
+  {
+   "code": "X20",
+   "type": "อื่น ๆ",
+   "branchCode": "",
+   "branchName": "ยังไม่มีข้อมูล",
+   "location": "วัดด่าน สสข"
+  }
+ ],
+ "rcvFromThisPage": [
+  {
+   "code": "RCV12",
+   "location": "หลังประชานุกูล VC"
+  },
+  {
+   "code": "RCV13",
+   "location": "ลุมพินี VC"
+  },
+  {
+   "code": "RCV25",
+   "location": "นวมินทร์ VC"
+  },
+  {
+   "code": "RCV27",
+   "location": "ประชานุกูล VC"
+  },
+  {
+   "code": "RCV28",
+   "location": "สามเสน VC"
+  },
+  {
+   "code": "RCV29",
+   "location": "Phahonyothin VC"
+  },
+  {
+   "code": "RCV38",
+   "location": "สี่พระยา อุโมงค์"
+  },
+  {
+   "code": "RCV48",
+   "location": "ราชมนตรี VC"
+  },
+  {
+   "code": "RCV50",
+   "location": "มัยลาภ VC"
+  },
+  {
+   "code": "RCV51",
+   "location": "พระราม9 VC"
+  },
+  {
+   "code": "RCV52",
+   "location": "เจริญนคร2 VC"
+  },
+  {
+   "code": "RCV53",
+   "location": "เจริญนคร34 VC"
+  },
+  {
+   "code": "RCV60",
+   "location": "สี่พระยา VC"
+  },
+  {
+   "code": "RCV66",
+   "location": "เฉลิมพันธ์ VC"
+  }
+ ]
+}

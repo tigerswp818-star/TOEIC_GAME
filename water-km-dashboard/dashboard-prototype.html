@@ -473,73 +473,249 @@ window.MASTER = {"projectName": "Water Operation KM Dashboard", "projectNameTh":
   ============================================================ */
   (function sysmap() {
     const p = $("#pane-sysmap");
-    const pos = {
-      PK: [70, 205], TP: [70, 330], RB: [70, 455],
-      LA: [590, 130], MB: [810, 130], LK: [810, 265], KT: [590, 265],
-      LP: [560, 420], SR: [700, 420], BP: [830, 505]
-    };
-    const byCode = {}; M.pumpingStations.forEach(s => byCode[s.stationCode] = s);
 
-    function node(code) {
-      const st = byCode[code], [x, y] = pos[code];
-      const pct = tankPct(st) || 0, t = st.clearWaterTank;
-      return `<g class="map-node" data-tip="${code} ${esc(shortName(st))} · ถัง ${t ? esc(t.levelM) + "/" + esc(t.maxLevelM) + " ม." : "–"}">
-        <rect class="body" x="${x}" y="${y}" width="128" height="64" rx="9" style="stroke:var(--line);fill:var(--surface)"/>
-        <text x="${x + 12}" y="${y + 22}" style="font-weight:700;font-size:13px">${code}</text>
-        <text x="${x + 12}" y="${y + 38}" style="font-size:10.5px;fill:var(--ink-sec)">${esc(shortName(st))}</text>
-        <rect x="${x + 12}" y="${y + 46}" width="104" height="7" rx="3.5" style="fill:var(--surface-2)"/>
-        <rect x="${x + 12}" y="${y + 46}" width="${(pct / 100 * 104).toFixed(1)}" height="7" rx="3.5" style="fill:var(--series-1)"/>
-      </g>`;
+    /* colors fixed to replicate the real SCADA screen (always dark) */
+    const C = {
+      bg: "#000000", tun: "#17c94f", trunk: "#3aa0ff", cyan: "#35d8ff",
+      tankCyan: "#29cdf5", tankGreen: "#43d96b", tankText: "#04202b",
+      org: "#ffb02e", red: "#ff6161", green: "#3ee06f", purple: "#c9a0ff",
+      yellow: "#e2c14b", white: "#f2f6f8", lbl: "#cfe0ea", max: "#8fc1ff",
+      grey: "#4a4a4a", river: "#3b4a63"
+    };
+    const T = [];  /* svg fragments */
+    const txt = (x, y, s, fill, size, opt) => T.push(
+      `<text x="${x}" y="${y}" fill="${fill}" font-size="${size || 13}"${opt && opt.b ? ' font-weight="700"' : ""}${opt && opt.a ? ` text-anchor="${opt.a}"` : ""}${opt && opt.mono ? ' font-family="ui-monospace,Consolas,monospace"' : ""}>${s}</text>`);
+    const ln = (d, col, w, dash) => T.push(`<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`);
+
+    /* vertical mini tank (transmission side) */
+    function miniTank(x, y, val, fillPct, green) {
+      T.push(`<g data-tip="ค่า ${val} — ความหมาย/หน่วยรอยืนยัน">`);
+      txt(x - 4, y - 7, val, C.org, 14, { b: 1, mono: 1 });
+      T.push(`<rect x="${x}" y="${y}" width="24" height="66" fill="#0c0c0c" stroke="#7a8a94"/>`);
+      const h = 66 * fillPct;
+      T.push(`<rect x="${x}" y="${y + 66 - h}" width="24" height="${h}" fill="${green ? C.tankGreen : C.tankCyan}"/>`);
+      T.push("</g>");
     }
-    const edge = (x1, y1, x2, y2) =>
-      `<path class="flowline" d="M${x1} ${y1} L${x1} ${(y1 + y2) / 2} L${x2} ${(y1 + y2) / 2} L${x2} ${y2}"/>`;
+    /* pump squares row — no real data yet: all grey */
+    function pumps(x, y, n) {
+      let s = `<g data-tip="สถานะปั๊ม (Actived/Non-Actived): ยังไม่มีข้อมูลจริง">`;
+      for (let i = 0; i < n; i++) s += `<rect x="${x + i * 14}" y="${y}" width="9" height="9" fill="${C.grey}" stroke="#222"/>`;
+      s += "</g>"; T.push(s);
+    }
+    /* station tank box */
+    function tank(x, y, w, h, val, mx, area, code, near) {
+      T.push(`<g data-tip="${code} · ระดับถัง ${val} / Max ${mx} ม. · ${area}">`);
+      txt(x + w - 2, y - 5, "Max " + mx, C.max, 11, { a: "end" });
+      T.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${near ? C.tankGreen : C.tankCyan}" stroke="#9adfef"/>`);
+      txt(x + w / 2, y + h / 2 + 6, val, C.tankText, 17, { b: 1, a: "middle", mono: 1 });
+      txt(x + w + 10, y + h / 2 + 5, code + " ♫", C.white, 15, { b: 1 });
+      txt(x + 2, y + h + 15, area, C.lbl, 11);
+      T.push("</g>");
+      pumps(x + 2, y + h + 22, 6);
+    }
+    const pair = (x1, x2, y, v1, v2, col) => { txt(x1, y, v1, col, 14, { b: 1, mono: 1 }); if (v2 != null) txt(x2, y, v2, col, 14, { b: 1, mono: 1 }); };
+    /* blue trunk stub + number */
+    function stub(x, y, v) {
+      ln(`M${x - 6} ${y + 5} H${x + 40}`, C.trunk, 1.6);
+      ln(`M${x + 40} ${y} V${y + 10}`, C.trunk, 1.6);
+      txt(x, y - 2, v, C.trunk, 11, { mono: 1 });
+    }
+
+    /* ---------- static frame ---------- */
+    T.push(`<rect x="0" y="0" width="1820" height="880" fill="${C.bg}"/>`);
+    /* river */
+    T.push(`<rect x="468" y="30" width="64" height="850" fill="${C.river}" rx="6"/>`);
+    "CHAOPHRAYA RIVER".split("").forEach((ch, i) => { if (ch !== " ") txt(500, 84 + i * 46, ch, "#dfe7f5", 15, { a: "middle", b: 1 }); });
+    /* title + date + footer */
+    T.push(`<rect x="740" y="8" width="360" height="30" fill="#ffffff" rx="3"/>`);
+    txt(920, 29, "เทพอุโมงค์ (Smart Tunnel)", "#000", 16, { a: "middle", b: 1 });
+    txt(1755, 66, "Friday 3 Jul 2026  2:05 PM", C.white, 22, { a: "end", b: 1 });
+    txt(1790, 868, "กองควบคุมระบบส่งและสูบจ่ายน้ำ โทร. 02-2782860-1", C.lbl, 12, { a: "end" });
+
+    /* ---------- tunnel (green) network ---------- */
+    ln("M86 116 V772", C.tun, 3);
+    ln("M86 300 H166", C.tun, 3); ln("M86 452 H170", C.tun, 3); ln("M86 740 H240", C.tun, 3);
+    ln("M86 772 H444", C.tun, 3);
+    ln("M262 570 H464", C.tun, 3); ln("M536 570 H732", C.tun, 3);
+    ln("M580 106 V568", C.tun, 3); ln("M692 106 V382", C.tun, 3);
+    ln("M908 106 V166", C.tun, 3); ln("M1024 106 V323", C.tun, 3); ln("M1024 345 V460", C.tun, 3);
+    ln("M1024 460 H1408", C.tun, 3); ln("M1160 460 V540", C.tun, 3);
+    ln("M1284 106 V845", C.tun, 3);
+    ln("M1284 345 H1462", C.tun, 3); ln("M1284 548 H1492", C.tun, 3); ln("M1284 740 H1462", C.tun, 3);
+    ln("M1024 323 H1072", C.tun, 3);
+    ln("M732 614 V656", C.tun, 3); ln("M700 656 H1284", C.tun, 3); ln("M1122 688 V656", C.tun, 3);
+    /* raw water (yellow) */
+    ln("M516 30 V360 H596", C.yellow, 5);
+    txt(505, 380, "น้ำดิบ", C.yellow, 12, { b: 1 }); txt(505, 398, "4528", C.yellow, 12, { mono: 1 });
+
+    /* ---------- MH (มหาสวัสดิ์) ---------- */
+    txt(64, 34, "MH ♫", C.white, 16, { b: 1 });
+    T.push(`<g data-tip="MH มหาสวัสดิ์ · Flow 40,010 · P 4.05 (รอยืนยันหน่วย)">`);
+    T.push(`<rect x="62" y="42" width="202" height="74" fill="#0d5f74" stroke="#35b9d8"/>`);
+    txt(82, 84, "40010", "#bff3e0", 30, { b: 1, mono: 1 });
+    txt(252, 108, "4.05", C.white, 15, { b: 1, mono: 1, a: "end" });
+    T.push("</g>");
+    pumps(70, 124, 5);
+    miniTank(70, 168, "21.94", 0.85);
+    stub(292, 50, "15761"); stub(348, 50, "23807");
+    txt(352, 92, "27.97", C.org, 13, { mono: 1 });
+    stub(300, 108, "8046"); stub(300, 148, "8017");
+    txt(196, 232, "P051", C.purple, 15, { b: 1 });
+
+    /* ---------- BK band: TR1 TR2 TR3 ---------- */
+    txt(542, 34, "BK", C.white, 16, { b: 1 });
+    T.push(`<g data-tip="BK บางเขน → TR1 46,476 · TR2 46,840 · TR3 52,580 (รอยืนยันหน่วย)">`);
+    T.push(`<rect x="540" y="42" width="692" height="64" fill="#0d7186" stroke="#35b9d8"/>`);
+    txt(560, 82, "46476", "#d5f7c8", 28, { b: 1, mono: 1 });
+    txt(830, 82, "46840", "#d5f7c8", 28, { b: 1, mono: 1 });
+    txt(1128, 82, "52580", "#d5f7c8", 28, { b: 1, mono: 1 });
+    txt(636, 100, "TR1 ♫", C.white, 14, { b: 1 });
+    txt(900, 100, "TR2 ♫", C.white, 14, { b: 1 });
+    txt(1178, 100, "TR3 ♫", C.white, 14, { b: 1 });
+    txt(742, 100, "BK03 ♫", "#ff8a80", 11);
+    txt(1042, 100, "BK04 ♫", "#ff8a80", 11);
+    txt(1094, 100, "3.44", "#5f7dff", 12, { mono: 1 });
+    T.push("</g>");
+    pumps(560, 116, 6); pumps(830, 116, 6); pumps(1120, 116, 6);
+    miniTank(568, 174, "33.22", 0.9);
+    miniTank(908, 174, "36.06", 0.9, true);
+    miniTank(1272, 164, "25.09", 0.85);
+    stub(642, 178, "3081"); stub(648, 202, "5400"); stub(648, 226, "5874");
+    stub(1046, 166, "9470"); stub(1052, 190, "262");
+    txt(1028, 224, "UZ1609", C.red, 14, { b: 1 });
+
+    /* ---------- percent / branch labels ---------- */
+    const pct = (x, y, s) => txt(x, y, s, C.lbl, 12);
+    pct(545, 270, "ประชานุกูล 44%  [3186]");
+    pct(545, 292, "เอลิมพันธ์ 15%  [828.00]");
+    pct(545, 314, "ประดิพัทธ์ 15%  [null]");
+    pct(545, 348, "สามเสน 16%  [1485]");
+    pct(724, 368, "พหลโยธิน 24%");
+    pct(1316, 264, "มัยลาภ 29% [2230]");
+    pct(1452, 264, "นวมินทร์ 40% [4929]");
+    pct(1290, 452, "พระราม9  0% [0]");
+    txt(1406, 452, "-3370", C.red, 13, { b: 1, mono: 1 });
+    txt(1452, 452, "▶▶", C.tun, 13);
+    pct(60, 606, "ราชมนตรี 0% [null]");
+    txt(432, 566, "◀◀◀", C.tun, 13, { a: "end" });
+    txt(462, 566, "-1435", C.red, 12, { b: 1, mono: 1 });
+    pct(538, 612, "ลอดแม่น้ำ 5%");
+    pct(584, 640, "สี่พระยา 10% [970]");
+    T.push(`<circle cx="694" cy="678" r="4" fill="${C.tun}"/>`); pct(704, 682, "ลุมพินี VC");
+    T.push(`<circle cx="884" cy="678" r="4" fill="${C.tun}"/>`); pct(894, 682, "คลองเตย VC");
+
+    /* ---------- SS สามเสน + PY Bypass ---------- */
+    T.push(`<g data-tip="โรงผลิตน้ำสามเสน (SS) — บทบาทรอยืนยัน">`);
+    T.push(`<rect x="596" y="390" width="152" height="106" fill="none" stroke="#cfd8dc" stroke-dasharray="5 4"/>`);
+    txt(640, 406, "3044", C.trunk, 11, { mono: 1 });
+    txt(604, 440, "RCV54", "#9fb4c0", 10);
+    [["SS1", 652, 424], ["SS2", 706, 448], ["SS4", 650, 452]].forEach(d => {
+      T.push(`<rect x="${d[1]}" y="${d[2]}" width="34" height="16" fill="#111" stroke="#cfd8dc"/>`);
+      txt(d[1] + 17, d[2] + 12, d[0], C.white, 10, { a: "middle" });
+    });
+    txt(618, 482, "2261", C.trunk, 11, { mono: 1 }); txt(700, 490, "-88", C.lbl, 10, { mono: 1 });
+    txt(724, 494, "ZOOM", "#7c8b95", 9);
+    txt(758, 466, "SS", C.white, 16, { b: 1 });
+    T.push("</g>");
+
+    txt(752, 332, "32769", C.org, 13, { b: 1, mono: 1 });
+    T.push(`<g data-tip="Bypass — จ่ายน้ำด้วยแรงดันอุโมงค์โดยไม่ผ่านปั๊ม">`);
+    T.push(`<rect x="806" y="384" width="96" height="32" fill="#0b0b0b" stroke="#e8eef2" stroke-width="1.5"/>`);
+    txt(854, 405, "Bypass", C.white, 14, { a: "middle", b: 1 });
+    T.push("</g>");
+    txt(946, 340, "6718", C.cyan, 14, { b: 1, mono: 1 });
+    txt(950, 362, "8.4", C.org, 13, { mono: 1 });
+    txt(840, 440, "PY ♫", C.white, 15, { b: 1 });
+
+    /* ---------- stations ---------- */
+    /* PK เพชรเกษม */
+    pair(140, 222, 262, "16409", "12688", C.cyan);
+    pair(148, 226, 284, "18.64", "13.02", C.org);
+    tank(168, 318, 95, 40, "4.97", "6.70", "10,500 Sqm", "PK");
+    stub(96, 298, "4521"); stub(96, 354, "8167");
+    stub(210, 590, "2535"); stub(272, 590, "4281"); stub(120, 542, "4855");
+    /* TB ธนบุรี */
+    txt(400, 304, "5001", C.cyan, 14, { b: 1, mono: 1 });
+    txt(428, 326, "6.4", C.org, 13, { mono: 1 });
+    tank(352, 352, 85, 36, "2.86", "4.80", "3,857 Sqm", "TB");
+    /* TP ท่าพระ */
+    pair(182, 258, 414, "11701", "11671", C.cyan);
+    pair(190, 262, 436, "11.98", "9.54", C.org);
+    tank(172, 462, 95, 40, "5.29", "5.63", "8,120 Sqm", "TP", true);
+    /* RB ราษฎร์บูรณะ */
+    txt(200, 750, "12.35", C.org, 14, { b: 1, mono: 1 });
+    tank(242, 752, 95, 40, "5.4", "5.60", "10,025 Sqm", "RB", true);
+    pair(240, 330, 842, "13335", "14491", C.cyan);
+    txt(322, 862, "16.3", C.org, 13, { mono: 1 });
+    stub(262, 708, "5063"); stub(318, 708, "9428");
+    /* LP ลุมพินี */
+    pair(690, 768, 532, "13143", "15149", C.cyan);
+    pair(664, 770, 554, "12.19", "6.78", C.org);
+    tank(682, 572, 100, 42, "4.13", "5.70", "8,570 Sqm", "LP");
+    stub(822, 600, "6017"); stub(832, 628, "9132");
+    /* KT คลองเตย */
+    txt(1108, 500, "-4", C.green, 14, { b: 1, mono: 1 }); txt(1222, 500, "8323", C.cyan, 14, { b: 1, mono: 1 });
+    pair(1162, 1240, 522, "13.22", "4.97", C.org);
+    tank(1122, 542, 100, 42, "4.69", "5.63", "8,120 Sqm", "KT");
+    stub(1046, 508, "312"); stub(1040, 550, "4289"); stub(1044, 604, "490"); stub(1084, 604, "3231");
+    /* SR สำโรง */
+    tank(1072, 666, 100, 42, "3.31", "5.63", "14,081 Sqm", "SR");
+    pair(1078, 1160, 758, "19439", "19926", C.cyan);
+    pair(1086, 1166, 780, "5.03", "14.43", C.org);
+    stub(1246, 730, "13404"); stub(1250, 702, "6522");
+    /* BP บางพลี */
+    tank(1462, 718, 100, 42, "4.61", "5.90", "11,000 Sqm", "BP");
+    pair(1452, 1545, 828, "24521", "22712", C.cyan);
+    pair(1460, 1552, 850, "7.93", "19.59", C.org);
+    stub(1552, 624, "7567"); stub(1374, 672, "7377"); stub(1560, 672, "7768");
+    /* LK ลาดกระบัง */
+    pair(1466, 1556, 488, "13311", "11417", C.cyan);
+    pair(1476, 1560, 510, "8.3", "7.26", C.org);
+    tank(1492, 526, 100, 42, "4.42", "5.63", "9,000 Sqm", "LK");
+    stub(1408, 508, "4084"); stub(1408, 576, "7333");
+    /* MB มีนบุรี */
+    pair(1458, 1548, 282, "18118", "16919", C.cyan);
+    pair(1466, 1552, 304, "6.45", "14.09", C.org);
+    tank(1462, 323, 100, 42, "5.47", "7.10", "7,745 Sqm", "MB");
+    T.push(`<g data-tip="MB — กล่อง LV / ถังที่สอง 4,216 Sqm (รอยืนยัน)">`);
+    T.push(`<rect x="1596" y="323" width="46" height="42" fill="${C.tankCyan}" stroke="#9adfef"/>`);
+    txt(1619, 349, "LV", C.tankText, 14, { b: 1, a: "middle" });
+    txt(1598, 380, "4,216 Sqm", C.lbl, 11);
+    T.push("</g>");
+    stub(1408, 458, "4895"); stub(1442, 466, "5429"); stub(1592, 466, "6595"); stub(1716, 386, "3721");
+    /* LA ลาดพร้าว */
+    tank(1072, 323, 100, 42, "4.29", "5.63", "13,815 Sqm", "LA");
+    pair(1068, 1146, 412, "171", "13600", C.cyan);
+    pair(1076, 1150, 434, "18.88", "11", C.org);
+    stub(1226, 336, "9879");
+
+    /* ---------- legend (in-canvas, like the real screen) ---------- */
+    T.push(`<g font-size="12">`);
+    T.push(`<rect x="536" y="712" width="356" height="104" fill="#0a0a0a" stroke="#2a2a2a"/>`);
+    T.push(`<rect x="548" y="726" width="10" height="10" fill="none" stroke="#bbb"/>`); txt(566, 736, "RTU", C.lbl, 12);
+    T.push(`<rect x="548" y="748" width="10" height="10" fill="none" stroke="#bbb"/>`); txt(566, 758, "ผังอุโมงค์", C.lbl, 12);
+    T.push(`<rect x="548" y="770" width="10" height="10" fill="${C.grey}"/>`); txt(566, 780, "Non-Actived Pump", C.lbl, 12);
+    T.push(`<rect x="548" y="792" width="10" height="10" fill="${C.red}"/>`); txt(566, 802, "Actived Pump", C.lbl, 12);
+    T.push(`<rect x="700" y="726" width="10" height="10" fill="none" stroke="#bbb"/>`); txt(718, 736, "Alert Mode", C.lbl, 12);
+    ln("M700 754 H726", C.tun, 3); txt(734, 758, "Tunnel", C.lbl, 12);
+    ln("M700 776 H726", C.trunk, 2.5); txt(734, 780, "Trunk Main", C.lbl, 12);
+    txt(700, 802, "♫ Recorder", C.lbl, 12);
+    txt(790, 802, "≈ Level Prediction", C.lbl, 12);
+    T.push("</g>");
 
     p.innerHTML = `
-      <h2>ผังระบบ (อิงเลย์เอาต์จอ SCADA จริง)</h2>
-      <p class="sub">แม่น้ำเจ้าพระยาแบ่งระบบเป็น 2 ฝั่ง — MH (มหาสวัสดิ์) เลี้ยงฝั่งตะวันตก · BK (บางเขน) จ่ายเข้าอุโมงค์ TR1–TR3 เลี้ยงฝั่งตะวันออก · แถบสีน้ำเงินในกล่องสถานี = ระดับน้ำถังเก็บน้ำใส</p>
-      <div class="card">
+      <h2>System Map — จำลองหน้าจอ SCADA "เทพอุโมงค์ (Smart Tunnel)"</h2>
+      <p class="sub">วาดตามภาพหน้าจอจริง ณ 3 ก.ค. 2026 14:05 — เส้นเขียว = อุโมงค์ (Tunnel), เส้นน้ำเงิน = ท่อประธาน (Trunk Main), เส้นเหลือง = น้ำดิบ, กล่องฟ้า/เขียว = ระดับน้ำถังเก็บน้ำใส (ชี้เมาส์ที่จุดต่าง ๆ เพื่อดูรายละเอียด)</p>
+      <div class="card" style="padding:10px">
         <div class="scroll-x">
-        <svg viewBox="0 0 1000 600" style="width:100%;min-width:760px" role="img" aria-label="ผังระบบสูบส่งและสูบจ่ายน้ำ">
-          <rect x="430" y="0" width="56" height="600" rx="10" style="fill:var(--accent-soft)"/>
-          <text x="458" y="300" text-anchor="middle" class="map-label" transform="rotate(90 458 300)" style="letter-spacing:.35em">CHAO PHRAYA RIVER</text>
-
-          <g data-tip="MH มหาสวัสดิ์ · Flow 40010 · P 4.05">
-            <rect x="40" y="52" width="180" height="66" rx="10" style="fill:var(--accent-soft);stroke:var(--accent)"/>
-            <text x="58" y="80" style="font-weight:700;font-size:15px">MH มหาสวัสดิ์</text>
-            <text x="58" y="100" class="mono" style="font-size:11.5px;fill:var(--ink-sec)">Flow 40,010 · P 4.05</text>
-          </g>
-          <g data-tip="BK บางเขน → TR1 46476 · TR2 46840 · TR3 52580">
-            <rect x="540" y="30" width="420" height="66" rx="10" style="fill:var(--accent-soft);stroke:var(--accent)"/>
-            <text x="558" y="56" style="font-weight:700;font-size:15px">BK บางเขน</text>
-            <text x="558" y="78" class="mono" style="font-size:11.5px;fill:var(--ink-sec)">TR1 46,476 · TR2 46,840 · TR3 52,580</text>
-          </g>
-
-          ${edge(130, 118, 134, 205)}
-          ${edge(130, 118, 134, 330)}
-          ${edge(130, 118, 134, 455)}
-          ${edge(660, 96, 654, 130)}
-          ${edge(860, 96, 874, 130)}
-          ${edge(860, 96, 874, 265)}
-          ${edge(660, 96, 654, 265)}
-          ${edge(660, 96, 624, 420)}
-          ${edge(760, 96, 764, 420)}
-          ${edge(860, 96, 894, 505)}
-          <path class="flowline" d="M220 85 L430 85" stroke-dasharray="7 5"/>
-          <path class="flowline" d="M486 85 L540 63" stroke-dasharray="7 5"/>
-          <text x="330" y="74" text-anchor="middle" class="map-label">ลอดแม่น้ำ</text>
-
-          ${Object.keys(pos).map(node).join("")}
-
-          <g style="font-size:10.5px">
-            <rect x="40" y="548" width="330" height="36" rx="8" style="fill:var(--surface-2)"/>
-            <line x1="56" y1="566" x2="86" y2="566" class="flowline"/>
-            <text x="94" y="570" style="fill:var(--ink-sec)">อุโมงค์/ท่อส่งน้ำ</text>
-            <rect x="196" y="561" width="26" height="8" rx="4" style="fill:var(--series-1)"/>
-            <text x="230" y="570" style="fill:var(--ink-sec)">ระดับน้ำถังเก็บน้ำใส</text>
-          </g>
-        </svg>
+          <svg viewBox="0 0 1820 880" style="width:100%;min-width:1240px;border-radius:8px" role="img" aria-label="ผังจอ SCADA เทพอุโมงค์">${T.join("")}</svg>
         </div>
-        <div class="note-box" style="margin-top:12px">โครงเส้นเชื่อม MH/TR → สถานี เป็นการจัดวางตามผังจอ SCADA เท่านั้น — <b>เส้นทางรับน้ำจริงของแต่ละสถานี (sourceSystem) ยังไม่มีข้อมูล</b> รอยืนยันเพื่อวาดเส้นเชื่อมที่ถูกต้อง</div>
+      </div>
+      <div class="note-box" style="margin-top:12px">
+        <b>หมายเหตุความถูกต้องของข้อมูล:</b> ตัวเลขทั้งหมดคือค่าดิบที่อ่านจากภาพหน้าจอจริง (ความหมาย/หน่วยรอยืนยัน) ·
+        <b>ช่องสถานะปั๊มแสดงเป็นสีเทาทั้งหมด</b> เพราะยังไม่มีข้อมูลว่าปั๊มตัวใดทำงานอยู่ (ของจริงสีแดง = Actived) ·
+        กล่องถังสีเขียว (TP, RB, TR2) ตีความจากภาพว่าระดับใกล้เต็ม — รอยืนยันเกณฑ์สีจริง ·
+        ระดับการเติมของแท่งถังฝั่งอุโมงค์ (21.94 / 33.22 / 36.06 / 25.09) เป็นการประมาณจากภาพ
       </div>`;
   })();
 

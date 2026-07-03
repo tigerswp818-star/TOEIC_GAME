@@ -83,7 +83,7 @@
     });
 
     // สถานีสูบจ่าย + DMA (ขวา)
-    info["sj"] = `<b>สถานีสูบจ่ายน้ำ (สจ.) 10 แห่ง</b><br>รับน้ำจาก TR แล้วเพิ่มแรงดัน ~15 → ~20 ม. จ่ายเข้าท่อประธาน (ดูรายชื่อ/ข้อมูลจริงที่หัวข้อ 10)`;
+    info["sj"] = `<b>สถานีสูบจ่ายน้ำ (สจ.) 10 แห่ง</b><br>รับน้ำจากสายส่งทั้ง 4 line แล้วเพิ่มแรงดัน ~15 → ~20 ม. จ่ายเข้าท่อประธาน (ดูรายชื่อ/ข้อมูลจริงที่หัวข้อ 10)`;
     info["dma"] = `<b>DMA &amp; ผู้ใช้น้ำ</b><br>สาขาแบ่งพื้นที่ย่อยละ ~1,000 มาตร คุมแรงดันปลายทางและตามหาน้ำสูญเสีย`;
     nodes += `
       <g class="flow-node" data-key="sj">
@@ -383,7 +383,8 @@
   $("#cp-text").textContent = D.dma.assets.cp;
 
   /* ---------------- Network (แก้ไขได้ + localStorage) ---------------- */
-  const NET_KEY = "waterkm.network.v1";
+  // v2: โครงสายส่งเปลี่ยนเป็น 4 line (MH/TR1/TR2/TR3) — เปลี่ยน key เพื่อไม่ให้ข้อมูลโครงเก่ามาทับ
+  const NET_KEY = "waterkm.network.v2";
   let net = JSON.parse(JSON.stringify(D.network));
   try {
     const saved = localStorage.getItem(NET_KEY);
@@ -392,7 +393,7 @@
 
   let editing = false;
   const TR_COLS = [
-    ["name", "ชื่อชุดสูบส่ง"], ["flowOut", "Flow ขาออก (ลบ.ม./ชม.)", "num"],
+    ["name", "ชื่อสายส่ง (Line)"], ["flowOut", "Flow ขาออก (ลบ.ม./ชม.)", "num"],
     ["rtu", "รหัส RTU"], ["note", "หมายเหตุ"],
   ];
   const SJ_COLS = [

@@ -174,13 +174,15 @@ const KM_DATA = {
 
   /* ---------- โครงข่ายจริงของหน่วยงานเรา ----------
      ⚠ ส่วนนี้เป็นโครงให้กรอกข้อมูลจริงจากหน้างาน (source: "example")
-     ชื่อ TR ตามที่หัวหน้าบรรยาย: มหาสวัสดิ์, บางเขน T1, บางเขน T2
+     สายส่ง (Transmission Line) มี 4 line:
+     MH มหาสวัสดิ์ / TR1 บางเขน / TR2 บางเขน / TR3 บางเขน
      สถานีสูบจ่าย (สจ.) 10 แห่ง — แก้ชื่อ/ตัวเลขได้ในโหมดแก้ไข หรือแก้ไฟล์นี้ */
   network: {
     trs: [
-      { id: "tr-msw", name: "TR มหาสวัสดิ์", flowOut: 200000, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "ตัวเลข 200,000 คิว/ชม. เป็นตัวอย่างจากที่หัวหน้าเล่า — ยืนยันค่าจริงอีกครั้ง", source: "example" },
-      { id: "tr-bkn1", name: "TR บางเขน T1", flowOut: null, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "กรอกข้อมูลจริงจากหน้างาน", source: "example" },
-      { id: "tr-bkn2", name: "TR บางเขน T2", flowOut: null, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "กรอกข้อมูลจริงจากหน้างาน", source: "example" },
+      { id: "tr-mh", name: "MH มหาสวัสดิ์", flowOut: 200000, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "ตัวเลข 200,000 คิว/ชม. เป็นตัวอย่างจากที่หัวหน้าเล่า — ยืนยันค่าจริงอีกครั้ง", source: "example" },
+      { id: "tr-bkn1", name: "TR1 บางเขน", flowOut: null, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "กรอกข้อมูลจริงจากหน้างาน", source: "example" },
+      { id: "tr-bkn2", name: "TR2 บางเขน", flowOut: null, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "กรอกข้อมูลจริงจากหน้างาน", source: "example" },
+      { id: "tr-bkn3", name: "TR3 บางเขน", flowOut: null, flowUnit: "ลบ.ม./ชม.", rtu: "กรอกรหัส RTU", note: "กรอกข้อมูลจริงจากหน้างาน", source: "example" },
     ],
     stations: Array.from({ length: 10 }, (_, i) => ({
       id: "sj-" + (i + 1),

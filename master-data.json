@@ -1,0 +1,4822 @@
+{
+  "projectName": "Water Operation KM Dashboard",
+  "projectNameTh": "ระบบจัดการองค์ความรู้งานสูบส่งและสูบจ่ายน้ำ",
+  "lastUpdate": "2026-07-03",
+  "dataVersion": 10,
+  "changeLog": [
+    {
+      "version": 1,
+      "date": "2026-07-03",
+      "detail": "ตั้งต้น Master Data: ระบบสูบส่ง 4 + สถานีสูบจ่าย 10"
+    },
+    {
+      "version": 2,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 1: ภาพ SCADA เทพอุโมงค์ (Smart Tunnel) 3 ก.ค. 2026 14:05, แผนที่ระบบส่ง-จ่ายน้ำ กปน. (ปรับปรุง 6 ก.พ. 69), รายงานองค์ความรู้ระบบส่ง-จ่ายน้ำ"
+    },
+    {
+      "version": 3,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 2: องค์ความรู้จากบันทึกการเรียนรู้งาน ณ กคจ. — ปรัชญาระบบ, ไฮดรอลิกอุโมงค์, SCADA/RTU/RCV เชิงลึก, Step Test/Water Balance, GIS, CP"
+    },
+    {
+      "version": 4,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 3: โครงสร้างบริหาร (ชั้น 6/ชั้น 4, Set Point), การควบคุมด้วย Curve ขอบบน-ล่าง, การวิเคราะห์ Demand/ตรวจจับท่อแตกจากกราฟ, ขอบเขตท่อประธาน ≥400 มม., Water Balance และข้อจำกัด, การจัดการวิกฤตไฟดับ/น้ำเค็ม"
+    },
+    {
+      "version": 5,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 4: ขยายความ Manage (ชั้น 6) vs Operate (ชั้น 4/สถานี) — บทบาท, Set Point, โลจิสติกส์น้ำ (6 ล้าน→จ่าย 5 ล้าน ลบ.ม.), การตัดสินใจช่วงวิกฤตคุณภาพน้ำ, วาล์ว Front/Discharge, รันปั๊มขนาน, โซนนิคมอุตสาหกรรม"
+    },
+    {
+      "version": 6,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 5: การจ่ายน้ำปกติ vs การผันน้ำ (Diversion) — วัตถุประสงค์, เครื่องมือ (ปั๊ม vs RCV/By-pass), ทิศทางการไหล/การส่งน้ำข้ามโซน, ตารางเปรียบเทียบ"
+    },
+    {
+      "version": 7,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 6: Smart Waterworks Playbook (สไลด์ 10 หน้า) — สัดส่วนกำลังผลิตโรงผลิต 4 แห่ง, Journey of Water 4 Stage, Interdependence Rule, SCADA Chain (RTU→DNP3→OPC), RTU Nomenclature (UZ 0114), Pressure Optimization Curve (±0.5m), Diagnostic Signatures, RCV Diversion Scenario"
+    },
+    {
+      "version": 8,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 7: Excel ข้อมูลรายชั่วโมง 10 สถานี (มี.ค.–พ.ค. 2025 และ 2026, 43,900 แถว) — Qin/Level/Inlet/Flow-Pressure จ่ายออกรายทิศทาง, สถิติรายสถานี, Data Quality Findings, ยืนยันความหมายตัวเลขสถานีบน SCADA"
+    },
+    {
+      "version": 9,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 8: ไฟล์หน้าจอจริง Smart Tunnel V.2 (SVG + ค่าสด 3 ก.ค. 2026 15:08) — สถานะปั๊มจริง 80 ตัว, รายชื่อ RCV 14 จุดพร้อม % เปิด, รหัส RTU 25 จุด, Level Max ทางการทุกสถานี, Snapshot ครั้งที่ 2, System Map ใช้ SVG จริง"
+    },
+    {
+      "version": 10,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 9: หน้า 'RTU รายจุด' — ทะเบียน RTU ครบ 236 จุดพร้อมตำแหน่งติดตั้ง, รหัสสาขา 16 สาขา, RCV เพิ่ม 3 ตัว (RCV12/52/53), ยืนยัน BK03: CH=แจ้งวัฒนะ NG=งามวงศ์วาน, RCV38 สี่พระยาอุโมงค์ = จุดลอดแม่น้ำ"
+    }
+  ],
+  "waterTreatmentPlants": [
+    {
+      "plantCode": "BK",
+      "plantName": "โรงผลิตน้ำบางเขน",
+      "highlight": "ใหญ่ที่สุด กำลังการผลิต ~4.2 ล้าน ลบ.ม./วัน (~67% ของระบบ)",
+      "rawWaterSource": "ยังไม่มีข้อมูล",
+      "feedsSystems": [
+        "TR1",
+        "TR2",
+        "TR3"
+      ],
+      "note": "บนจอ SCADA แสดงเป็นฝั่ง BK จ่ายเข้าอุโมงค์ TR1 / TR2 / TR3",
+      "capacityShare": "~67% ของระบบ / ~4.2 ล้านหน่วย (Playbook)"
+    },
+    {
+      "plantCode": "MH",
+      "plantName": "โรงผลิตน้ำมหาสวัสดิ์",
+      "highlight": "ใหม่ที่สุด กำลังการผลิต ~1.9 ล้าน ลบ.ม./วัน (~30% ของระบบ)",
+      "rawWaterSource": "แม่น้ำแม่กลอง (ฝั่งตะวันตก)",
+      "feedsSystems": [
+        "MH"
+      ],
+      "note": "ยังไม่มีข้อมูลกำลังการผลิต",
+      "capacityShare": "~30% ของระบบ / ~1.9 ล้านหน่วย (Playbook)"
+    },
+    {
+      "plantCode": "SS",
+      "plantName": "โรงผลิตน้ำสามเสน",
+      "highlight": "เก่าแก่ที่สุด จุดเริ่มต้นของการประปา",
+      "rawWaterSource": "ยังไม่มีข้อมูล",
+      "feedsSystems": [],
+      "note": "ปรากฏบนจอ SCADA (SS, SS1-SS4) — รอยืนยันบทบาทในระบบสูบส่ง",
+      "capacityShare": "~3-4% ของระบบ (Playbook)"
+    },
+    {
+      "plantCode": "TB",
+      "plantName": "โรงผลิตน้ำธนบุรี",
+      "highlight": "เล็กที่สุด ผลิตและสูบจ่ายเฉพาะพื้นที่ฝั่งธนบุรี",
+      "rawWaterSource": "ยังไม่มีข้อมูล",
+      "feedsSystems": [],
+      "note": "ปรากฏบนจอ SCADA เป็น TB (ถัง 3,857 Sqm, Max 4.80) — รอยืนยันบทบาท",
+      "capacityShare": "<1% ของระบบ (Playbook)"
+    }
+  ],
+  "mainTransmissionSystems": [
+    {
+      "systemCode": "MH",
+      "systemName": "มหาสวัสดิ์",
+      "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ / ท่อส่งน้ำมหาสวัสดิ์)",
+      "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำมหาสวัสดิ์เข้าระบบอุโมงค์/ท่อส่งน้ำ",
+      "source": "โรงผลิตน้ำมหาสวัสดิ์ (น้ำดิบจากแม่น้ำแม่กลอง)",
+      "connectedStations": [],
+      "flow": "40010 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)",
+      "pressure": "4.05 (ค่าอ่านจาก SCADA — รอยืนยันหน่วยและตำแหน่งวัด)",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "note": "ค่าอื่นบนจอฝั่ง MH: 21.94, 23807, 27.97, 15761, 8046, 8017 — รอยืนยันความหมาย / จุดวัดแรงดัน P051 อยู่ใกล้ MH",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "39250 (MHTR_TR)",
+        "level": "4.05 (MHTR_Level, Max 5.4)",
+        "inlet": "22.02 (Max 28)",
+        "branches": {
+          "MH_F": "23807 (P 27.97)",
+          "MH_F_A": "15761",
+          "MH_F_B": "8046",
+          "MH_F_C": "8017"
+        }
+      },
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 3
+      }
+    },
+    {
+      "systemCode": "TR1",
+      "systemName": "TR1 บางเขน",
+      "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)",
+      "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ",
+      "source": "โรงผลิตน้ำบางเขน (BK)",
+      "connectedStations": [],
+      "flow": "46476 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)",
+      "pressure": "33.22 (ค่าอ่านจาก SCADA ฝั่ง TR1 — รอยืนยันหน่วยและตำแหน่งวัด)",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "note": "BK03 = จุดจ่ายกิ่ง 3 เส้น: CH 3109, NG 5518, ME 5841 (ชื่อเต็มรอยืนยัน) พร้อมปั๊ม 5 ตัว (ทำงาน 4)",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "46474",
+        "pressure": "33.37",
+        "level": "3.48 (BK_TR1_L1)"
+      },
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3
+      }
+    },
+    {
+      "systemCode": "TR2",
+      "systemName": "TR2 บางเขน",
+      "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)",
+      "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ",
+      "source": "โรงผลิตน้ำบางเขน (BK)",
+      "connectedStations": [],
+      "flow": "46840 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)",
+      "pressure": "36.06 (ค่าอ่านจาก SCADA ฝั่ง TR2 — รอยืนยันหน่วยและตำแหน่งวัด)",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "note": "BK04 = จุดจ่ายกิ่ง: VI 9440, PY 229 (ชื่อเต็มรอยืนยัน) พร้อมปั๊ม 4 ตัว (ทำงาน 3) / ค่า 3.44-3.48 คือระดับ/ค่าฝั่ง TR (รอยืนยัน)",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "46510",
+        "pressure": "36.03"
+      },
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 5
+      }
+    },
+    {
+      "systemCode": "TR3",
+      "systemName": "TR3 บางเขน",
+      "type": "ระบบสูบส่งหลัก (อุโมงค์ส่งน้ำ)",
+      "mainFunction": "สูบส่งน้ำจากโรงผลิตน้ำบางเขนเข้าอุโมงค์ส่งน้ำ",
+      "source": "โรงผลิตน้ำบางเขน (BK)",
+      "connectedStations": [],
+      "flow": "52580 (ค่าอ่านจาก SCADA 3 ก.ค. 2026 14:05 — รอยืนยันหน่วย)",
+      "pressure": "25.09 (ค่าอ่านจาก SCADA ฝั่งขวาแนว TR3 — รอยืนยันหน่วยและตำแหน่งวัด)",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "note": "ยังไม่มีข้อมูล",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "51900",
+        "pressure": "25.1"
+      },
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 2
+      }
+    }
+  ],
+  "pumpingStations": [
+    {
+      "stationCode": "SR",
+      "stationName": "สถานีสูบจ่ายสำโรง",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 17,287 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 8.16 / สูงสุด 21.92 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 55,392 เมื่อ 2025-04-11 11:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "3.31",
+        "maxLevelM": "5.63",
+        "areaSqm": "14,081",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันออกตอนล่าง ใกล้ BP",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 17287,
+        "qinMax": 22038,
+        "totalFlowAvg": 20205,
+        "totalFlowMax": 55392,
+        "totalFlowMaxAt": "2025-04-11 11:00",
+        "levelMin": 0.0,
+        "levelMax": 5.62,
+        "levelAvg": 3.25,
+        "inletAvg": 8.16,
+        "inletMax": 21.92,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "SR_F_1800",
+          "nameTh": "ท่อ ø1800"
+        },
+        {
+          "code": "SR_F_1000",
+          "nameTh": "ท่อ ø1000"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 390 ชม.",
+        "ระดับถังอ่านได้ 0.0 จำนวน 60 ชม. (คาดว่าสัญญาณหลุด)",
+        "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "19577",
+        "out": "20151",
+        "lvl": "3.31",
+        "inlet": "4.88",
+        "p": "14.96"
+      }
+    },
+    {
+      "stationCode": "KT",
+      "stationName": "สถานีสูบจ่ายคลองเตย",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 9,796 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 13.39 / สูงสุด 21.94 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 19,708 เมื่อ 2025-05-24 07:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ณ 15:08 ปั๊มไม่ทำงานทุกตัวแต่ยังจ่ายน้ำ (LA Qin=133, KT Qin=-6) — คาดว่าจ่ายแบบ By-pass ด้วยแรงดันอุโมงค์ (รอยืนยัน)",
+      "clearWaterTank": {
+        "levelM": "4.69",
+        "maxLevelM": "5.63",
+        "areaSqm": "8,120",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "มี คลองเตย VC (Valve Chamber) บนแนวอุโมงค์",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 9796,
+        "qinMax": 19652,
+        "totalFlowAvg": 11786,
+        "totalFlowMax": 19708,
+        "totalFlowMaxAt": "2025-05-24 07:00",
+        "levelMin": 0.45,
+        "levelMax": 5.58,
+        "levelAvg": 4.04,
+        "inletAvg": 13.39,
+        "inletMax": 21.94,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "KT_F_Sukhum",
+          "nameTh": "สุขุมวิท"
+        },
+        {
+          "code": "KT_F_Praka",
+          "nameTh": "พระโขนง (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "KT_F_Ram4_1500",
+          "nameTh": "พระราม 4 ท่อ ø1500"
+        },
+        {
+          "code": "KT_F_Ram4_1000",
+          "nameTh": "พระราม 4 ท่อ ø1000"
+        }
+      ],
+      "dataQuality": [
+        "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)",
+        "Flow ติดลบ 7 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 0,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "-6",
+        "out": "8790",
+        "lvl": "4.7",
+        "inlet": "13.58",
+        "p": "4.84"
+      }
+    },
+    {
+      "stationCode": "BP",
+      "stationName": "สถานีสูบจ่ายบางพลี",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 22,566 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 7.09 / สูงสุด 13.11 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 41,753 เมื่อ 2026-05-10 00:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "4.61",
+        "maxLevelM": "5.90",
+        "areaSqm": "11,000",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 22566,
+        "qinMax": 27583,
+        "totalFlowAvg": 22225,
+        "totalFlowMax": 41753,
+        "totalFlowMaxAt": "2026-05-10 00:00",
+        "levelMin": 0.93,
+        "levelMax": 5.83,
+        "levelAvg": 3.95,
+        "inletAvg": 7.09,
+        "inletMax": 13.11,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "BP_F_Kingkeaw1",
+          "nameTh": "กิ่งแก้ว 1"
+        },
+        {
+          "code": "BP_F_Kingkeaw2",
+          "nameTh": "กิ่งแก้ว 2"
+        },
+        {
+          "code": "BP_F_Epec",
+          "nameTh": "โรงไฟฟ้า EPEC ถ.สุขุมวิท"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 2 ชม.",
+        "Flow ติดลบ 982 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 5,
+        "statusList": [
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "24620",
+        "out": "21462",
+        "lvl": "4.85",
+        "inlet": "8",
+        "p": "17.53"
+      }
+    },
+    {
+      "stationCode": "LK",
+      "stationName": "สถานีสูบจ่ายลาดกระบัง",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 13,675 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 6.96 / สูงสุด 17.02 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 27,382 เมื่อ 2026-04-25 21:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "4.42",
+        "maxLevelM": "5.63",
+        "areaSqm": "9,000",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 13675,
+        "qinMax": 28401,
+        "totalFlowAvg": 13616,
+        "totalFlowMax": 27382,
+        "totalFlowMaxAt": "2026-04-25 21:00",
+        "levelMin": 1.43,
+        "levelMax": 5.65,
+        "levelAvg": 4.05,
+        "inletAvg": 6.96,
+        "inletMax": 17.02,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LK_F_Meen",
+          "nameTh": "มีนบุรี"
+        },
+        {
+          "code": "LK_F_Ladkra",
+          "nameTh": "ลาดกระบัง"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 30 ชม."
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 2,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "13383",
+        "out": "11403",
+        "lvl": "4.68",
+        "inlet": "8.49",
+        "p": "7.21"
+      }
+    },
+    {
+      "stationCode": "MB",
+      "stationName": "สถานีสูบจ่ายมีนบุรี",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 16,595 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 6.93 / สูงสุด 558.88 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 23,139 เมื่อ 2026-05-30 10:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "5.47",
+        "maxLevelM": "7.10",
+        "areaSqm": "7,745",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "บนจอมีช่อง LV และพื้นที่ 4,216 Sqm เพิ่มอีกหนึ่งค่า — อาจมีถัง 2 ใบ รอยืนยัน",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 16595,
+        "qinMax": 20217,
+        "totalFlowAvg": 16371,
+        "totalFlowMax": 23139,
+        "totalFlowMaxAt": "2026-05-30 10:00",
+        "levelMin": 1.3,
+        "levelMax": 7.23,
+        "levelAvg": 4.67,
+        "inletAvg": 6.93,
+        "inletMax": 558.88,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "MB_F_Nimit",
+          "nameTh": "นิมิตใหม่ (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "MB_F_Ram",
+          "nameTh": "รามอินทรา (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "MB_F_Suwin",
+          "nameTh": "สุวินทวงศ์ (รอยืนยันชื่อ)"
+        }
+      ],
+      "pumps": {
+        "total": 7,
+        "activeAt1508": 4,
+        "statusList": [
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "18226",
+        "out": "16783",
+        "lvl": "5.53",
+        "inlet": "6.44",
+        "p": "14.12"
+      }
+    },
+    {
+      "stationCode": "LP",
+      "stationName": "สถานีสูบจ่ายลุมพินี",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 9,565 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 13.66 / สูงสุด 21.87 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 33,981 เมื่อ 2025-05-13 12:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "4.13",
+        "maxLevelM": "5.70",
+        "areaSqm": "8,570",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "มี ลุมพินี VC (Valve Chamber) บนแนวอุโมงค์",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 9565,
+        "qinMax": 23580,
+        "totalFlowAvg": 12203,
+        "totalFlowMax": 33981,
+        "totalFlowMaxAt": "2025-05-13 12:00",
+        "levelMin": 2.07,
+        "levelMax": 5.49,
+        "levelAvg": 3.99,
+        "inletAvg": 13.66,
+        "inletMax": 21.87,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LP_F_Sarasin",
+          "nameTh": "สารสิน"
+        },
+        {
+          "code": "LP_F_Sathon",
+          "nameTh": "สาทร"
+        }
+      ],
+      "dataQuality": [
+        "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 3,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "12057",
+        "out": "15147",
+        "lvl": "4.2",
+        "inlet": "13.2",
+        "p": "6.81"
+      }
+    },
+    {
+      "stationCode": "LA",
+      "stationName": "สถานีสูบจ่ายลาดพร้าว",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 8,986 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 18.04 / สูงสุด 24.33 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 20,938 เมื่อ 2025-04-05 08:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ณ 15:08 ปั๊มไม่ทำงานทุกตัวแต่ยังจ่ายน้ำ (LA Qin=133, KT Qin=-6) — คาดว่าจ่ายแบบ By-pass ด้วยแรงดันอุโมงค์ (รอยืนยัน)",
+      "clearWaterTank": {
+        "levelM": "4.29",
+        "maxLevelM": "5.63",
+        "areaSqm": "13,815",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 8986,
+        "qinMax": 21842,
+        "totalFlowAvg": 14846,
+        "totalFlowMax": 20938,
+        "totalFlowMaxAt": "2025-04-05 08:00",
+        "levelMin": 0.0,
+        "levelMax": 5.43,
+        "levelAvg": 3.25,
+        "inletAvg": 18.04,
+        "inletMax": 24.33,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LA_F_1500",
+          "nameTh": "ท่อ ø1500"
+        },
+        {
+          "code": "LA_F_1200",
+          "nameTh": "ท่อ ø1200"
+        }
+      ],
+      "dataQuality": [
+        "ระดับถังอ่านได้ 0.0 จำนวน 248 ชม. (คาดว่าสัญญาณหลุด)",
+        "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 0,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "133",
+        "out": "13754",
+        "lvl": "4.32",
+        "inlet": "19.13",
+        "p": "11.18"
+      }
+    },
+    {
+      "stationCode": "TP",
+      "stationName": "สถานีสูบจ่ายท่าพระ",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 12,902 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 7.76 / สูงสุด 15.5 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 30,762 เมื่อ 2026-03-02 12:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "5.29",
+        "maxLevelM": "5.63",
+        "areaSqm": "8,120",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกของแม่น้ำเจ้าพระยา",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 12902,
+        "qinMax": 22913,
+        "totalFlowAvg": 12825,
+        "totalFlowMax": 30762,
+        "totalFlowMaxAt": "2026-03-02 12:00",
+        "levelMin": 1.82,
+        "levelMax": 5.66,
+        "levelAvg": 4.29,
+        "inletAvg": 7.76,
+        "inletMax": 15.5,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "TP_F_Wong",
+          "nameTh": "วงเวียนใหญ่ (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "TP_F_Petka",
+          "nameTh": "เพชรเกษม"
+        },
+        {
+          "code": "TP_F_Thapra",
+          "nameTh": "ท่าพระ"
+        }
+      ],
+      "dataQuality": [
+        "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "11632",
+        "out": "11502",
+        "lvl": "5.24",
+        "inlet": "12.08",
+        "p": "9.55"
+      }
+    },
+    {
+      "stationCode": "RB",
+      "stationName": "สถานีสูบจ่ายราษฎร์บูรณะ",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 17,216 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 5.74 / สูงสุด 15.31 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 24,353 เมื่อ 2025-04-25 07:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "5.4",
+        "maxLevelM": "5.6",
+        "areaSqm": "10,025",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกตอนล่าง",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 17216,
+        "qinMax": 23591,
+        "totalFlowAvg": 17011,
+        "totalFlowMax": 24353,
+        "totalFlowMaxAt": "2025-04-25 07:00",
+        "levelMin": 1.53,
+        "levelMax": 5.59,
+        "levelAvg": 3.97,
+        "inletAvg": 5.74,
+        "inletMax": 15.31,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "RB_F_Ram2",
+          "nameTh": "พระราม 2"
+        },
+        {
+          "code": "RB_F_Yairom",
+          "nameTh": "รอยืนยันชื่อ"
+        }
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "13476",
+        "out": "14533",
+        "lvl": "5.31",
+        "inlet": "12.39",
+        "p": "16.36"
+      }
+    },
+    {
+      "stationCode": "PK",
+      "stationName": "สถานีสูบจ่ายเพชรเกษม",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 13,616 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 15.57 / สูงสุด 20.8 (รอยืนยันหน่วย)",
+      "pressureOut": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 37,695 เมื่อ 2026-04-29 14:00",
+      "maxPressureToday": "ยังไม่มีข้อมูล",
+      "serviceArea": "ยังไม่มีข้อมูล",
+      "rtu": "ยังไม่มีข้อมูล",
+      "status": "ยังไม่มีข้อมูล",
+      "issue": "ยังไม่มีข้อมูล",
+      "clearWaterTank": {
+        "levelM": "4.97",
+        "maxLevelM": "6.7",
+        "areaSqm": "10,500",
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
+      },
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตก ใกล้แนวท่อส่งน้ำมหาสวัสดิ์ (เส้นสีเขียวบนแผนที่)",
+      "hourlyStats": {
+        "period": "2026-03-01 ถึง 2026-05-31 (92 วัน, 2190 ชม.)",
+        "qinAvg": 13616,
+        "qinMax": 18609,
+        "totalFlowAvg": 13793,
+        "totalFlowMax": 37695,
+        "totalFlowMaxAt": "2026-04-29 14:00",
+        "levelMin": 2.77,
+        "levelMax": 6.64,
+        "levelAvg": 4.89,
+        "inletAvg": 15.57,
+        "inletMax": 20.8,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "PK_F",
+          "nameTh": "เส้นจ่ายหลัก (มี Zone Meter ZM01/ZM02)"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 210 ชม.",
+        "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)"
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "16336",
+        "out": "12480",
+        "lvl": "5.41",
+        "inlet": "18.69",
+        "p": "12.92"
+      }
+    }
+  ],
+  "otherNodesOnScada": [
+    {
+      "code": "TB",
+      "name": "ธนบุรี",
+      "tank": {
+        "levelM": "2.86",
+        "maxLevelM": "4.80",
+        "areaSqm": "3,857"
+      },
+      "otherValues": [
+        "5001",
+        "6.4"
+      ],
+      "note": "โรงผลิตน้ำธนบุรี — ไม่อยู่ในสถานีสูบจ่าย 10 แห่ง รอยืนยันว่าจะรวมใน Dashboard หรือไม่"
+    },
+    {
+      "code": "SS",
+      "name": "สามเสน",
+      "tank": null,
+      "otherValues": [
+        "SS1",
+        "SS2",
+        "SS4",
+        "3044",
+        "2261",
+        "-88",
+        "RCV54"
+      ],
+      "note": "โรงผลิตน้ำสามเสน — มีผังจ่ายน้ำของโรงงานผลิตน้ำสามเสนแทรกอยู่ในแผนที่ รอยืนยันบทบาท"
+    },
+    {
+      "code": "PY",
+      "name": "พหลโยธิน",
+      "tank": null,
+      "otherValues": [
+        "6718",
+        "8.4",
+        "32769"
+      ],
+      "note": "มีกล่อง Bypass — จุดจ่ายน้ำแบบ Bypass จากอุโมงค์เข้าท่อประธาน (รอยืนยัน) ไม่อยู่ในสถานีสูบจ่าย 10 แห่ง"
+    }
+  ],
+  "rtuList": [
+    {
+      "rtuName": "P019",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองมหาศร ถ.เพชรเกษม(ปลายเส้นท่อ}",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P021",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสรรพสามิต ถ.สุขสวัสดิ์ ปลายเส้นท่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P032",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางพึง ถ.ราษฏร์บูรณะ ปลายเส้นท่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P036",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "วัดทุ่งครุ ถ.ประชาอุทิศ ปลายเส้นท่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P038",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางกอกน้อย ถ.บรมราชชนนี(ก่อนข้ามคลอง)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P046",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ปลายเส้นท่อ ถ.บรมราชชนนี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P050",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองเจ็ก ถ.บางกรวย ไทรน้อย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P051",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางบอน ถ.เอกกชัย (ปลายเส้นท่อ)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P052",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ซอยแสมดำ ถ.พระราม2 (ปลายเส้นท่อ)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P113",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานใหม่ ถ.พหลโยธิน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P125",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางนา ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P146",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองเกร็ด ถ.คู้บอน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P149",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "เชิงสะพานพระราม 7",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P167",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางนา ถ.ศรีนครินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P169",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "แยก ถ.ออเงิน ตัด ถ.สายไหม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P170",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ต้น ถ.สุวินทวงศ์มีนบุรี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P171",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สุด ถ.ปู่่เจ้าสมิงพราย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P173",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.สายลวด",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P174",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สุด ถ.ท้ายบ้าน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P175",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "แยก ถ.แพรกษา ตัด ถ.กิ่งแก้ว",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P176",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "วัดตำหรุ ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P177A",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "หลัง booster ถ.ปานวิถี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "P177B",
+      "type": "P (Pressure เท่านั้น)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "หน้าโรงไฟฟ้า EPEC ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U001",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองมอญ ถ.จรัญสนิทวงศ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U002",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองมอญ ถ.อิสรภาพ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U004",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานเจริญพาสน์ ถ.อิสรภาพ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U005",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานเนาวจำเนียร ถ.อินทรพิทักษ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U006",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานเนาวจำเนียร ถ.อินทรพิทักษ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U014",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ซอย สุขสวัสดิ์53 ถ.สุขสวัสดิ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U016",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางบอน ถ.วงแหวนรอบนอก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U017",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.บางค้อ ถ.กาญจนาภิเษก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U018",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางเชือกหนัง ถ.วงแหวนรอบนอก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U019",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ราชมนตรี ถ.เอกชัย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U020",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางกอกใหญ่ ถ.รัชดาภิเษก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U022",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองมหาสวัสดิ์ ถ.วงแหวนรอบน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U023",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ทางรถไฟ ถ.เทอดพระเกีียรติ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U024",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.เตย ถ.จรัญสนิทวงศ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U025",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.ตากสิน เพชรเกษม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U027",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ราชมนตรี ถ.กัลปพฤกษ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U028",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ราชมนตรี ถ.กัลปพฤกษ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U029",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.มหาสวัสดิ์ ถ.ราชพฤกษ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U030",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานพระราม4",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U031",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.เจริญนครใต้สะพานข้ามคลองดาวคนอง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U032",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "พระราม2 ซอย 33 ซอยพุทธบูชา 24",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U033",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "พระราม2 ซอย 33 ถนนสมานมิตรพัฒนา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U039",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานพระนั่งเกล้า ถ.รัตนาธิเบศน์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U040",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "พุฑมณฑลสาย 3",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U101",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.เปรมประชากร ถ.แจ้งวัฒนะ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U103",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.บางบัว ถ.พหลโยธิน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U105",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองเปรม ถ.งามวงศ์วาน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U108",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.ประชาราษฎร์ ค.บางซื่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U109",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "กองระบบน้ำดิบ ถ.เตชะวนิช",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U110",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองลาดพร้าว ถ.ลาดพร้าว",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U111",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองแสนแสบ ถ.ศรีนครินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U112",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสามเสน ถ.สามเสน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U118",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.พระราม 6 ค.สามเสน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U119",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสามเสน ถ.พหลโยธิน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U120",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสามเสน ถ.ดินแดง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U121",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสามเสน ถ.อโศกดินแดง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U122",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ซ.รามคำแหง 53 ถ.รามคำแหง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U125",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.เพชรบุรี ทางรถไฟ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U128",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานสาธร ถ.เจริญกรุง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U134",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ใต้ทางด่วน ถ.พระราม 4",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U137",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองพระโขนง ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U138",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ประเวศ, ถ.พัฒนาการ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U139",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองเปรม ถ.สรงประภา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U140",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.แสนแสบ ถ.สุขาภิบาล 1",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U141",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.บางชัน ถ.สุขาภิบาล 2",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U142",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ประเวศบุรีรมย์ ถ.ศรีนครินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U144",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางบัว เคหะบางบัว",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U145",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองลาดยาว ถ.งามวงศ์วาน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U148",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.แสนแสบ ถ.รามคำแหง 21",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U151",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.พระราม9 คลองแสนแสบ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U172",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สุด ถ.สวนส้ม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U201",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ติดห้าง Robinson สีลม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U202",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองผดุงกรุงเกษม ถ.มหาพฤ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U203",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ผดุงกรุงเกษม ซ.เจริญกรุง 24",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U204",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสำโรง ถ.หน้ากรม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U205",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสำโรง ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U206",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสำโรง ถ.ศรีนครินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U207",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองลาดพร้า ถ.ประชาอุทิศ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U208",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองเปรม ถ.ทหาร",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U209",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองประปา ถ.งามวงศ์วาน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U212",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองประปา แจ้งวัฒนะ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U215",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางเขน ถ.ประชาืชื่น",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U216",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางเขน ถ.กรุงเทพ นนท์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U217",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางเขน ถ.พิบูลย์สงคราม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U219",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ลาดพร้าว ซ.เสนานิคม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U220",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ซอยนวลจันทร์ ถ.รามอินทรา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U222",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองตาพุก ถ.อ่อนนุช",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U223",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "หน้าปั้มปิโตรเอเชีย ถ.กิ่งแก้ว",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U226",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองสำโรง ถ.กิ่งแก้ว",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U227",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองจระเ้ข้ ถ.บางนา ตราด",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U230",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานชิดชน ถ.วิภาวดี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U231",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานชิดชน ถ.วิภาวดี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U232",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "BK03 แจ้งวัฒนะ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U233",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ฺBK03 งามวงศ์วาน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U234",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองบางชัน ถ.รามอินทรา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U235",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ลาดพร้าว ทางด่วนรามอินทรา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U236",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ทางรถไฟ ถ.เพลินจิต",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U237",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.บางขวด ทางด่วนรามอินทรา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U238",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองแสนแสบ ใกล้นิด้า",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U239",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.วัดลาดปลาเค้า",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U240",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ศรีวารีน้อย สุวรรณ 5",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U241",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.สามเสน ถ.เอกมัย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U242",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองแม่่จันทร์ ถ.วงแหวนตะวันออก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U243",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองแสนแสบ วงแหวนรอบนอก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U245",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ค.ลาดบัวขาว ถ.สุขาภิบาล 3",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U246",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองประเวศ ถ.วงแหวนตะวันออก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U247",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ซอย รามคำแหง 39",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U248",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สรงประภา ศรีสมาน",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U249",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.หลวงแพ่ง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U250",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.เกษตร สุขาภิบาล",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U251",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.รัชดา ใกล้ตลาดปีนัง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U252",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ใกล้แยกประชานุกูล",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U253",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ใต้สะพานพระราม 5 ถ.พิบูลย์สงคราม นนทบุรี.",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U254",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "เชิงสะพานวัดเสมียนนารี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U255",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "การท่าอากาศยาน ถ.กำแพงเพชร 5",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U256",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ใกล้สถานฑูตเยอรมัน ถ.สาทรใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U259",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "ถ.จตุรโชคชัย คลองสำโรง วัดหลวงพ่อโต",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U260",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "คลองแสนแสบ ถ.อโศกดินแดง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "U263",
+      "type": "U (Ultra Flow Meter)",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "สะพานนนทบุรี1 ฝั่งตะวันตก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0102",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.จรัลสนิทวงศ์ ข้ามค.บางกอกน้อย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0105",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.บางกอกน้อย-ตลิ่งชัน บริเวณค.ชักพระ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0106",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.บรมราชชนนีตัดกับ ถ.ราชพฤกษ์ฝั่งตะวันตก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0108",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.บรมราชชนนีตัดกับ ถ.พุทธมณฑล สาย 3",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0112",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.พรานนกตัดใหม่ ตัด ถ.บรมราชชนนี ฝั่งตะวันออก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0114",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "01",
+      "branchName": "บางกอกน้อย",
+      "location": "ถ.พรานนกตัดใหม่ ตัด ถ.บรมราชชนนี ฝั่งตะวันตก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0201",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "ถ.อนามัยงานเจริญ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0202",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "ค.ดาวคะนอง สุขสวัสดิ์ (211)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0204",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "สุขสวัสดิ์ 72 ซ. 1 (สุเหร่า)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0206",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "ถ.เอกชัย จอมทอง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0207",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "ประชาอุทิศ 74",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0208",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "ตากสินเพชรเกษมตัดวุฒากาศ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0210",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "สยามนิเวศน์ ประชาอุทิศ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0218",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "พระราม 2 ซอย 31 ท่อ 1200",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0219",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "พระราม 2 ซอย 31 ท่อ 800",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0220",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "02",
+      "branchName": "ตากสิน",
+      "location": "คลองบางมด ถนนพระรามที่ 2",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0301",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "03",
+      "branchName": "พญาไท",
+      "location": "แยกเกษตร",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0303",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "03",
+      "branchName": "พญาไท",
+      "location": "กำแพงเพชร 2",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0307",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "03",
+      "branchName": "พญาไท",
+      "location": "ถ.วิภาวดีรังสิต ข้ามคลองบางซื่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0309",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "03",
+      "branchName": "พญาไท",
+      "location": "ถ.รัชดาภิเษก ข้ามคลองบางซื่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0323",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "03",
+      "branchName": "พญาไท",
+      "location": "ถ.พหลโยธิน ข้ามคลองบางซื่อ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0409",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "04",
+      "branchName": "นนทบุรี",
+      "location": "คลองประปา line 1800 เมืองทองธานี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0507",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "05",
+      "branchName": "ทุ่งมหาเมฆ",
+      "location": "ถ.สาธุประดิษฐ์ ตัดถ.จันทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0513",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "05",
+      "branchName": "ทุ่งมหาเมฆ",
+      "location": "ถ.รัชดาภิเษก ตัดถ.สาธุประดิษฐ์ ทางทิศ ต.อ.",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0514",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "05",
+      "branchName": "ทุ่งมหาเมฆ",
+      "location": "ถ.สาธุประดิษฐ์ ใกล้ปากซ.สาธุประดิษฐ์ 49 ทางทิศใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0601",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.บรรทัดทอง ข้ามค.มหานาค",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0602",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.พญาไท ข้ามค.มหานาค",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0603",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.ราชดำริ ข้ามค.แสนแสบ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0606",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.พระราม 4 หน้าหัวลำโพง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0608",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งเหนือ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0609",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0611",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.พระราม4 หน้าหัวลำโพง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0613",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.นครสวรรค์ ตัด ถ.พะเนียง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0615",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.สามเสน ตัด กรุงเกษม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0616",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "สะพานผ่านฟ้าลีลาส",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0617",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.บำรุงเมือง ใกล้แยกแม้นศรี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0619",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "สะพานข้ามคลองรอบกรุง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0620",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.วรจักร ตัด ถ.หลวง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0622",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ใต้ทางด่วนมหานคร ตัดถ.พระราม4",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0624",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.หลานหลวง ตัด ถ.กรุงเกษม ฝั่งเหนือ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ0625",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "06",
+      "branchName": "แม้นศรี",
+      "location": "ถ.จักวรรติ์ สะพานพิธภิมุข",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1101",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "11",
+      "branchName": "ภาษีเจริญ",
+      "location": "ถ.เพชรเกษม หมวดการทาง ZM1108",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1102",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "11",
+      "branchName": "ภาษีเจริญ",
+      "location": "ถ.เพชรเกษม คลองบางกอกใหญ่ ZM1101",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1103",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "11",
+      "branchName": "ภาษีเจริญ",
+      "location": "คลองบางกอกใหญ่ ถนนบางแวก (ซ.พานิชธนฯ )",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1110",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "11",
+      "branchName": "ภาษีเจริญ",
+      "location": "ซอย เพชรเกษม 69",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1204",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "ถ.ประดิษฐ์มนูธรรม ตัด เกษตรนวมินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1207",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "ถ.ประดิษฐ์มนูธรรม ใกล้ปากซ.สุขา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1210",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "วงแหวนตะวันออก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1213",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "ถ.วัดคู้บอน (สสมบ กับ สสล)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1214",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "คลองโครกคราม ซ.รามอินทรา 14 (มัยลาภ)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1218",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "ถ.ประดิษฐ์มนูธรรม ตัด ถ.ลาดพร้าว ทิศเหนือ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1219",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "คลองครุ ถนนประเสริฐมนูกิจ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1220",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "คลองเสือน้อย ถนนประดิษฐ์มนูธรรม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1231",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "12",
+      "branchName": "ลาดพร้าว",
+      "location": "คลองระหัส ถนนเสรีไทย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1301",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ซ.สุขุมวิท 77 (อ่อนนุช)ตัดกับถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1302",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ซ.สุขุมวิท 103 (อุดมสุข)ตัดกับถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1303",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ถ.สุขุมวิทตัดกับถ. บางนา – ตราด",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1304",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ถ.ศรีนครินทร์ตัดกับซ.สุขุมวิท 77 (อ่อนนุช) ทิศใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1305",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ซ.สุขุมวิท 105 (ลาซาล)ตัดกับถ.ศรีนครินทร์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1307",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ซ.อ่อนนุช 44/1",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1309",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "13",
+      "branchName": "พระโขนง",
+      "location": "ทางหลวงกาญจนาภิเษก (วงแหวนรอบนอก ตะวันออก) ตัดถนนบางนา-ตราด",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1501",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.งามวงศ์วาน เยื้อง ซ.ชินเขต 2",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1502",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.ประชาชื่น ระหว่าง ซ. 21 กับทางรถไฟ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1504",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.ประชาราษฎร์ สาย 1ตัดกับ ถ.ประชาราษฎร์ สาย2",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1505",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.ประชาราษฎร์ สาย 1 บริเวณค.ส้มปอย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1506",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.กรุงเทพฯ-นนทบุรี ระหว่าง ซ. 27 กับ ซ. 38",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1507",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "15",
+      "branchName": "ประชาชื่น",
+      "location": "ถ.วัดเวฬุวนาราม (วัดไผ่เขียว) บริเวณซ.ไผ่เขียว 6",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1603",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "ถ.พหลโยธินตัดกับ ถ.รามอินทรา ท่อ 600 มม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1604",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "ถ.พหลโยธินตัดกับ ถ.รามอินทรา ท่อ 1200 มม",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1605",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "ถ.จันทรุเบกษาตัดกับ ถ.พหลโยธิน (ดอนเมือง 1)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1607",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "ถ.วิภาวดีรังสิต คลองวัดหลักสี่",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1608",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "สุขาภิบาล 5 ซอย 88 ถนนออเงิน (ถนนสุขาภิบาล 5)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1609",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "16",
+      "branchName": "บางเขน",
+      "location": "ถ.แจ้งวัฒนะ ซอย 1",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1702",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.เทพารักษ์ตัดกับ ถ.สุขุวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1703",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.สุขุมวิทตัดกับ ถ.ประโคนชัย",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1705",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.ศรีนครินทร์ตัดกับ ซ.จักรศรี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1706",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.เทพารักษ์ตัดกับ ถ.ศรีนครินทร์ ฝั่งตะวันออก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1707",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.แพรกษา ตรงข้าม ซ.เทศบาลบางปู 20",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1708",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.สุขุมวิทตัดกับ ซ.เทศบาลบางปู 108 ฝั่งทิศ ต.ต.",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1709",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.เทพารักษ์ตัดกับ ซ.ชุบรุ่งเรือง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1711",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "นิคมอุตสาหกรรมบางปู ถ.สุขุมวิท",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1712",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "นิคมอุตสาหกรรมบางปู ถ.แพรกษา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1716",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "บ้านคลองดำหรุ บางกระบือ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1718",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.เลียบคลองระบายน้ำสุวรรณภูมิ ตัด ถ.สุขุมวิทสายเก่า",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ1719",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "17",
+      "branchName": "สมุทรปราการ",
+      "location": "ถ.สุขุมวิทสายเก่าตัด ถ.เมืองใหม่บางพลี",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5301",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ.นิมิตรใหม่",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5303",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ.นิมิตรใหม่ตัดกับ ถ.ประชาร่วมใจ ทิศใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5304",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ.สุวินทวงศ์ตัดกับ ถ.รามคำแหง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5306",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ.รามคำแหงตัดกับ ถ.ร่มเกล้า",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5307",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ. ฉลองกรุงตัดกับ ถ. สุวินทวงศ์",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5308",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ.วงแหวนรอบนอก (กรุงเทพ-ชลบุรี)ตัดกับ ถ.ฉลองกรุง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5309",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ถ. ฉลองกรุง เหนือ ถ. เจ้าคุณทหาร ฯ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5310",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "53",
+      "branchName": "มีนบุรี",
+      "location": "ลาดกระบัง คลองหัวตะเข้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5407",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.ราชพฤกษ์ตัดกับ ถ.รัตนาธิเบศร์ ทิศใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5408",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.บางกรวยไทรน้อย ตัด ถ.กาณจนาภิเษก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5410",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.บางกรวย-ไทรน้อยตัดกับ ถ.รัตนาธิเบศร์ ทิศใต้",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5411",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.กาญจนาภิเษก ช่วงก่อนข้ามค.บางไผ่ (โซน54-03,04)",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5412",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.บางไผ่-หนองเพรางามตัดกับ ถ.กาญจนาภิเษก ทิศ ต.ต.",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5413",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.บ้านกล้วย-ไทรน้อยตัดกับ ถ.กาญจนาภิเษก ทิศ ต.ต.",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5414",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.ตลิ่งชัน-สุวรรณบุรี ตัด ถ.กาญจนาภิเษก ทิศตะวันตก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5415",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "54",
+      "branchName": "บางบัวทอง",
+      "location": "ถ.นครอินทร์ คลองบางคูเวียง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5501",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "บริเวณหน้าโรงงานฟุตบอลไทยสปอร์ตติ้งกู๊ดส์ จำกัด ถนนฉลองกรุง",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5502",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "ยังไม่มีข้อมูล",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5503",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "ซอยเคหะร่มเกล้า 66 ถ.ราษฏร์พัฒนา",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5505",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "คลองสำโรง ถ.เลียบคลองระบายน้ำสุวรรณภูมิ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5506",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "คลองสำโรง สป.1006",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5507",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "คลองสำโรง ถ.ทางหลวงหมายเลข 3413",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5508",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "ยังไม่มีข้อมูล",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5509",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "คลองแม่จันทร์ ถนนศรีนคริทร์-ร่มเกล้า",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5510",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "55",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "ท่อ 1000 คลองบางแก้วใหญ่",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5601",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "56",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "ถ.รัตนโชติ",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ5604",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "56",
+      "branchName": "รอยืนยันชื่อสาขา",
+      "location": "เลียบคลองประปาฝั่งตะวันตก",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "UZ_RWT",
+      "type": "UZ (Flow + Pressure)",
+      "branchCode": "",
+      "branchName": "ท่อน้ำดิบ (Raw Water)",
+      "location": "ท่่อน้ำดิบ คลองสามเสน ถ.พระราม5",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    },
+    {
+      "rtuName": "X20",
+      "type": "อื่น ๆ",
+      "branchCode": "",
+      "branchName": "ยังไม่มีข้อมูล",
+      "location": "วัดด่าน สสข",
+      "stationCode": "",
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล"
+    }
+  ],
+  "flowPressureData": [
+    {
+      "recordType": "SCADA Snapshot (ค่าดิบ รอยืนยันความหมายของแต่ละตำแหน่งตัวเลข)",
+      "date": "2026-07-03",
+      "time": "14:05",
+      "source": "จอ SCADA เทพอุโมงค์ (Smart Tunnel) กองควบคุมระบบส่งและสูบจ่ายน้ำ",
+      "mainSystems": [
+        {
+          "systemCode": "MH",
+          "largeValues": [
+            "40010",
+            "23807",
+            "15761",
+            "8046",
+            "8017"
+          ],
+          "smallValues": [
+            "4.05",
+            "27.97",
+            "21.94"
+          ]
+        },
+        {
+          "systemCode": "TR1",
+          "largeValues": [
+            "46476",
+            "3081",
+            "5400",
+            "5874"
+          ],
+          "smallValues": [
+            "33.22"
+          ]
+        },
+        {
+          "systemCode": "TR2",
+          "largeValues": [
+            "46840",
+            "9470",
+            "262"
+          ],
+          "smallValues": [
+            "36.06",
+            "3.44"
+          ]
+        },
+        {
+          "systemCode": "TR3",
+          "largeValues": [
+            "52580"
+          ],
+          "smallValues": [
+            "25.09"
+          ]
+        }
+      ],
+      "stations": [
+        {
+          "stationCode": "PK",
+          "largeValues": [
+            "16409",
+            "12688",
+            "4521",
+            "8167",
+            "2535",
+            "4281",
+            "4855"
+          ],
+          "smallValues": [
+            "18.64",
+            "13.02"
+          ]
+        },
+        {
+          "stationCode": "TP",
+          "largeValues": [
+            "11701",
+            "11671"
+          ],
+          "smallValues": [
+            "11.98",
+            "9.54"
+          ]
+        },
+        {
+          "stationCode": "RB",
+          "largeValues": [
+            "13335",
+            "14491",
+            "5063",
+            "9428"
+          ],
+          "smallValues": [
+            "12.35",
+            "16.3"
+          ]
+        },
+        {
+          "stationCode": "LP",
+          "largeValues": [
+            "13143",
+            "15149",
+            "6017",
+            "9132"
+          ],
+          "smallValues": [
+            "12.19",
+            "6.78"
+          ]
+        },
+        {
+          "stationCode": "KT",
+          "largeValues": [
+            "8323",
+            "312",
+            "4289",
+            "490",
+            "3231"
+          ],
+          "smallValues": [
+            "13.22",
+            "4.97",
+            "-4"
+          ]
+        },
+        {
+          "stationCode": "SR",
+          "largeValues": [
+            "19439",
+            "19926",
+            "13404",
+            "6522"
+          ],
+          "smallValues": [
+            "5.03",
+            "14.43"
+          ]
+        },
+        {
+          "stationCode": "BP",
+          "largeValues": [
+            "24521",
+            "22712",
+            "7567",
+            "7377",
+            "7768"
+          ],
+          "smallValues": [
+            "7.93",
+            "19.59"
+          ]
+        },
+        {
+          "stationCode": "LK",
+          "largeValues": [
+            "13311",
+            "11417",
+            "4084",
+            "7333"
+          ],
+          "smallValues": [
+            "8.3",
+            "7.26"
+          ]
+        },
+        {
+          "stationCode": "MB",
+          "largeValues": [
+            "18118",
+            "16919",
+            "4895",
+            "5429",
+            "6595",
+            "3721"
+          ],
+          "smallValues": [
+            "6.45",
+            "14.09"
+          ]
+        },
+        {
+          "stationCode": "LA",
+          "largeValues": [
+            "171",
+            "13600",
+            "9879"
+          ],
+          "smallValues": [
+            "18.88",
+            "11"
+          ]
+        }
+      ],
+      "branchReadings": [
+        {
+          "point": "ประชานุกูล",
+          "percent": "44%",
+          "value": "3186"
+        },
+        {
+          "point": "เอลิมพันธ์ (รอยืนยันชื่อ)",
+          "percent": "15%",
+          "value": "828.00"
+        },
+        {
+          "point": "ประดิพัทธ์",
+          "percent": "15%",
+          "value": "null"
+        },
+        {
+          "point": "สามเสน",
+          "percent": "16%",
+          "value": "1485"
+        },
+        {
+          "point": "พหลโยธิน",
+          "percent": "24%",
+          "value": "ยังไม่มีข้อมูล"
+        },
+        {
+          "point": "สี่พระยา",
+          "percent": "10%",
+          "value": "970"
+        },
+        {
+          "point": "ลอดแม่น้ำ",
+          "percent": "5%",
+          "value": "ยังไม่มีข้อมูล"
+        },
+        {
+          "point": "มัยลาภ",
+          "percent": "29%",
+          "value": "2230"
+        },
+        {
+          "point": "นวมินทร์",
+          "percent": "40%",
+          "value": "4929"
+        },
+        {
+          "point": "พระราม9",
+          "percent": "0%",
+          "value": "0 (มีค่า -3370 บนแนวเดียวกัน)"
+        },
+        {
+          "point": "ราชมนตรี",
+          "percent": "0%",
+          "value": "null"
+        }
+      ],
+      "pressureRecorderChart": {
+        "point": "P051",
+        "currentValue": "2.25",
+        "range": "2.5-5.0",
+        "comparedDates": [
+          "2026-07-03",
+          "2026-07-02",
+          "2026-07-01",
+          "2026-06-26"
+        ]
+      },
+      "note": "สมมติฐานการตีความ (ยังไม่ยืนยัน): ตัวเลข 5 หลัก = Flow, ทศนิยม 2 ตำแหน่ง = Pressure/ระดับน้ำ, % = เปอร์เซ็นต์เปิดวาล์ว/RCV"
+    },
+    {
+      "recordType": "Hourly Dataset",
+      "source": "Water_Level_3rd5th_month.xlsx",
+      "period": "มี.ค.–พ.ค. 2025 และ มี.ค.–พ.ค. 2026 (PK เฉพาะปี 2026)",
+      "coverage": "10 สถานี × รายชั่วโมง รวม 41,700+ แถว",
+      "fields": {
+        "Qin": "อัตราการไหลรับเข้าสถานี (คาดว่า ลบ.ม./ชม. — หน่วยรอยืนยัน)",
+        "Level": "ระดับน้ำถังเก็บน้ำใส (ม.)",
+        "Inlet": "แรงดันขาเข้า (คาดว่า ม. — รอยืนยัน)",
+        "F_x / P_x": "Flow / Pressure จ่ายออกรายทิศทางหรือรายขนาดท่อ",
+        "ZM": "Zone Meter (เฉพาะ PK: ZM01, ZM02)",
+        "TotalFlow": "Flow จ่ายออกรวมของสถานี"
+      },
+      "cleaningRules": [
+        "ตัดค่า Flow ที่เป็น Error Code (32768/32769/65535/65536/65538 = 16-bit overflow) และ >60000 ออกจากสถิติ",
+        "ตัดค่า Level > 8 ม. (เกินความจุถังจริง = สัญญาณเซนเซอร์ผิดพลาด)",
+        "ค่า Flow ติดลบ (เช่น BP_F_Kingkeaw1) คงไว้ — อาจเป็นการไหลย้อน รอยืนยัน"
+      ],
+      "storage": "water-km-dashboard/data/timeseries/*.csv (ข้อมูลเต็ม) + summary.json (สถิติ/โปรไฟล์)",
+      "note": "ผู้ใช้ระบุว่าเป็น 'ตัวอย่างข้อมูล' ของแต่ละสถานี"
+    },
+    {
+      "recordType": "SCADA Snapshot ครั้งที่ 2 (จากไฟล์หน้าจอจริง — ความหมายค่ายืนยันด้วย element id)",
+      "date": "2026-07-03",
+      "time": "15:08",
+      "source": "Smart Tunnel V.2 (tunnel.php) บันทึกจากหน้างาน",
+      "stations": {
+        "SR": {
+          "qin": "19577",
+          "out": "20151",
+          "lvl": "3.31",
+          "inlet": "4.88",
+          "p": "14.96"
+        },
+        "KT": {
+          "qin": "-6",
+          "out": "8790",
+          "lvl": "4.7",
+          "inlet": "13.58",
+          "p": "4.84"
+        },
+        "BP": {
+          "qin": "24620",
+          "out": "21462",
+          "lvl": "4.85",
+          "inlet": "8",
+          "p": "17.53"
+        },
+        "LK": {
+          "qin": "13383",
+          "out": "11403",
+          "lvl": "4.68",
+          "inlet": "8.49",
+          "p": "7.21"
+        },
+        "MB": {
+          "qin": "18226",
+          "out": "16783",
+          "lvl": "5.53",
+          "inlet": "6.44",
+          "p": "14.12"
+        },
+        "LP": {
+          "qin": "12057",
+          "out": "15147",
+          "lvl": "4.2",
+          "inlet": "13.2",
+          "p": "6.81"
+        },
+        "LA": {
+          "qin": "133",
+          "out": "13754",
+          "lvl": "4.32",
+          "inlet": "19.13",
+          "p": "11.18"
+        },
+        "TP": {
+          "qin": "11632",
+          "out": "11502",
+          "lvl": "5.24",
+          "inlet": "12.08",
+          "p": "9.55"
+        },
+        "RB": {
+          "qin": "13476",
+          "out": "14533",
+          "lvl": "5.31",
+          "inlet": "12.39",
+          "p": "16.36"
+        },
+        "PK": {
+          "qin": "16336",
+          "out": "12480",
+          "lvl": "5.41",
+          "inlet": "18.69",
+          "p": "12.92"
+        }
+      },
+      "note": "id ยืนยัน: Qin=รับเข้า, F=TotalFlow จ่ายออก, P=แรงดันจ่าย, Inlet=แรงดันขาเข้า, Level=ระดับถัง / KT_Qin=-6 และ LA_Qin=133 สอดคล้องโหมด By-pass"
+    }
+  ],
+  "shiftHandoverData": [],
+  "knowledgeBase": [
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "โรงผลิตน้ำหลัก 4 แห่ง",
+      "description": "บางเขน = ใหญ่ที่สุด (~4 ล้าน ลบ.ม./วัน), มหาสวัสดิ์ = ใหม่ที่สุด (น้ำดิบจากแม่น้ำแม่กลอง ฝั่งตะวันตก), สามเสน = เก่าแก่ที่สุด (จุดเริ่มต้นของการประปา), ธนบุรี = เล็กที่สุด (จ่ายเฉพาะฝั่งธนบุรี)",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "แหล่งผลิตน้ำต้นทางของระบบสูบส่งทั้งหมดมาจากโรงผลิตน้ำ 4 แห่งที่มีขนาดและบทบาทต่างกัน"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "การสูบส่ง (Transmission)",
+      "description": "การส่งน้ำที่ผลิตเสร็จแล้วจากโรงผลิต ผ่านอุโมงค์ส่งน้ำขนาดใหญ่ (เส้นผ่านศูนย์กลางสูงสุด 3,200 มม.) ไปยังสถานีสูบจ่ายน้ำต่าง ๆ",
+      "example": "อุโมงค์ MH, TR1, TR2, TR3",
+      "relatedStation": "",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "สูบส่ง = โรงผลิต → สถานีสูบจ่าย ผ่านอุโมงค์"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "การสูบจ่าย (Distribution)",
+      "description": "การสูบน้ำจากโรงผลิตหรือสถานีสูบจ่ายน้ำ ผ่านท่อประธานและท่อบริการ ไปยังบ้านเรือนผู้ใช้น้ำโดยตรง",
+      "example": "สถานีสูบจ่าย 10 แห่ง จ่ายน้ำเข้าท่อประธาน",
+      "relatedStation": "SR, KT, BP, LK, MB, LP, LA, TP, RB, PK",
+      "relatedSystem": "",
+      "keyTakeaway": "สูบจ่าย = สถานี → ผู้ใช้น้ำ ผ่านท่อประธาน/ท่อบริการ"
+    },
+    {
+      "category": "หน่วยงาน",
+      "topic": "กคจ. (กองควบคุมการส่งและจ่ายน้ำ) — สมองของระบบ",
+      "description": "มอนิเตอร์และควบคุมปริมาณน้ำ/แรงดันให้เพียงพอ, บริหารสมดุลน้ำไม่ให้ล้นถังเก็บน้ำใสและมีน้ำสำรองพอช่วง Peak, สั่งการโรงผลิตและสถานีสูบจ่าย, ประสานงานเหตุฉุกเฉิน (ท่อแตก ไฟดับ) เพื่อผันน้ำจากพื้นที่อื่นมาชดเชย",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "กคจ. เปรียบเสมือน 'สมอง' ของระบบประปา"
+    },
+    {
+      "category": "อุปกรณ์/กระบวนการ",
+      "topic": "ถังเก็บน้ำใส (Clear Water Tank) = Buffer",
+      "description": "เก็บสำรองน้ำช่วงการใช้น้ำต่ำ (Off-peak) และนำออกมาใช้ช่วงการใช้น้ำสูงเกินกว่าปริมาณที่รับเข้าจากอุโมงค์ได้ / โรงผลิตน้ำเองก็มีถังพักน้ำเป็น Buffer ใช้ในการคำนวณปริมาณการผลิตให้สอดคล้องกับ Demand",
+      "example": "ระดับน้ำในถังแสดงบนจอ SCADA พร้อมค่า Max และพื้นที่ถัง (Sqm)",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "ถังเก็บน้ำใสคือกันชนระหว่างน้ำเข้า (อุโมงค์) กับน้ำออก (ผู้ใช้)"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "การควบคุมด้วยกราฟมาตรฐาน (PTC Curve / Curve ขอบบน-ขอบล่าง)",
+      "description": "สถานีสูบจ่ายสูบน้ำโดยอ้างอิงกราฟมาตรฐานเพื่อให้แรงดันที่จุดวัดปลายทางเป็นไปตามที่กำหนดในแต่ละช่วงเวลา กราฟมีขอบบนและขอบล่าง (Gap) เพื่อให้หน้างานปรับรอบปั๊มได้ยืดหยุ่น เพราะในทางปฏิบัติควบคุมแรงดันให้เป็นเส้นตรงเป๊ะตลอดเวลาไม่ได้เนื่องจากการสวิงของอุปกรณ์ (ในอดีต ~20 ปีก่อน ควบคุมด้วยตัวเลขปริมาณน้ำรวม) / กรอบบน-ขอบล่าง (Gap) สำคัญมากในโซนที่มีนิคมอุตสาหกรรม ซึ่งมีการใช้น้ำเป็นก้อนใหญ่ทำให้แรงดันสวิงตลอดเวลา — ทีม Operate ทำงานได้โดยไม่ต้องเกร็งกับการรักษาแรงดันเป็นเส้นตรงเป๊ะ / กราฟกำหนดล่วงหน้าตามช่วงเวลา (Peak/Off-peak) โดยอ้างอิงสถิติความต้องการใช้น้ำในอดีต / รายละเอียดจาก Playbook: Tolerance Band ±0.5 ม., ต้องเร่งแรงดันล่วงหน้าก่อนช่วงตื่นนอนเช้า (~05:00), การไต่ระดับแบบค่อยเป็นค่อยไปช่วยกัน Water Hammer/Pipe Shear จากการสตาร์ทปั๊มกะทันหัน, และการลดแรงดันช่วงกลางคืน (Demand ต่ำ) ประหยัดพลังงานได้มาก",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "คุมด้วย Curve ที่มีขอบบน-ล่าง ไม่ใช่เส้นตรงเส้นเดียว — ยืดหยุ่นและปฏิบัติได้จริง"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "การวางแผนเดินปั๊มเพื่อประหยัดพลังงาน",
+      "description": "วางแผนการเดินเครื่องสูบน้ำให้เหมาะสมกับปริมาณน้ำในถัง การรักษาความสูงของระดับน้ำในถังช่วยลดภาระปั๊มและประหยัดพลังงาน",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "ระดับน้ำในถังสูง = Head ฝั่งดูดช่วยปั๊ม = ประหยัดพลังงาน"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "ระบบ By-pass",
+      "description": "กรณีปั๊มสูบจ่ายทำงานไม่ได้ หรือต้องการลดการใช้พลังงาน สามารถใช้แรงดันจากอุโมงค์ส่งน้ำจ่ายเข้าท่อประธานโดยตรงผ่านวาล์ว By-pass / เป็นหนึ่งในเครื่องมือหลักของการผันน้ำ (Diversion) ยามฉุกเฉิน คู่กับ RCV",
+      "example": "กล่อง Bypass ปรากฏบนจอ SCADA บริเวณ PY (พหลโยธิน)",
+      "relatedStation": "PY (รอยืนยัน)",
+      "relatedSystem": "",
+      "keyTakeaway": "By-pass = จ่ายน้ำด้วยแรงดันอุโมงค์โดยไม่ใช้ปั๊ม"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "RTU (Remote Terminal Unit)",
+      "description": "ตู้เครื่องวัดที่ติดตั้งบนท่อประธานกว่า 210 จุดทั่วกรุงเทพฯ และปริมณฑล ส่งข้อมูลกลับศูนย์ควบคุม แบ่งเป็น รหัส P = วัดแรงดันอย่างเดียว, รหัส UZ (Ultra) = วัดทั้ง Flow และ Pressure การตั้งชื่อขึ้นต้นด้วยรหัสสาขา เช่น 01 (บางกอกน้อย), 17 (สมุทรปราการ) / U/UZ ย่อจาก Ultrasonic (มิเตอร์อัลตราโซนิก) / วิธีอ่านรหัส: UZ 0114 = Ultrasonic Flow Meter + โซนบางกอกน้อย (01) + Node 14 — อ่านรหัสแล้วระบุตำแหน่งและประเภทความผิดปกติได้ทันที / ทะเบียนจริงมี 236 จุด: P 23, U 99, UZ 113 — รหัสสาขาครบ 16 สาขา: 01 บางกอกน้อย, 02 ตากสิน(1/2), 03 พญาไท, 04 นนทบุรี, 05 ทุ่งมหาเมฆ, 06 แม้นศรี, 07 สุขุมวิท, 11 ภาษีเจริญ, 12 ลาดพร้าว, 13 พระโขนง, 15 ประชาชื่น, 16 บางเขน, 17 สมุทรปราการ, 53 มีนบุรี, 54 บางบัวทอง",
+      "example": "P051 (จุดวัดแรงดันใกล้ MH), UZ1609 (ฝั่งบางเขน) / บนแผนที่มีจุดอุปกรณ์ส่งข้อมูลระยะไกล 81 จุด (U/P) — จำนวน 210 vs 81 รอยืนยัน",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "RTU คือตาและหูของ กคจ. ในภาคสนาม — P วัดแรงดัน, UZ วัดทั้ง Flow และ Pressure"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "RCV (Remote Control Valve)",
+      "description": "วาล์วควบคุมระยะไกล สั่งเปิด-ปิดหรือปรับเปอร์เซ็นต์การไหลผ่านคอมพิวเตอร์ที่ศูนย์ควบคุม ปรับแรงดันได้ละเอียดกว่าการใช้คนหมุนวาล์วแบบแมนนวล ใช้สำหรับการผันน้ำ (Diversion) เปลี่ยนทิศทางน้ำช่วยพื้นที่ขาดแคลนหรือกรณีไฟดับ",
+      "example": "บนแผนที่มี RCV 28 ตัว (และ RCV แบบ New เพิ่มเติม) เช่น RCV54 ใกล้สามเสน / ค่า % บนจอ SCADA เช่น นวมินทร์ 40%, มัยลาภ 29% (สมมติฐาน: % เปิดวาล์ว — รอยืนยัน)",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "RCV ทำให้ผันน้ำ/ปรับการไหลได้จากส่วนกลางโดยไม่ต้องส่งคนไปหน้างาน"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "DMA (District Metering Area)",
+      "description": "การแบ่งพื้นที่จ่ายน้ำเป็นโซนย่อย เพื่อตรวจสอบปริมาณน้ำสูญเสียและควบคุมแรงดันแต่ละพื้นที่ให้ทั่วถึง / รายละเอียดจาก Playbook: ท่อบริการใน DMA มีขนาด <400 มม. และ 1 DMA ครอบคลุมผู้ใช้น้ำประมาณ 1,000 ราย",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "DMA ช่วยหาน้ำสูญเสียและคุมแรงดันรายโซน"
+    },
+    {
+      "category": "หน่วยงาน",
+      "topic": "การทำงานร่วมกัน 3 กอง (ระบบท่อประธาน)",
+      "description": "1) กคจ. วางแผน สั่งการ บริหารแรงดัน/ปริมาณน้ำ 2) กรจ. (กองบำรุงรักษา) เปิด-ปิดประตูน้ำหน้างาน ปรับผันน้ำ ทำ Step Test หาจุดรั่ว 3) กซร. (กองซ่อมท่อประธาน) ซ่อมแซม ตัดบรรจบ เปลี่ยนท่อตามที่ กรจ. แจ้ง",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "กคจ. = สั่งการ / กรจ. = หน้างาน+หาจุดรั่ว / กซร. = ซ่อม"
+    },
+    {
+      "category": "เหตุฉุกเฉิน",
+      "topic": "กรณีไฟดับ",
+      "description": "ต้องรู้วิธีสับเปลี่ยนแหล่งจ่ายไฟฟ้า และขั้นตอนการปิดน้ำเข้าเพื่อป้องกันน้ำล้นถังกรณีสูบจ่ายออกไม่ได้ / หากสถานีหนึ่งไฟดับจนเดินปั๊มไม่ได้ กคจ. จะสั่งการให้สถานีข้างเคียงเร่งรอบปั๊มและเปิดวาล์วผันน้ำ (ผ่าน RCV) เพื่อส่งน้ำชดเชยพื้นที่ที่ได้รับผลกระทบ",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "ไฟดับ → สับไฟสำรอง + กันถังล้น + สถานีข้างเคียงเร่งปั๊ม/ผันน้ำชดเชย"
+    },
+    {
+      "category": "การบำรุงรักษา",
+      "topic": "Test ปั๊มก่อน Overhaul",
+      "description": "ทดสอบปั๊มก่อนการ Overhaul เพื่อเก็บสถิติประสิทธิภาพเครื่องก่อนและหลังการซ่อมบำรุง",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "เก็บ Baseline ก่อนซ่อม เพื่อวัดผลหลังซ่อม"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "Step Test",
+      "description": "กระบวนการหาจุดท่อรั่วโดย กรจ. ใช้หลัก Water Balance (น้ำเข้า - น้ำออก) ปิดประตูน้ำเป็นท่อน ๆ เพื่อแยกท่อประธานออกเป็นส่วนย่อย แล้วดูการเปลี่ยนแปลงของอัตราการไหล หากน้ำเข้ายังสูงแต่ไม่มีที่ไป แสดงว่ามีจุดรั่วในท่อนนั้น",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "Step Test = ปิดวาล์วแยกท่อนท่อ + ดู Flow เพื่อชี้จุดรั่ว"
+    },
+    {
+      "category": "ปรัชญาระบบ",
+      "topic": "ระบบประปาคือกลไกฟันเฟือง",
+      "description": "ทุกส่วนสำคัญเกี่ยวเนื่องกัน หากส่วนใดขัดข้องจะกระทบเป็นทอด ๆ — โรงผลิตขนาดใหญ่ผลิตได้ถึง 5 ล้าน ลบ.ม. (พบข้อมูลไม่ตรงกับชุดที่ 1 ที่ระบุบางเขน ~4 ล้าน ลบ.ม./วัน — รอยืนยัน) กับสถานีสูบจ่ายเล็กวอลุ่ม 100,000 ลบ.ม. มีความสำคัญเท่ากันต่อเสถียรภาพระบบ / Interdependence Rule (Playbook): การปรับการรับน้ำที่สถานีหนึ่งกระทบแรงดัน Manifold และความพร้อมน้ำของโซนข้างเคียงทันที — เช่น หากเพชรเกษมรับน้ำเต็มกำลัง ท่าพระและบางกอกน้อยจะเจอแรงดันขาเข้าตกทันที",
+      "example": "หาก สจ.เพชรเกษม (PK) ทำงานไม่ได้ แรงดันในพื้นที่จะตกและไม่มีน้ำส่งต่อให้ประชาชนในพื้นที่รับผิดชอบ",
+      "relatedStation": "PK (ตัวอย่าง), ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "ไม่มีสถานีไหนสำคัญน้อย — ขาดหนึ่งจุด กระทบทั้งโครงข่าย"
+    },
+    {
+      "category": "ปรัชญาระบบ",
+      "topic": "แนวคิดวิศวกรรมอุตสาหการ (IE) กับการจัดการน้ำ",
+      "description": "การจัดการน้ำคือการบริหารทรัพยากรที่มีจำกัดให้เกิดประโยชน์สูงสุด เป้าหมายหลักคือทำให้ Loss (น้ำสูญเสีย) น้อยที่สุด",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "เป้าหมายสูงสุดของระบบ = Loss ต่ำสุด"
+    },
+    {
+      "category": "ไฮดรอลิก",
+      "topic": "ความสัมพันธ์ของแรงดันในอุโมงค์ส่งน้ำ",
+      "description": "หากสถานีสูบจ่ายหลายแห่ง (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์ส่งน้ำจะเพิ่มสูงขึ้นทันที เพราะน้ำไม่มีที่ไป — กคจ. ต้องประสานโรงผลิตปรับกำลังการผลิตให้สอดคล้องกับ Demand",
+      "example": "TP + RB หรี่รับน้ำพร้อมกัน → แรงดันอุโมงค์พุ่ง",
+      "relatedStation": "TP, RB",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "หรี่รับน้ำพร้อมกันหลายสถานี = แรงดันอุโมงค์พุ่งทันที ต้องประสานต้นทาง"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "SCADA (Supervisory Control and Data Acquisition)",
+      "description": "ระบบรวบรวมข้อมูลจากภาคสนาม แปลงสัญญาณเป็นดิจิทัล ให้เจ้าหน้าที่มอนิเตอร์กราฟการจ่ายน้ำและควบคุมแรงดันให้อยู่ในเกณฑ์ที่กำหนด / โครงข่ายข้อมูล 4 ขั้น: ท่อประธาน → RTU → DNP3 Protocol → OPC Server → SCADA Dashboard — เปลี่ยนโลจิสติกส์น้ำทางกายภาพให้เป็น Digital Intelligence แบบเรียลไทม์",
+      "example": "จอ 'เทพอุโมงค์ (Smart Tunnel)' ของกองควบคุมระบบส่งและสูบจ่ายน้ำ",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "SCADA = ศูนย์รวมตา-หู-มือของการควบคุมระยะไกล"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "จุดควบคุม: Critical Point / Influence Point",
+      "description": "การเลือกจุดวัดแรงดันเลือกที่ 'ปลายโซน' หรือจุด Critical Point / จุดตัวแทนพื้นที่ (Influence Point) เพื่อตรวจสอบว่าแรงดันที่ส่งไปถึงจุดไกลสุด/สูงสุดยังเพียงพอ — เกณฑ์เชิงปฏิบัติ: ส่งน้ำขึ้นถึงชั้น 2 ของบ้านเรือนได้",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "คุมแรงดันที่ปลายโซน — ถ้าปลายพอ ทั้งเส้นก็พอ"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "GIS (Geographic Information System)",
+      "description": "ระบบสารสนเทศภูมิศาสตร์เก็บข้อมูลตำแหน่งท่อ ประตูน้ำ และรายละเอียดอุปกรณ์ใต้ดินทั้งหมด ซึ่งเป็นทรัพย์สินหลักขององค์กร",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "GIS = สมุดทรัพย์สินใต้ดินขององค์กร"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "CP (Cathodic Protection)",
+      "description": "ระบบป้องกันการกัดกร่อนของท่อเหล็กใต้ดิน โดยจ่ายกระแสไฟฟ้า/อิเล็กตรอนเข้าไปในท่อ เพื่อไม่ให้ท่อเสียอิเล็กตรอนให้ดินซึ่งเป็นสาเหตุของสนิม",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "CP = เติมอิเล็กตรอนให้ท่อ กันสนิมจากภายนอก"
+    },
+    {
+      "category": "โครงสร้างบริหาร",
+      "topic": "การแบ่งงานระดับบริหาร (ชั้น 6) กับระดับปฏิบัติการ (ชั้น 4)",
+      "description": "Manage (ชั้น 6) = 'สมอง'/ส่วนวางแผน มองภาพรวมทั้งระบบ: วางแผน (Planning), จัดการ (Organizing), มอบหมายงาน (Assign), กำหนด Set Point (ค่าแรงดันเป้าหมาย) ส่งให้สถานี, บริหารโลจิสติกส์น้ำทั้งระบบ (เช่น บริหารน้ำที่มีอยู่ 6 ล้าน ลบ.ม. เพื่อจ่ายให้ได้ 5 ล้าน ลบ.ม.), และตัดสินใจระดับนโยบายช่วงวิกฤต (คุณภาพน้ำไม่ดี มีสาหร่าย น้ำเค็ม → ลดกำลังการผลิตหรือไม่ ผันน้ำอย่างไร) / Operate (สถานี/ชั้น 4) = ผู้ลงมือทำตามโจทย์: ปรับรอบปั๊ม ปรับวาล์ว (Front Valve, Discharge Valve) คุมแรงดันให้สม่ำเสมอ, เปิดวาล์วรับน้ำเข้าถังเก็บน้ำใส, จัดการปั๊มสูบจ่าย, รันปั๊มแบบขนาน (Parallel) ให้แรงดันจ่ายออกตรง Set Point, แก้ปัญหาเฉพาะหน้า (ไฟดับ → เร่งรอบปั๊มตัวอื่น/เปิดวาล์วเชื่อมต่อชดเชยแรงดัน) / หลักการสำคัญ: ชั้น 6 ไม่ลงไปยุ่งกับ 'วิธีการ' (Process) ของสถานี ดูเพียงว่าแรงดันผลลัพธ์สอดคล้องกับแผนหรือไม่",
+      "example": "ชั้น 6 ส่ง Set Point แรงดันให้สถานี → สถานีเลือกเองว่าจะใช้ปั๊มตัวไหน กี่ตัว รอบเท่าไร วาล์วเปิดกี่ %",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "Manage ให้ 'โจทย์' (Set Point) + ดูภาพรวม / Operate หา 'วิธีทำ' — แยกส่วนชัดเจน ไม่ก้าวก่ายกัน"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "การวิเคราะห์ Demand จากการตอบสนองของ Flow",
+      "description": "เร่งแรงดันแล้ว Flow เพิ่ม = ยังมี Demand / เร่งแรงดันแล้ว Flow นิ่ง = จ่ายแรงดันเกินความจำเป็น",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "ใช้ Flow เป็นตัวบอกว่าแรงดันที่จ่าย 'พอดี' หรือ 'เกิน'"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "การตรวจจับสิ่งผิดปกติจากรูปแบบกราฟ",
+      "description": "Flow พุ่งขึ้นเร็วและชันผิดปกติ = อาจเป็นท่อประธานแตก / Flow ค่อย ๆ ขึ้นช่วงเช้ามืด = Demand จริงจากผู้ใช้น้ำ / Diagnostic Signature จาก Playbook: Demand ปกติ = ค่อยเป็นค่อยไป คาดการณ์ได้ Flow-Pressure สัมพันธ์แบบผกผัน / ท่อประธานแตก = เบี่ยงเบนรุนแรงฉับพลัน Pressure ดิ่งลงพร้อม Flow พุ่งขึ้น (Simultaneous Divergence) ภายในไม่กี่นาที — ต้องอ่าน 'รูปร่าง' ของกราฟ ไม่ใช่แค่ตัวเลข",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "ความชันของกราฟ Flow แยก 'ท่อแตก' ออกจาก 'คนตื่นมาใช้น้ำ'"
+    },
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "ขอบเขตความรับผิดชอบท่อ: กคจ. vs สาขา",
+      "description": "กคจ. บริหารท่อประธานขนาดตั้งแต่ 400 มม. ขึ้นไป ส่วนท่อขนาดเล็กกว่า (Service Pipes) เป็นหน้าที่ของสำนักงานประปาสาขา",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "≥400 มม. = กคจ. / เล็กกว่า = สาขา"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "Water Balance และข้อจำกัดของการวัดน้ำสูญเสีย",
+      "description": "หลักการ: น้ำเข้า - น้ำออก = น้ำสูญเสีย แต่น้ำเข้ามีข้อมูลเรียลไทม์ ส่วนน้ำออก (ผู้ใช้ใช้จริง) ต้องอาศัยการจดมิเตอร์รายเดือนจากสาขาแล้วเฉลี่ยรายวัน จึงเห็น Loss เรียลไทม์ที่แม่นยำ 100% ไม่ได้ และเครื่องวัดทุกตัวมี Error ~5% ในตัวเอง",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "Loss เรียลไทม์แท้จริงยังวัดไม่ได้ — น้ำออกเป็นค่าเฉลี่ยรายเดือน + Error มิเตอร์ ~5%"
+    },
+    {
+      "category": "เหตุฉุกเฉิน/คุณภาพน้ำ",
+      "topic": "ปัญหาน้ำเค็ม",
+      "description": "ปัญหาคุณภาพน้ำที่แก้ยากที่สุดเพราะเป็นปัจจัยภายนอก โรงผลิตทำได้เพียงบริหารจัดการน้ำเพื่อเจือจางความเค็ม (ต้นฉบับใช้คำว่า 'Blackout' — คาดว่าหมายถึงการบริหารจัดการน้ำ/Blending รอยืนยันคำที่ถูกต้อง) ไม่สามารถกำจัดความเค็มออกได้ทั้งหมด / การตัดสินใจช่วงวิกฤตคุณภาพน้ำ (น้ำเค็ม สาหร่าย) เป็นอำนาจของชั้น 6 (Manage): ตัดสินว่าจะลดกำลังการผลิตหรือไม่ และวางแผนผันน้ำอย่างไร",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "น้ำเค็มกำจัดไม่ได้ ทำได้แค่เจือจาง — ต้องบริหารน้ำดิบให้ดี"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "งาน Operate ภายในสถานี: วาล์วสำคัญและการรันปั๊มขนาน",
+      "description": "เจ้าหน้าที่ Operate ปรับรอบปั๊มและวาล์วเพื่อคุมแรงดันให้สม่ำเสมอ — วาล์วสำคัญ: วาล์วด้านหน้า (Front Valve), วาล์วทางจ่าย (Discharge Valve) / ขั้นตอนครอบคลุมตั้งแต่เปิดวาล์วรับน้ำเข้าถังเก็บน้ำใส จัดการปั๊มสูบจ่าย และรันปั๊มแบบขนาน (Parallel) เพื่อให้แรงดันจ่ายออกสอดคล้อง Set Point",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "คุมแรงดัน = ศิลปะการผสมรอบปั๊ม + วาล์ว (Front/Discharge) + จำนวนปั๊มที่รันขนาน"
+    },
+    {
+      "category": "ไฮดรอลิก",
+      "topic": "โซนนิคมอุตสาหกรรม: การใช้น้ำเป็นก้อนใหญ่",
+      "description": "พื้นที่ที่มีนิคมอุตสาหกรรมมีการใช้น้ำเป็นก้อนใหญ่ (Batch) ทำให้แรงดัน/Flow สวิงตลอดเวลา การควบคุมจึงต้องอาศัยกรอบบน-ขอบล่าง (Gap) ของกราฟควบคุมแทนการยึดเส้นตรงเส้นเดียว",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "ยังไม่มีข้อมูล (รอระบุว่าสถานีใดครอบคลุมโซนนิคมฯ)",
+      "relatedSystem": "",
+      "keyTakeaway": "Demand ก้อนใหญ่ = สวิงแรง → ต้องคุมแบบมี Gap"
+    },
+    {
+      "category": "เหตุฉุกเฉิน/คุณภาพน้ำ",
+      "topic": "วิกฤตคุณภาพน้ำ: สาหร่าย",
+      "description": "ปัญหาคุณภาพน้ำที่อาจนำไปสู่การตัดสินใจลดกำลังการผลิตโดยชั้น 6 (Manage) พร้อมวางแผนผันน้ำชดเชย",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "วิกฤตคุณภาพน้ำ = การตัดสินใจเชิงนโยบาย ไม่ใช่แค่เรื่องหน้างาน"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "การจ่ายน้ำปกติ vs การผันน้ำ (Diversion)",
+      "description": "การจ่ายน้ำปกติ = ทำตามแผน: เดินตามกราฟ PTC (ขอบบน-ล่าง) ที่กำหนดล่วงหน้าจากสถิติ ใช้การปรับรอบปั๊ม+วาล์วในสถานีคุมแรงดันตาม Set Point ของ กคจ. ทิศทางน้ำไหลต้นน้ำ→ปลายน้ำ (โรงผลิต → อุโมงค์ → สถานีสูบจ่าย → ท่อประธาน) แรงดันลดหลั่นตามระยะทางและแรงเสียดทาน / การผันน้ำ (Diversion) = กลยุทธ์บริหารวิกฤต: 'เปลี่ยนทางน้ำ' เฉพาะกิจเมื่อท่อแตก งานซ่อมบำรุง ไฟดับ หรือน้ำเค็ม เพื่อชดเชยแรงดันพื้นที่กระทบ ใช้ RCV และ By-pass เป็นเครื่องมือหลัก สั่งการแบบ Case by case อาจย้อนทิศทางน้ำหรือส่งน้ำข้ามโซน (เช่น ฝั่งตะวันออกข้ามมาช่วยฝั่งตะวันตกผ่านจุดเชื่อมต่อ) โดย กคจ. ประสานงานร่วมกับหน่วยซ่อมและบำรุงรักษา / Scenario จาก Playbook: หากบางเขนลดกำลังผลิตเพราะน้ำดิบเค็ม/สาหร่าย (-2 ล้านหน่วย) เจ้าหน้าที่ใช้ RCV ดึงแรงดันจากอุโมงค์และผันน้ำจากโซนที่ไม่กระทบ เพื่อรักษาสมดุลปลายน้ำ — RCV คือเครื่องมือผันน้ำเชิงกลยุทธ์ ไม่ใช่แค่ตัวปิดน้ำ",
+      "example": "ตารางเปรียบเทียบ: เกณฑ์คุม (PTC vs Case by case), เครื่องมือ (ปั๊มในสถานี vs RCV/By-pass), สถานการณ์ (Daily Operation vs ฉุกเฉิน/ไฟดับ/ท่อแตก/น้ำเค็ม)",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "จ่ายปกติ = ทำตามแผนให้ระบบเสถียร / ผันน้ำ = บริหารวิกฤตให้ผู้ใช้น้ำกระทบน้อยที่สุด"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "Water Hammer / Pipe Shear (ค้อนน้ำ)",
+      "description": "แรงกระแทกในท่อจากการเปลี่ยนความเร็วน้ำกะทันหัน เช่น สตาร์ท/หยุดปั๊มทันที หรือเร่งแรงดันเร็วเกินไป อาจทำให้ท่อฉีกเสียหายรุนแรง — ป้องกันโดยการไต่แรงดันแบบค่อยเป็นค่อยไป (Gradual Ramping)",
+      "example": "กราฟ Pressure Optimization: การพุ่งของแรงดันช่วง 05:00 เกิน Tolerance Band = ความเสี่ยง Water Hammer",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "เร่งแรงดันเร็วเกิน = เสี่ยงท่อฉีก — ไต่ทีละนิดเสมอ"
+    },
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "Journey of Water: เส้นทางน้ำ 4 Stage",
+      "description": "Stage 1 Production (โรงผลิต 4 แห่ง) → Stage 2 Transmission (อุโมงค์/TR Lines = Main Arteries) → Stage 3 Distribution (สถานีสูบจ่าย) → Stage 4 Delivery (DMA, ท่อบริการ <400 มม., ~1,000 ผู้ใช้/DMA)",
+      "example": "บางเขน ~67% (4.2 ล้านหน่วย), มหาสวัสดิ์ ~30% (1.9 ล้านหน่วย), สามเสน 3-4%, ธนบุรี <1%",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "MH, TR1, TR2, TR3",
+      "keyTakeaway": "มองระบบเป็น 4 ช่วง: ผลิต → ส่ง → จ่าย → ถึงมือผู้ใช้"
+    },
+    {
+      "category": "ปรัชญาระบบ",
+      "topic": "กรอบแนวคิด 4 ด้านสู่ System Equilibrium",
+      "description": "Playbook จัดองค์ความรู้เป็น 4 ด้านรอบแกนกลาง 'System Equilibrium': 1) The Physical Grid (ท่อผลิต-จ่าย) 2) Digital Nervous System (SCADA/RTU Telemetry) 3) Operational Logistics (Pressure Curves, Diversion, Valves) 4) Strategic Directives (ความปลอดภัย เครื่องมือสมัยใหม่ ค่านิยมหลัก)",
+      "example": "ยังไม่มีข้อมูล",
+      "relatedStation": "",
+      "relatedSystem": "",
+      "keyTakeaway": "เป้าหมายร่วมของทุกด้านคือรักษาสมดุลของระบบ (System Equilibrium)"
+    },
+    {
+      "category": "คุณภาพข้อมูล",
+      "topic": "Error Code จากเซนเซอร์: 32769 / 65538 (16-bit Overflow)",
+      "description": "ค่า Flow ที่อ่านได้เป็น 32768/32769/65535/65538 คือค่าผิดพลาดจากการล้นของตัวเลข 16-bit ไม่ใช่ค่าจริง ต้องคัดออกก่อนวิเคราะห์ — พบใน PK (210 ชม.), SR (390 ชม.), LK (30 ชม.) และค่า 32769 ยังปรากฏบนจอ SCADA (จุด PY) ด้วย",
+      "example": "PK OutMax ดิบ = 65538 (ผิดพลาด) → คัดแล้วเหลือ 37,695",
+      "relatedStation": "PK, SR, LK, PY",
+      "relatedSystem": "",
+      "keyTakeaway": "เห็น 32769/65538 เมื่อไร ให้สงสัยว่าเป็น Error ไม่ใช่น้ำจริง"
+    },
+    {
+      "category": "คุณภาพข้อมูล",
+      "topic": "Flow ติดลบ = การไหลย้อน (Reverse Flow)",
+      "description": "BP_F_Kingkeaw1 ติดลบถึง 982 ชั่วโมง แสดงว่าน้ำไหลย้อนทิศในบางช่วงเวลา (หรือทิศทางติดตั้งมิเตอร์) — เป็นพฤติกรรมโครงข่ายที่ควรเข้าใจ ไม่ใช่ข้อมูลเสียเสมอไป",
+      "example": "BP_F_Kingkeaw1 ช่วงกลางคืนติดลบ (-13 ถึง -196) แล้วพลิกเป็นบวกช่วงกลางวัน",
+      "relatedStation": "BP",
+      "relatedSystem": "",
+      "keyTakeaway": "ค่าติดลบของ Flow อาจเป็นการไหลย้อนจริง — ตรวจสอบทิศทางก่อนตัดทิ้ง"
+    },
+    {
+      "category": "ไฮดรอลิก",
+      "topic": "วัฏจักรรายวันของถังเก็บน้ำใส (Tank Cycle)",
+      "description": "จากข้อมูลรายชั่วโมงจริง: ระดับถังไต่ขึ้นตลอดคืน (สะสมน้ำช่วง Off-peak) ไปสูงสุดราว 05:00-06:00 แล้วถูกดึงลงต่อเนื่องช่วง Peak เช้า (07:00-11:00) — ตรงกับหลักการ Buffer และการเดินปั๊มตาม PTC Curve",
+      "example": "TP: Level 3.09 (เที่ยงคืน) → 5.43 (06:00) → ลดลงช่วงสาย / TotalFlow ต่ำสุดตี 3 สูงสุด 8.00-12.00",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "คืนเติมถัง–เช้าระบาย: เห็นวัฏจักรนี้ในข้อมูลจริงทุกสถานี"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "ZM (Zone Meter)",
+      "description": "มิเตอร์วัดการจ่ายน้ำรายโซนของสถานี — พบใน PK (ZM01, ZM02) สอดคล้องกับรหัส ZM1105/ZM1108 บนแผนที่บริเวณเพชรเกษม โดย ZM01+ZM02 ≈ PK_F (เส้นจ่ายหลัก) / หน้า RTU รายจุดยืนยัน: UZ1101 (ถ.เพชรเกษม หมวดการทาง) คู่กับ ZM1108 และ UZ1102 (คลองบางกอกใหญ่) คู่กับ ZM1101",
+      "example": "PK: ZM01 5,644 + ZM02 2,573 ≈ TotalFlow 8,218",
+      "relatedStation": "PK",
+      "relatedSystem": "",
+      "keyTakeaway": "ZM ช่วยแยกว่าน้ำที่จ่ายออกไปโซนไหนเท่าไร"
+    },
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "เส้นจ่ายออกของสถานี (Distribution Lines)",
+      "description": "แต่ละสถานีจ่ายน้ำออกหลายทิศทาง/หลายท่อ และวัด Flow+Pressure แยกรายเส้น เช่น TP→(Wong, เพชรเกษม, ท่าพระ), KT→(สุขุมวิท, พระโขนง?, พระราม 4 ø1500/ø1000), SR→(ø1800, ø1000), BP→(กิ่งแก้ว 1/2, EPEC?), LK→(มีนบุรี, ลาดกระบัง), MB→(นิมิตใหม่?, รามอินทรา?, สุวินทวงศ์?), LP→(สารสิน, สาทร), RB→(พระราม 2, Yairom?), LA→(ø1500, ø1200)",
+      "example": "ชื่อย่อจากคอลัมน์ Excel — ชื่อเต็มภาษาไทยหลายเส้นรอยืนยัน",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "1 สถานี = หลายเส้นจ่าย แต่ละเส้นมี Flow/Pressure ของตัวเอง"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "สังเกตโหมด By-pass จากจอ SCADA",
+      "description": "เมื่อสถานีจ่ายน้ำโดยปั๊มดับทุกตัว (Non-Actived ทั้งหมด) แต่ TotalFlow ยังมีค่า แสดงว่ากำลังจ่ายแบบ By-pass ใช้แรงดันจากอุโมงค์โดยตรง — ตัวอย่างจริง 3 ก.ค. 2026 15:08: LA (Qin 133, จ่าย 13,754) และ KT (Qin -6, จ่าย 8,790) ปั๊ม 0/4 และ 0/5 ตัว (รอยืนยันกับหน้างาน)",
+      "example": "โค้ดหน้าจอมีตัวแปร pk_bp, tp_bp, ..., bp_bp สำหรับติดตาม Pump Bypass ทุกสถานี",
+      "relatedStation": "LA, KT",
+      "relatedSystem": "",
+      "keyTakeaway": "ปั๊มดับหมดแต่น้ำยังไหล = By-pass กำลังทำงาน"
+    },
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "ตำแหน่งติดตั้ง RTU: ปลายเส้นท่อและจุดข้ามคลอง",
+      "description": "จากทะเบียน 236 จุด — จุด P (Pressure) จำนวนมากติดตั้งที่ 'ปลายเส้นท่อ' (เช่น P019 คลองมหาศร, P032 คลองบางพึ่ง, P051 คลองบางบอน) ตรงหลักการ Critical Point / จุด U/UZ มักติดที่สะพานข้ามคลอง-ทางรถไฟ-แนวตัดถนนใหญ่ ซึ่งเป็นจุดอ้างอิงหาท่อได้ง่ายและครอบคลุมโครงข่าย / มีจุดวัดน้ำดิบแยกคือ UZ_RWT (คลองสามเสน ถ.พระราม 5)",
+      "example": "P177B หน้าโรงไฟฟ้า EPEC ถ.สุขุมวิท → ยืนยันว่า BP_F_Epec คือเส้นจ่ายไปทาง EPEC",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "P เฝ้าปลายท่อ (Critical Point) / U-UZ เฝ้ากลางโครงข่าย"
+    }
+  ],
+  "pumpData": [
+    {
+      "unit": "MH",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_03",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 4,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "BK_04",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR1",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR2",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 5,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR3",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 2,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "PK",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "TP",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "RB",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "LP",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "LA",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 0,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "KT",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 0,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "SR",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "MB",
+      "totalPumps": 7,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 4,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "LK",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 2,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BP",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 5,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    }
+  ],
+  "systemMapReference": {
+    "scadaScreen": {
+      "title": "เทพอุโมงค์ (Smart Tunnel)",
+      "owner": "กองควบคุมระบบส่งและสูบจ่ายน้ำ โทร. 02-2782860-1",
+      "layout": "MH ฝั่งซ้าย (ตะวันตกของแม่น้ำเจ้าพระยา) / BK ฝั่งขวา จ่าย TR1, TR2, TR3 — เส้นเขียว = Tunnel, เส้นน้ำเงิน = Trunk Main",
+      "legend": [
+        "RTU",
+        "Alert Mode",
+        "ผังอุโมงค์",
+        "Non-Actived Pump",
+        "Actived Pump (สีแดง)",
+        "Tunnel (เขียว)",
+        "Trunk Main (น้ำเงิน)",
+        "Recorder",
+        "Level Prediction"
+      ],
+      "westSideNodes": [
+        "PK",
+        "TP",
+        "RB",
+        "TB (ธนบุรี)"
+      ],
+      "eastSideNodes": [
+        "LP",
+        "KT",
+        "SR",
+        "BP",
+        "LK",
+        "MB",
+        "LA",
+        "SS (สามเสน)",
+        "PY (พหลโยธิน + Bypass)"
+      ],
+      "valveChambers": [
+        "ลุมพินี VC",
+        "คลองเตย VC"
+      ],
+      "features": [
+        "เลือกวัน-เวลาย้อนหลังได้",
+        "กราฟ Pressure Recorder เทียบหลายวัน (เช่น P051)",
+        "ปุ่ม Reset"
+      ]
+    },
+    "networkMap": {
+      "title": "ระบบส่งและจ่ายน้ำการประปานครหลวง",
+      "publisher": "ฝ่ายควบคุมการส่งและจ่ายน้ำ",
+      "lastRevision": "6 ก.พ. 69",
+      "legend": [
+        "จุดวัดแรงดันประเมินผล Tris — 28 จุด (สัญลักษณ์ P)",
+        "จุดอุปกรณ์ส่งข้อมูลระยะไกล — 81 จุด (U = Ultra Flow Meter, P = Pressure Meter)",
+        "Remote Control Valve (New) — เขียว",
+        "Remote Control Valve — 28 ตัว (เหลือง)",
+        "ท่อโครงการ (น้ำเงินประ)",
+        "อุโมงค์ส่งน้ำ (ส้ม)",
+        "ท่อส่งน้ำมหาสวัสดิ์ (เขียว)",
+        "Ultra Flow Meter (แดง)",
+        "Pressure Recorder (เหลือง)",
+        "Rising Structure",
+        "Valve Chamber (VC)",
+        "Valve Chamber ที่มีการจ่ายน้ำเข้าระบบ"
+      ],
+      "insetDiagrams": [
+        "บางเขน (BK03/BK04, TR1-TR3)",
+        "มีนบุรี",
+        "ลาดพร้าว",
+        "พหลโยธิน",
+        "โรงงานผลิตน้ำสามเสน",
+        "เพชรเกษม (ZM1105, ZM1108)",
+        "ท่าพระ",
+        "ราษฎร์บูรณะ",
+        "ลุมพินี",
+        "คลองเตย",
+        "ลาดกระบัง",
+        "สำโรง",
+        "บางพลี",
+        "ธนบุรี",
+        "มหาสวัสดิ์ Transmission Pump Station"
+      ],
+      "districtsOnMap": [
+        "บางบัวทอง",
+        "ประชาชื่น",
+        "บางเขน",
+        "นนทบุรี",
+        "มหาสวัสดิ์",
+        "มีนบุรี",
+        "ลาดพร้าว",
+        "พญาไท",
+        "บางกอกน้อย",
+        "ภาษีเจริญ",
+        "ทุ่งมหาเมฆ",
+        "สุขุมวิท",
+        "พระโขนง",
+        "เพชรเกษม",
+        "ตากสิน",
+        "ราษฎร์บูรณะ",
+        "สุขสวัสดิ์",
+        "สำโรง",
+        "สมุทรปราการ",
+        "บางพลี",
+        "สุวรรณภูมิ",
+        "ลาดกระบัง"
+      ]
+    }
+  },
+  "dashboardRequirements": [
+    {
+      "menu": [
+        "Overview",
+        "System Map",
+        "Main Transmission",
+        "Pumping Stations",
+        "Flow & Pressure Analytics",
+        "RTU Monitoring",
+        "Shift Handover",
+        "KM Library",
+        "Data Upload"
+      ],
+      "techStack": "React + Tailwind CSS + Recharts + Lucide React",
+      "capabilities": [
+        "แสดงภาพรวมระบบผลิตน้ำ → MH/TR → สถานีสูบจ่ายน้ำ → พื้นที่จ่ายน้ำ",
+        "แสดงข้อมูลสถานีสูบจ่ายน้ำ 10 แห่ง",
+        "แสดง Flow และ Pressure พร้อม Max Flow / Max Pressure",
+        "แสดง RTU Monitoring",
+        "แสดงข้อมูลรับ–ส่งเวร",
+        "แสดงองค์ความรู้สำหรับพนักงานใหม่",
+        "อัปโหลดข้อมูล CSV / JSON",
+        "Export ข้อมูล",
+        "Reset เป็น Sample Data"
+      ],
+      "systemMapDesignNotes": [
+        "โครง System Map ควรอิงผัง SCADA จริง: แม่น้ำเจ้าพระยาแบ่งกลาง, MH ฝั่งตะวันตก, BK (TR1-TR3) ฝั่งตะวันออก",
+        "สัญลักษณ์ควรรองรับ: Tunnel/Trunk Main, Actived/Non-Actived Pump, RTU, Recorder, ระดับน้ำถัง + Max, Bypass, VC",
+        "มีมิติเวลา: ดูค่าย้อนหลัง + กราฟ Pressure Recorder เทียบหลายวัน"
+      ]
+    }
+  ],
+  "pendingConfirmations": [
+    "แต่ละสถานีรับน้ำจากระบบใด (sourceSystem: MH / TR1 / TR2 / TR3) — จากภาพยังสรุปแน่ชัดไม่ได้",
+    "จะรวม TB (ธนบุรี), SS (สามเสน), PY (พหลโยธิน) เข้าใน Dashboard ด้วยหรือไม่ (ไม่อยู่ใน Master 10 สถานี)",
+    "MB มีถัง 2 ใบหรือไม่ — จอจริงมีช่อง MB_Level2 แสดง 'LV' (ไม่มีตัวเลข ณ 15:08) และพื้นที่ 4,216 Sqm — ยังรอยืนยัน",
+    "คำว่า 'Blackout' ในการจัดการน้ำเค็ม — น่าจะเป็น Blending หรือการบริหารจัดการน้ำดิบ รอยืนยันคำที่ถูกต้อง",
+    "บทบาท 'บางกอกน้อย' ใน Interdependence Rule: Playbook กล่าวถึงเสมือนเป็นโหนดรับน้ำข้างเคียงเพชรเกษม/ท่าพระ แต่ไม่อยู่ใน 10 สถานีสูบจ่ายหลัก (เป็นชื่อสาขา/โซน 01) — รอยืนยันสถานะ",
+    "หน่วยของ Flow ในข้อมูลรายชั่วโมง (คาดว่า ลบ.ม./ชม.) และหน่วย Inlet/Pressure (คาดว่า ม.)",
+    "ชื่อเต็มภาษาไทยของเส้นจ่ายบางเส้น: TP_Wong, RB_Yairom, KT_Praka, , MB_Nimit/Ram/Suwin",
+    "SR TotalFlow สูงสุด 55,392 (11 เม.ย. 2025 11:00) สูงผิดปกติ — เหตุการณ์จริงหรือความผิดพลาดข้อมูล",
+    "กิ่งจ่ายบางเขน: CH = แจ้งวัฒนะ, NG = งามวงศ์วาน (ยืนยันจาก U232 'BK03 แจ้งวัฒนะ', U233 'BK03 งามวงศ์วาน') — เหลือ ME, VI (คาดว่าวิภาวดี), PY (คาดว่าพหลโยธิน) รอยืนยัน",
+    "จุด 'ทับช้าง(?)' มีค่า -4329 ▶▶ (tubchang) — รอยืนยันชื่อและความหมาย"
+  ],
+  "futureAddOn": [
+    "Pump Capacity",
+    "Alarm History",
+    "Maintenance",
+    "AI Chatbot"
+  ],
+  "rtuNetworkOverview": {
+    "totalPoints": "236 จุดตามทะเบียนหน้า 'RTU รายจุด' (สอดคล้องบันทึกการเรียนรู้ 'กว่า 210 จุด') — Legend แผนที่ 81 จุดคือชุดย่อยที่พล็อตบนแผนที่",
+    "types": [
+      {
+        "code": "P",
+        "meaning": "วัดแรงดัน (Pressure) อย่างเดียว"
+      },
+      {
+        "code": "U / UZ (Ultrasonic)",
+        "meaning": "มิเตอร์อัลตราโซนิก วัดทั้งอัตราการไหล (Flow) และแรงดัน (Pressure)"
+      }
+    ],
+    "namingConvention": "Prefix (P / U / UZ) + รหัสสาขา 2 หลัก + Node ID — เช่น UZ 0114 = Ultrasonic Flow Meter, โซนบางกอกน้อย (01), Node 14 / รหัสสาขาตัวอย่าง: 01 บางกอกน้อย, 17 สมุทรปราการ",
+    "pointSelection": "เลือกจุดปลายโซน / Critical Point / Influence Point (ตัวแทนพื้นที่) เพื่อยืนยันว่าแรงดันปลายทางเพียงพอ (ส่งน้ำขึ้นถึงชั้น 2 ของบ้านได้)",
+    "dataChain": "Physical Pipe (ท่อประธาน >400 มม. วัด Flow/Pressure ดิบ) → RTU Hardware (210+ จุด) → DNP3 Protocol (ส่งข้อมูลไร้สายแบบปลอดภัย) → OPC Server (แสดงผล SCADA Dashboard ส่วนกลาง)",
+    "byType": {
+      "P (Pressure เท่านั้น)": 23,
+      "U (Ultra Flow Meter)": 99,
+      "UZ (Flow + Pressure)": 113,
+      "อื่น ๆ (X20)": 1
+    },
+    "branchMap": {
+      "01": "บางกอกน้อย",
+      "02": "ตากสิน",
+      "03": "พญาไท",
+      "04": "นนทบุรี",
+      "05": "ทุ่งมหาเมฆ",
+      "06": "แม้นศรี",
+      "07": "สุขุมวิท",
+      "11": "ภาษีเจริญ",
+      "12": "ลาดพร้าว",
+      "13": "พระโขนง",
+      "15": "ประชาชื่น",
+      "16": "บางเขน",
+      "17": "สมุทรปราการ",
+      "53": "มีนบุรี",
+      "54": "บางบัวทอง"
+    },
+    "registryFile": "water-km-dashboard/data/rtu-registry.json"
+  },
+  "systemOverview": {
+    "totalCapacity": "~6 ล้าน ลบ.ม./วัน (กำลังการผลิตรวม)",
+    "dailyDemand": "~5 ล้าน ลบ.ม./วัน (ความต้องการใช้จริง)",
+    "journeyOfWater": [
+      "Stage 1 - Production: โรงผลิตน้ำ 4 แห่ง (BK ~67%, MH ~30%, SS 3-4%, TB <1%)",
+      "Stage 2 - Transmission: อุโมงค์ส่งน้ำและ TR Lines (Main Arteries)",
+      "Stage 3 - Distribution: สถานีสูบจ่ายน้ำ (เช่น เพชรเกษม, ท่าพระ)",
+      "Stage 4 - Delivery: DMA (District Metering Areas) — ท่อบริการ <400 มม., ~1,000 ผู้ใช้น้ำต่อ 1 DMA"
+    ],
+    "source": "Smart Waterworks Playbook (ชุดที่ 6)"
+  },
+  "resolvedConfirmations": [
+    "กำลังการผลิต (คลี่คลายโดย Playbook ชุดที่ 6): บางเขน ~4.2 ล้าน ลบ.ม./วัน (~67%), มหาสวัสดิ์ ~1.9 ล้าน (~30%), สามเสน 3-4%, ธนบุรี <1% → กำลังผลิตรวมทั้งระบบ ~6 ล้าน, Demand รายวัน ~5 ล้าน — ตัวเลข '4 ล้าน' (ชุด 1) คือบางเขนแห่งเดียว ส่วน '5-6 ล้าน' (ชุด 2/4) คือภาพรวมระบบ",
+    "ความหมายตัวเลขสถานีบน SCADA (คลี่คลายโดย Excel ชุดที่ 7): คู่เลขใหญ่ = Qin (รับเข้า) กับ TotalFlow (จ่ายออกรวม), เลขทศนิยม = Inlet Pressure และแรงดันจ่ายรายเส้น, กล่องถัง = Level (ม.) — เหลือยืนยันเฉพาะหน่วยของ Flow (คาดว่า ลบ.ม./ชม.)",
+    "ค่า % บนจอ (คลี่คลายโดยไฟล์จอจริง): คือเปอร์เซ็นต์เปิดวาล์ว RCV — ทุกจุดมีรหัส RCV กำกับ (เช่น นวมินทร์ = RCV25 40%, ประชานุกูล = RCV27 44%)",
+    "ชื่อจุด 'เอลิมพันธ์' ที่อ่านจากภาพ (คลี่คลาย): ชื่อจริงคือ 'เฉลิมพันธ์' (RCV66)",
+    "Max ถัง MB (คลี่คลาย): ค่าทางการในระบบ = 7.10 ม. (MB_Level_max) — ค่า 7.23 ใน Time Series คือ overshoot ของเซนเซอร์ช่วงสั้น",
+    "จำนวนจุด RTU (ปิดประเด็น): ทะเบียนหน้า 'RTU รายจุด' มี 236 จุด (P 23 / U 99 / UZ 113 / อื่น ๆ 1) — '81 จุด' บน Legend แผนที่คือชุดที่พล็อตบนแผนที่เท่านั้น",
+    "ชื่อเส้นจ่าย BP_F_Epec (ปิดประเด็น): คือเส้นไปทางโรงไฟฟ้า EPEC ถ.สุขุมวิท (มีจุดวัด P177B 'หน้าโรงไฟฟ้า EPEC' ยืนยัน)"
+  ],
+  "rcvList": [
+    {
+      "code": "RCV27",
+      "name": "ประชานุกูล",
+      "percentOpen": "44%",
+      "flow": "3206"
+    },
+    {
+      "code": "RCV66",
+      "name": "เฉลิมพันธ์",
+      "percentOpen": "15%",
+      "flow": "828.00"
+    },
+    {
+      "code": "RCV64",
+      "name": "ประดิพัทธ์",
+      "percentOpen": "15%",
+      "flow": "null"
+    },
+    {
+      "code": "RCV28",
+      "name": "สามเสน",
+      "percentOpen": "14%",
+      "flow": "1352"
+    },
+    {
+      "code": "RCV29",
+      "name": "พหลโยธิน",
+      "percentOpen": "22%",
+      "flow": "6831",
+      "pressure": "8.4",
+      "inletRaw": "32769 (Error Code)"
+    },
+    {
+      "code": "RCV60",
+      "name": "สี่พระยา",
+      "percentOpen": "10%",
+      "flow": "1000"
+    },
+    {
+      "code": "RCV50",
+      "name": "มัยลาภ",
+      "percentOpen": "29%",
+      "flow": "2225"
+    },
+    {
+      "code": "RCV25",
+      "name": "นวมินทร์",
+      "percentOpen": "40%",
+      "flow": "4658"
+    },
+    {
+      "code": "RCV51",
+      "name": "พระราม9",
+      "percentOpen": "0%",
+      "flow": "0"
+    },
+    {
+      "code": "RCV38",
+      "name": "ลอดแม่น้ำ / สี่พระยา อุโมงค์",
+      "percentOpen": "5%",
+      "flow": "cross river -2194",
+      "note": "หน้า RTU รายจุดระบุ RCV38 = 'สี่พระยา อุโมงค์' → จุดลอดแม่น้ำคือช่วงอุโมงค์สี่พระยา (RCV60 = สี่พระยา VC แยกกัน)"
+    },
+    {
+      "code": "RCV48",
+      "name": "ราชมนตรี",
+      "percentOpen": "0%",
+      "flow": "null"
+    },
+    {
+      "code": "RCV13",
+      "name": "ลุมพินี VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV65",
+      "name": "คลองเตย VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV54",
+      "name": "(บริเวณสามเสน)",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": "",
+      "note": "ไม่อยู่ในลิสต์หน้า RTU รายจุด — พบเฉพาะบนจอ Smart Tunnel บริเวณสามเสน (รอยืนยัน)"
+    },
+    {
+      "code": "RCV12",
+      "name": "หลังประชานุกูล VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV52",
+      "name": "เจริญนคร 2 VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV53",
+      "name": "เจริญนคร 34 VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "note": "ข้อมูล % ณ 2026-07-03 15:08 จากจอ Smart Tunnel V.2 / รายชื่อ VC จากหน้า RTU รายจุด — รวม 15 จุด (RCV54 รอยืนยัน)"
+    }
+  ]
+}

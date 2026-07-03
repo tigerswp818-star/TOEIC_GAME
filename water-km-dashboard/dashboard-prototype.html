@@ -331,7 +331,6 @@ window.TS = {"meta": {"source": "Water_Level_3rd5th_month.xlsx (ผู้ใช�
     { id: "stations", t: "Pumping Stations", ic: "station" },
     { id: "analytics", t: "Flow & Pressure Analytics", ic: "chart" },
     { id: "rtu", t: "RTU Monitoring", ic: "radio" },
-    { id: "shift", t: "Shift Handover", ic: "shift" },
     { id: "km", t: "KM Library", ic: "book" },
     { id: "upload", t: "Data Upload", ic: "upload" }
   ];
@@ -966,35 +965,6 @@ window.TS = {"meta": {"source": "Water_Level_3rd5th_month.xlsx (ผู้ใช�
     $("#rtu-go").addEventListener("click", decode);
     $("#rtu-in").addEventListener("keydown", e => { if (e.key === "Enter") decode(); });
     decode();
-  })();
-
-  /* ============================================================
-     SHIFT HANDOVER
-  ============================================================ */
-  (function shift() {
-    const p = $("#pane-shift");
-    const fields = [
-      ["วันที่ / เวลา", "date, time"], ["ผู้ส่งเวร → ผู้รับเวร", "shiftFrom → shiftTo"],
-      ["สถานะระบบ", "systemStatus"], ["Alarm ที่เกิดขึ้น", "alarms[]"],
-      ["งานค้าง", "pendingTasks[]"], ["งานที่เสร็จแล้ว", "completedTasks[]"],
-      ["สถานีที่ต้องเฝ้าระวัง", "stationsToMonitor[]"], ["ประเด็น Flow/Pressure", "flowPressureIssues[]"],
-      ["สิ่งที่ต้องทำต่อ", "nextActions[]"], ["หมายเหตุ", "note"]
-    ];
-    p.innerHTML = `
-      <h2>บันทึกรับ–ส่งเวร</h2>
-      <p class="sub">ยังไม่มีข้อมูลบันทึกรับ–ส่งเวร — โครงสร้างข้อมูลเตรียมพร้อมแล้วตามรูปแบบด้านล่าง</p>
-      <div class="empty" style="margin-bottom:14px">
-        <div class="big">ยังไม่มีบันทึกรับ–ส่งเวร</div>
-        เมื่อได้รับข้อมูลเวรชุดแรก หน้านี้จะแสดงไทม์ไลน์การส่งเวร พร้อม Alarm งานค้าง และสิ่งที่ต้องติดตาม
-      </div>
-      <div class="card">
-        <h3>โครงสร้างข้อมูลที่รองรับแล้ว</h3>
-        <p class="hint">ตาม Master Data schema — ส่งข้อมูลตามหัวข้อเหล่านี้ได้เลย</p>
-        <div class="scroll-x"><table>
-          <thead><tr><th>หัวข้อ</th><th>Field</th></tr></thead>
-          <tbody>${fields.map(f => `<tr><td>${f[0]}</td><td class="num" style="color:var(--muted)">${f[1]}</td></tr>`).join("")}</tbody>
-        </table></div>
-      </div>`;
   })();
 
   /* ============================================================

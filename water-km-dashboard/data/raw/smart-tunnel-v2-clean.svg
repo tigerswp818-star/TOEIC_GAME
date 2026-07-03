@@ -1,0 +1,548 @@
+<svg viewBox="0 0 1700 850" style="width:100%;min-width:1240px;background:#000000;border-radius:8px" font-family="'Segoe UI','Noto Sans Thai','Leelawadee UI',sans-serif" role="img" aria-label="Smart Tunnel SCADA">
+
+<text id="time_box" x="1300" y="40" fill="#FFFFFF" style="font-size:28px">Friday 3 Jul 2026 3:08 PM </text>
+
+
+
+
+
+
+
+<!-- // Layer // -->
+<text id="layer1" x="500" y="720" fill="#FFFFFF" style="font-size:14px; cursor:pointer;">☐ RTU</text>
+<text id="alert_mode" x="560" y="720" fill="#FFFFFF" style="font-size:14px; cursor:pointer;">☐ Alert Mode</text>
+<a href="http://172.16.193.162/smartmap/tunnel.pdf" target="_blank"><text x="500" y="740" stroke="none" fill="#DDDDDD" font-size="14">☐ ผังอุโมงค์</text></a>
+<rect x="502" y="750" width="9" height="9" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect><text x="516" y="760" stroke="none" fill="#DDDDDD" font-size="14">Non-Actived Pump</text>
+<rect x="502" y="770" width="9" height="9" style="fill:red; stroke:#FFFFFF; stroke-width:1"></rect><text x="516" y="780" stroke="none" fill="#DDDDDD" font-size="14">Actived Pump</text>
+<rect x="660" y="716" width="9" height="2" style="fill:#33FF00; stroke:#33FF00; stroke-width:1"></rect><text x="680" y="720" stroke="none" fill="#DDDDDD" font-size="14">Tunnel</text>
+<rect x="660" y="736" width="9" height="2" style="fill:#009EFF; stroke:#009EFF; stroke-width:1"></rect><text x="680" y="740" stroke="none" fill="#DDDDDD" font-size="14">Trunk Main</text>
+<text x="660" y="760" stroke="none" fill="#DDDDDD" font-size="14">♬ Recorder</text>
+<text x="660" y="780" stroke="none" fill="#DDDDDD" font-size="14"><a href="http://172.16.193.162/smartmap/newgraph/st_regress.php" target="_blank">ᯓ Level Prediction</a></text>
+
+<rect id="MHTR_Level_px" x="20" y="20" width="200" height="80" style="fill:#000000; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="MHTR_Level_bar" x="20" y="-100" width="200" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; opacity: 0.7; height: 60px;" transform="scale(1,-1)"></rect>
+<text id="MHTR_Level_txt" x="180" y="90" fill="#0000FF" stroke="#FFFFFF">4.05</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=MH" target="_blank"><text x="20" y="15" fill="#FFFFFF">MH</text></a>
+<a href="http://172.16.198.25/" target="_blank"><text x="60" y="15" fill="#FDFDFD">♬</text></a>
+<path d="M20 80 L10 80 L10 220 L20 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path>
+<rect id="MHTR_Inlet_px" x="20" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="MHTR_Inlet_bar" x="20" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: cyan; stroke-width: 0; height: 62.9143px;" transform="scale(1,-1)"></rect>
+<text id="MHTR_Inlet_txt" x="15" y="145" fill="#FFAD00" style="font-size:14px">22.02</text>
+<text id="MHTR_TR_txt" x="65" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">39250</text>
+
+<rect id="MH_Pump1" x="230" y="40" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump2" x="230" y="55" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump3" x="230" y="70" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump4" x="230" y="85" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+
+<path d="M250 40 L250 95" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M250 50 L300 50" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M250 80 L300 80 M280 80 L280 50" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M265 80 L265 120 L240 120" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<a href="http://172.16.193.162/smartmap/img/mh_valve.jpg" target="_blank"><text x="280" y="120" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+
+<rect x="257" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="270" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="290" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="257" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="270" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="290" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="MH_F_txt" x="340" y="50" fill="#00CFFC">23807</text>
+<text id="MH_P_txt" x="340" y="70" fill="#FFA030" style="font-size:12px">27.97</text>
+
+<text id="MH_F_A_txt" x="310" y="50" fill="#009EFF" style="font-size:10px">15761</text>
+<text id="MH_F_B_txt" x="310" y="80" fill="#009EFF" style="font-size:10px">8046</text>
+<text id="MH_F_C_txt" x="205" y="125" fill="#009EFF" style="font-size:10px">8017</text>
+
+
+
+<rect id="BK_TR1_L1_px" x="500" y="20" width="700" height="80" style="fill:#000000; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR1_L1_bar" x="500" y="-100" width="700" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; opacity: 0.7; height: 55.68px;" transform="scale(1,-1)"></rect>
+<text x="500" y="15" fill="#FFFFFF">BK</text>
+<text id="BK_TR1_L1_txt" x="1050" y="90" fill="#FFFFFF" stroke="#0000FF" stroke-width="1">3.48</text>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BK03" target="_blank"><text x="690" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">BK03</text></a>
+<a href="http://192.168.86.99/" target="_blank"><text x="730" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+<rect id="BK_03_Pump1" x="670" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump2" x="685" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump3" x="700" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump4" x="715" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump5" x="730" y="90" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M673 105 L735 105" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M673 105 L673 160 L650 160" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M688 105 L688 180 L650 180" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M713 105 L713 200 L650 200 M713 200 L713 250 L960 250" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M728 105 L728 240 L945 240" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="695" y="103" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="815" y="247" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="710" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="725" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="BK_03_CH_txt" x="600" y="160" fill="#009EFF" style="font-size:10px">3109</text>
+<text id="BK_03_NG_txt" x="600" y="180" fill="#009EFF" style="font-size:10px">5518</text>
+<text id="BK_03_ME_txt" x="600" y="200" fill="#009EFF" style="font-size:10px">5841</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BK04" target="_blank"><text x="950" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">BK04</text></a>
+<a href="http://172.17.197.65/" target="_blank"><text x="990" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+<rect id="BK_04_Pump1" x="940" y="90" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump2" x="955" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump3" x="970" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump4" x="985" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M940 105 L995 105" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M945 105 L945 240" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M960 105 L960 250" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M985 105 L985 140 M960 140 L1010 140" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M945 160 L955 160 M 965 160 L1010 160" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M965,160 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="942" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="970" y="137" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="BK_04_VI_txt" x="1020" y="140" fill="#009EFF" style="font-size:10px">9440</text>
+<text id="BK_04_PY_txt" x="1020" y="160" fill="#009EFF" style="font-size:10px">229</text>
+
+<text x="525" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR1</text>
+<a href="http://172.17.197.17/" target="_blank"><text x="565" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR1_Pump1" x="500" y="110" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump2" x="520" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump3" x="540" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump4" x="560" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump5" x="580" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR1_PS_txt" x="525" y="145" fill="#FFAD00" style="font-size:14px">33.37</text>
+<text id="BK_TR1_FL_txt" x="510" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">46474</text>
+
+<rect id="BK_TR1_PS_px" x="530" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR1_PS_bar" x="530" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 70.2526px;" transform="scale(1,-1)"></rect>
+
+<text x="820" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR2</text>
+<a href="http://172.17.197.49/" target="_blank"><text x="860" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR2_Pump1" x="780" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump2" x="800" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump3" x="820" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump4" x="840" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump5" x="860" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump6" x="880" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR2_PS_txt" x="875" y="145" fill="#FFAD00" style="font-size:14px">36.03</text>
+<text id="BK_TR2_FL_txt" x="800" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">46510</text>
+
+<rect id="BK_TR2_PS_px" x="880" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR2_PS_bar" x="880" y="-230" width="20" height="40" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 72.06px;" transform="scale(1,-1)"></rect>
+
+<text x="1120" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR3</text>
+<a href="http://172.17.197.81/" target="_blank"><text x="1160" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR3_Pump1" x="1080" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump2" x="1100" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump3" x="1120" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump4" x="1140" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump5" x="1160" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump6" x="1180" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR3_PS_txt" x="1250" y="145" fill="#FFAD00" style="font-size:14px">25.1</text>
+<text id="BK_TR3_FL_txt" x="1100" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">51900</text>
+
+<rect id="BK_TR3_PS_px" x="1250" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR3_PS_bar" x="1250" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 52.8421px;" transform="scale(1,-1)"></rect>
+
+<path d="M500 130 L525 130 M500 130 L500 220 L530 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M545 130 L780 130 M575 130 L575 220 L550 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M780 130 L890 130 M855 130 L855 220 L880 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1080 130 L1080 220 L900 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1080 130 L1210 130 L1210 220 L1250 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> 
+
+
+<rect x="430" y="20" width="40" height="800" style="fill:#8FBAFF; stroke:#8FBAFF; stroke-width:1; opacity:0.5;"></rect>
+<text x="440" y="50" fill="black" stroke="black" stroke-width="1" style="font-size:18px">C</text>
+<text x="440" y="80" fill="black" stroke="black" stroke-width="1" style="font-size:18px">H</text>
+<text x="440" y="110" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+<text x="440" y="140" fill="black" stroke="black" stroke-width="1" style="font-size:18px">O</text>
+<text x="440" y="170" fill="black" stroke="black" stroke-width="1" style="font-size:18px">P</text>
+<text x="440" y="200" fill="black" stroke="black" stroke-width="1" style="font-size:18px">H</text>
+<text x="440" y="230" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<text x="440" y="260" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+<text x="440" y="290" fill="black" stroke="black" stroke-width="1" style="font-size:18px">Y</text>
+<text x="440" y="320" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+
+<text x="440" y="395" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<text x="440" y="425" fill="black" stroke="black" stroke-width="1" style="font-size:18px">I</text>
+<text x="440" y="455" fill="black" stroke="black" stroke-width="1" style="font-size:18px">V</text>
+<text x="440" y="485" fill="black" stroke="black" stroke-width="1" style="font-size:18px">E</text>
+<text x="440" y="515" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<rect x="480" y="20" width="8" height="368" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+<rect x="420" y="340" width="60" height="8" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+<rect x="488" y="380" width="72" height="8" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=PK" target="_blank"><text x="230" y="320" fill="#FDFDFD">PK</text></a>
+<a href="http://192.168.113.51/" target="_blank"><text x="260" y="320" fill="#FDFDFD">♬</text></a>
+<rect id="PK_Level_px" x="120" y="290" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=PK_02_OVERVIEW" target="_blank"><rect id="PK_Level_bar" x="120" y="-340" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 40.3731px;" transform="scale(1,-1)"></rect></a>
+<text id="PK_Level_txt" x="160" y="330" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">5.41</text>
+
+<rect id="PK_Pump1" x="100" y="295" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump2" x="100" y="305" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump3" x="100" y="315" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump4" x="100" y="325" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump5" x="100" y="335" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 230 L30 260 L130 260 L130 290" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M90 260 L90 295" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M90 295 L90 340 M90 295 L60 295 L60 280 M60 295 L60 320" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#"><text id="PK_ZM02_txt" x="50" y="275" fill="#009EFF" style="font-size:10px">4504</text></a>
+<a href="#"><text id="PK_ZM01_txt" x="50" y="330" fill="#009EFF" style="font-size:10px">7923</text></a>
+
+<path d="M80 260 L80 230 L110 230" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#"><text id="PK_Qin_txt" x="110" y="230" fill="#00FF3D">16336</text></a>
+<text id="PK_Inlet_txt" x="90" y="250" fill="#FFA030" style="font-size:12px">18.69</text>
+<a href="#"><text id="PK_F_txt" x="200" y="230" fill="#00CFFC">12480</text></a>
+<text id="PK_P_txt" x="200" y="250" fill="#FFA030" style="font-size:12px">12.92</text>
+<text id="P051" x="160" y="200" fill="#FDFDFD" style="cursor: pointer; display: block;" stroke="#D576FF">P051</text>
+
+<text x="180" y="288" fill="#009EFF" style="font-size:10px">Max 6.70</text>
+<text x="170" y="350" fill="#009EFF" style="font-size:10px">10,500 Sqm</text>
+
+
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=TP" target="_blank"><text x="230" y="450" fill="#FDFDFD">TP</text></a>
+<a href="http://192.168.119.31/" target="_blank"><text x="235" y="470" fill="#FDFDFD">♬</text></a>
+<rect id="TP_Level_px" x="120" y="420" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=TP_02_OVERVIEW" target="_blank"><rect id="TP_Level_bar" x="120" y="-470" width="100" height="25" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 46.5364px;" transform="scale(1,-1)"></rect></a>
+<text id="TP_Level_txt" x="160" y="460" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">5.24</text>
+
+<rect id="TP_Pump1" x="120" y="485" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump2" x="140" y="485" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump3" x="160" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump4" x="180" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump5" x="200" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 260 L30 550 L260 550" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 550 L540 550" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 550 L260 405 L130 405 L130 420" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 500 L210 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M210 500 L120 500" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M150 500 L150 515 L110 515" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M180 500 L180 515 L180 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M200 500 L200 515 L220 515 L220 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#"><text id="TP_F_Thapra_txt" x="80" y="520" fill="#009EFF" style="font-size:10px">4774</text></a>
+<a href="#"><text id="TP_F_Petka_txt" x="170" y="540" fill="#009EFF" style="font-size:10px">2529</text></a>
+<a href="#"><text id="TP_F_Wong_txt" x="220" y="540" fill="#009EFF" style="font-size:10px">4199</text></a>
+
+<rect x="132" y="498" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="172" y="498" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<path d="M130 410 L120 410 L120 380" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#"><text id="TP_Qin_txt" x="110" y="380" fill="#00FF3D">11632</text></a>
+<text id="TP_Inlet_txt" x="130" y="400" fill="#FFA030" style="font-size:12px">12.08</text>
+<a href="#"><text id="TP_F_txt" x="200" y="380" fill="#00CFFC">11502</text></a>
+<text id="TP_P_txt" x="200" y="400" fill="#FFA030" style="font-size:12px">9.55</text>
+<text id="U020" x="280" y="450" fill="#FDFDFD" style="cursor: pointer; display: none;">U020</text>
+<text id="U005" x="280" y="470" fill="#FDFDFD" style="cursor: pointer; display: none;">U005</text>
+
+<text x="180" y="418" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="175" y="480" fill="#009EFF" style="font-size:10px">8,120 Sqm</text>
+
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=RB" target="_blank"><text x="310" y="780" fill="#FDFDFD">RB</text></a>
+<a href="http://192.168.110.51/" target="_blank"><text x="340" y="780" fill="#FDFDFD">♬</text></a>
+<rect id="RB_Level_px" x="200" y="750" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=RB_02_OVERVIEW" target="_blank"><rect id="RB_Level_bar" x="200" y="-800" width="100" height="25" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 47.4107px;" transform="scale(1,-1)"></rect></a>
+<text id="RB_Level_txt" x="240" y="790" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">5.31</text>
+
+<rect id="RB_Pump1" x="200" y="730" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump2" x="220" y="730" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump3" x="240" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump4" x="260" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump5" x="280" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 550 L30 660 M30 650 L120 650 L140 680 L150 680 a5,5 0 0,1 10,0 L180 680 L180 740 L155 740" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 740 L155 650 L360 650 L360 550 M360 610 L340 610 L340 630 L360 630" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 740 L155 780 L200 780" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 720 L175 720 a5,5 0 0,1 10,0 L200 720" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M200 720 L290 720" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M220 720 L220 700" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M260 720 L260 700" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#"><text id="RB_F_Ram2_txt" x="210" y="690" fill="#009EFF" style="font-size:10px">5090</text></a>
+<a href="#"><text id="RB_F_Yairom_txt" x="255" y="690" fill="#009EFF" style="font-size:10px">9443</text></a>
+
+<rect x="232" y="718" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="252" y="718" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<path d="M165 780 L165 820 L180 820" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#"><text id="RB_Qin_txt" x="190" y="830" fill="#00FF3D">13476</text></a>
+<text id="RB_Inlet_txt" x="165" y="775" fill="#FFA030" style="font-size:12px">12.39</text>
+<a href="#"><text id="RB_F_txt" x="280" y="830" fill="#00CFFC">14533</text></a>
+<text id="RB_P_txt" x="280" y="850" fill="#FFA030" style="font-size:12px">16.36</text>
+<text id="P032" x="360" y="760" fill="#FDFDFD" style="cursor: pointer; display: none;">P032</text>
+<text id="U032" x="360" y="780" fill="#FDFDFD" style="cursor: pointer; display: none;">U032</text>
+
+<text x="260" y="748" fill="#009EFF" style="font-size:10px">Max 5.60</text>
+<text x="250" y="810" fill="#009EFF" style="font-size:10px">10,025 Sqm</text>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=TB" target="_blank"><text x="380" y="380" fill="#FDFDFD">TB</text></a>
+<text x="440" y="338" fill="#C5AA00" style="font-size:10px; cursor:pointer;">น้ำดิบ</text>
+<rect id="TB_Lev_px" x="320" y="310" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="TB_Lev_bar" x="320" y="-360" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 27.6042px;" transform="scale(1,-1)"></rect>
+<text id="TB_Lev_txt" x="360" y="350" fill="#0000FF" stroke="#0000FF" stroke-width="1">2.65</text>
+
+<text id="TB_Qin_txt" x="432" y="365" fill="#C5AA00" style="font-size:14px; ">4535</text>
+<text id="TB_F_txt" x="380" y="280" fill="#00CFFC">4944</text>
+<text id="TB_P_txt" x="380" y="300" fill="#FFA030" style="font-size:12px">6.4</text>
+<text id="UZ0102" x="340" y="250" fill="#FDFDFD" style="cursor: pointer; display: none;" stroke="red">UZ0102</text>
+
+<text x="320" y="308" fill="#009EFF" style="font-size:10px">Max 4.80</text>
+<text x="320" y="370" fill="#009EFF" style="font-size:10px">3,857 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS" target="_blank"><text x="720" y="445" fill="#FDFDFD">SS</text></a>
+<rect x="560" y="370" width="150" height="107" stroke-dasharray="3,3" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect>
+
+<rect id="ss3" x="615" y="375" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS3" target="_blank"><text x="620" y="385" fill="#C8C8C8" style="font-size:8px;">SS3</text></a>
+<path d="M615 385 L600 385" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M645 385 L650 385 M660 385 L680 385" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M650,385 a5,5 0 0,1 10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="O1_F_txt" x="575" y="385" fill="#009EFF" style="font-size:10px">3044</text>
+<text id="U_F_txt" x="685" y="385" fill="#009EFF" style="font-size:10px">-1</text>
+
+<rect id="ss1" x="615" y="405" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS1" target="_blank"><text x="620" y="415" fill="#C8C8C8" style="font-size:8px;">SS1</text></a>
+<path d="M615 415 L560 415" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M590 415 L590 445" stroke-dasharray="2,3" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M645 415 L655 415 L655 355" stroke-dasharray="2,3" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <rect x="588" y="430" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <text id="DU1_F_txt" x="575" y="410" fill="#009EFF" style="font-size:10px">1855</text>
+<text id="S_F_txt" x="655" y="355" fill="#009EFF" style="font-size:10px">0</text>
+<text id="RCV54" x="558" y="435" fill="#009EFF" style="font-size:8px">RCV54</text>
+
+<rect id="ss4" x="600" y="435" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS4" target="_blank"><text x="605" y="445" fill="#C8C8C8" style="font-size:8px;">SS4</text></a>
+<path d="M600 445 L570 445" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="X_F_txt" x="575" y="455" fill="#009EFF" style="font-size:10px">2280</text>
+
+<rect id="ss2" x="675" y="430" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS2" target="_blank"><text x="680" y="440" fill="#C8C8C8" style="font-size:8px;">SS2</text></a>
+<path d="M675 435 L670 435 M660 435 L650 435 L650 455 L650 455" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M670,435 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M675 445 L665 445 L665 385 M665 445 L665 455" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+
+<text id="O2_F_txt" x="640" y="465" fill="#009EFF" style="font-size:10px">-1</text>
+<text id="K_F_txt" x="665" y="465" fill="#009EFF" style="font-size:10px">-88</text>
+
+<text x="675" y="480" fill="#C8C8C8" stroke="#C8C8C8" stroke-width="0.1" style="font-size:10px; cursor:zoom-in; opacity:0.5;">ZOOM</text>
+
+
+<text id="UZ0619" x="580" y="360" fill="#FDFDFD" style="cursor: pointer; display: none;">UZ0619</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=PY" target="_blank"><text x="810" y="420" fill="#FDFDFD">PY</text></a>
+<a href="http://192.168.86.99/" target="_blank"><text x="840" y="420" fill="#FDFDFD">♬</text></a>
+<rect x="770" y="360" width="100" height="40" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="770" y="375" width="100" height="0" style="fill:#00D6FF; stroke:#FFFFFF; stroke-width:0"></rect>
+<text x="800" y="390" fill="#33FF00" stroke="#33FF00" stroke-width="0.1">Bypass</text>
+
+<rect x="800" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="820" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="840" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="860" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+
+<path d="M540 230 L540 300 L750 300" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M750 300 L750 390 L770 390" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M770 300 L990 300" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M770 300 L750 330" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M750 335 L790 335" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M790 335 L870 335" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M825 335 L825 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M865 335 L865 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M790 310 L900 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="815" y="333" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="855" y="333" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<circle r="4" cx="750" cy="335" style="fill:black; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV29" x="690" y="335" stroke="none" fill="#C8C8C8" font-size="10">พหลโยธิน</text>
+
+<text id="rcv29_txt" x="710" y="350" fill="#C8C8C8" style="font-size:10px">22%</text>
+<text id="rcv29I_txt" x="720" y="315" fill="#FFA030" style="font-size:12px">32769</text>
+<text id="rcv29F_txt" x="920" y="320" fill="#00CFFC">6831</text>
+<text id="rcv29P_txt" x="920" y="340" fill="#FFA030" style="font-size:12px">8.4</text>
+<text id="UZ0307" x="900" y="390" fill="#FDFDFD" style="cursor: pointer; display: none;">UZ0307</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LP" target="_blank"><text x="690" y="630" fill="#FDFDFD">LP</text></a>
+<a href="http://192.168.115.31/" target="_blank"><text x="720" y="630" fill="#FDFDFD">♬</text></a>
+<rect id="LP_Level_px" x="650" y="550" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LP_02_OVERVIEW" target="_blank"><rect id="LP_Level_bar" x="650" y="-600" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 36.8421px;" transform="scale(1,-1)"></rect></a>
+<text id="LP_Level_txt" x="690" y="590" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">4.2</text>
+
+<rect id="LP_Pump1" x="760" y="550" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump2" x="760" y="565" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump3" x="760" y="580" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump4" x="760" y="595" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M540 300 L540 550 L540 610" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M540 550 L640 650 L990 650" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M610 620 L610 560 L650 560" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M780 550 L780 600" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M780 555 L810 555" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M780 575 L800 575" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M800 575 L810 600" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M615 560 L615 520 L640 520" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <rect x="778" y="560" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="LP_F_Sarasin_txt" x="815" y="560" fill="#009EFF" style="font-size:10px">6018</text></a>
+<a href="#"><text id="LP_F_Sathon_txt" x="815" y="610" fill="#009EFF" style="font-size:10px">9121</text></a>
+
+<a href="#"><text id="LP_Qin_txt" x="640" y="515" fill="#00FF3D">12057</text></a>
+<text id="LP_Inlet_txt" x="620" y="550" fill="#FFA030" style="font-size:12px">13.2</text>
+<a href="#"><text id="LP_F_txt" x="720" y="515" fill="#00CFFC">15147</text></a>
+<text id="LP_P_txt" x="720" y="535" fill="#FFA030" style="font-size:12px">6.81</text>
+<text id="U201" x="880" y="580" fill="#FDFDFD" style="cursor: pointer; display: none;">U201</text>
+
+<text x="710" y="548" fill="#009EFF" style="font-size:10px">Max 5.70</text>
+<text x="710" y="610" fill="#009EFF" style="font-size:10px">8,570 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LA" target="_blank"><text x="1210" y="340" fill="#FDFDFD">LA</text></a>
+<a href="http://192.168.112.51/" target="_blank"><text x="1240" y="340" fill="#FDFDFD">♬</text></a>
+<rect id="LA_Level_px" x="1050" y="300" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LA_02_OVERVIEW" target="_blank"><rect id="LA_Level_bar" x="1050" y="-350" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 38.3659px;" transform="scale(1,-1)"></rect></a>
+<text id="LA_Level_txt" x="1090" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">4.32</text>
+
+<a href="#"><rect id="LA_Pump1" x="1160" y="300" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#"><rect id="LA_Pump2" x="1160" y="315" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#"><rect id="LA_Pump3" x="1160" y="330" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#"><rect id="LA_Pump4" x="1160" y="345" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+
+<path d="M990 220 L990 360 L1010 360" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1010 360 L1010 310 L1050 310" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M990 450 L1390 450" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1180 300 L1180 350" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 310 L1210 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 340 L1200 340 L1210 360" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1030 310 L1030 390 L1050 390 " stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1010 310 L1010 280 L1180 280 L1180 300" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> 
+<rect x="1178" y="325" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="LA_F_1500_txt" x="1215" y="315" fill="#009EFF" style="font-size:10px">10025</text></a>
+<a href="#"><text id="LA_F_1200_txt" x="1215" y="365" fill="#009EFF" style="font-size:10px">3729</text></a>
+
+<a href="#"><text id="LA_Qin_txt" x="1050" y="390" fill="#00FF3D">133</text></a>
+<text id="LA_Inlet_txt" x="1050" y="410" fill="#FFA030" style="font-size:12px">19.13</text>
+<a href="#"><text id="LA_F_txt" x="1120" y="390" fill="#00CFFC">13754</text></a>
+<text id="LA_P_txt" x="1120" y="410" fill="#FFA030" style="font-size:12px">11.18</text>
+<text id="U247" x="1260" y="330" fill="#FDFDFD" style="cursor: pointer; display: none;">U247</text>
+
+<text x="1110" y="298" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1110" y="360" fill="#009EFF" style="font-size:10px">13,815 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=KT" target="_blank"><text x="1210" y="550" fill="#FDFDFD">KT</text></a>
+<a href="http://192.168.114.31/" target="_blank"><text x="1240" y="550" fill="#FDFDFD">♬</text></a>
+<rect id="KT_Level_px" x="1100" y="520" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=KT_02_OVERVIEW" target="_blank"><rect id="KT_Level_bar" x="1100" y="-570" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.7407px;" transform="scale(1,-1)"></rect></a>
+<text id="KT_Level_txt" x="1140" y="560" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">4.7</text>
+
+<rect id="KT_Pump1" x="1085" y="500" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump2" x="1085" y="515" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump3" x="1085" y="530" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump4" x="1085" y="545" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump5" x="1085" y="560" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M990 360 L990 470 L1110 470 L1110 520" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1110 495 L1135 495" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1070 470 L1070 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1070 500 L1070 565" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 520 L1050 520 L1050 500" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 550 L1020 550 L1020 580 M1020 550 L1020 520" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 565 L1060 565 L1060 580" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1068" y="540" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="KT_F_Ram4_1000_txt" x="1040" y="490" fill="#009EFF" style="font-size:10px">350</text></a>
+<a href="#"><text id="KT_F_Sukhum_txt" x="1010" y="510" fill="#009EFF" style="font-size:10px">4241</text></a>
+<a href="#"><text id="KT_F_Ram4_1500_txt" x="1010" y="590" fill="#009EFF" style="font-size:10px">941</text></a>
+<a href="#"><text id="KT_F_Praka_txt" x="1050" y="590" fill="#009EFF" style="font-size:10px">3258</text></a>
+
+<a href="#"><text id="KT_Qin_txt" x="1130" y="490" fill="#00FF3D">-6</text></a>
+<text id="KT_Inlet_txt" x="1130" y="510" fill="#FFA030" style="font-size:12px">13.58</text>
+<a href="#"><text id="KT_F_txt" x="1200" y="490" fill="#00CFFC">8790</text></a>
+<text id="KT_P_txt" x="1200" y="510" fill="#FFA030" style="font-size:12px">4.84</text>
+<text id="U137" x="1260" y="540" fill="#FDFDFD" style="cursor: pointer; display: none;">U137</text>
+<text id="U251" x="1260" y="560" fill="#FDFDFD" style="cursor: pointer; display: none;">U251</text>
+
+<text x="1160" y="518" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1160" y="580" fill="#009EFF" style="font-size:10px">8,120 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=SR" target="_blank"><text x="1210" y="695" fill="#FDFDFD">SR</text></a>
+<a href="http://192.168.116.31/" target="_blank"><text x="1240" y="695" fill="#FDFDFD">♬</text></a>
+<rect id="SR_Level_px" x="1050" y="660" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=SR_02_OVERVIEW" target="_blank"><rect id="SR_Level_bar" x="1050" y="-710" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 29.3961px;" transform="scale(1,-1)"></rect></a>
+<text id="SR_Level_txt" x="1090" y="700" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">3.31</text>
+
+<rect id="SR_Pump1" x="1160" y="660" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump2" x="1160" y="675" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump3" x="1160" y="690" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump4" x="1160" y="705" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump5" x="1160" y="720" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M990 470 L990 670 L1050 670" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1040 670 L1040 640 L1180 640 L1180 660" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1020 670 L1020 755 L1055 755" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1180 660 L1180 725" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 665 L1210 665" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 715 L1210 715" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1178" y="670" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="SR_F_1000_txt" x="1215" y="670" fill="#009EFF" style="font-size:10px">6385</text></a>
+<a href="#"><text id="SR_F_1800_txt" x="1215" y="720" fill="#009EFF" style="font-size:10px">13797</text></a>
+
+<a href="#"><text id="SR_Qin_txt" x="1050" y="750" fill="#00FF3D">19577</text></a>
+<text id="SR_Inlet_txt" x="1050" y="770" fill="#FFA030" style="font-size:12px">4.88</text>
+<a href="#"><text id="SR_F_txt" x="1120" y="750" fill="#00CFFC">20151</text></a>
+<text id="SR_P_txt" x="1120" y="770" fill="#FFA030" style="font-size:12px">14.96</text>
+<text id="P125" x="1260" y="680" fill="#FDFDFD" style="cursor: pointer; display: none;">P125</text>
+<text id="P171" x="1260" y="700" fill="#FDFDFD" style="cursor: pointer; display: none;" stroke="#D576FF">P171</text>
+
+<text x="1110" y="658" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1110" y="720" fill="#009EFF" style="font-size:10px">14,081 Sqm</text>   
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=MB" target="_blank"><text x="1620" y="330" fill="#FDFDFD">MB</text></a>
+<a href="http://192.168.111.31/" target="_blank"><text x="1650" y="330" fill="#FDFDFD">♬</text></a>
+<rect id="MB_Level_px" x="1450" y="300" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?area=/&amp;cmd=MB_2_OVERVIEW" target="_blank"><rect id="MB_Level_bar" x="1450" y="-350" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 38.9437px;" transform="scale(1,-1)"></rect></a>
+<text id="MB_Level_txt" x="1490" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">5.53</text>
+
+<rect id="MB_Level_px" x="1555" y="300" width="50" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?area=/&amp;cmd=MB_2_OVERVIEW" target="_blank"><rect id="MB_Level_bar2" x="1555" y="-350" width="50" height="25" style="fill:#00D6FF; stroke:#FFFFFF; stroke-width:0" transform="scale(1,-1)"></rect></a>
+<text id="MB_Level2_txt" x="1575" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">LV</text>
+
+<rect id="MB_Pump1" x="1450" y="367" width="7" height="2" style="fill: rgb(67, 67, 67); stroke: gray; stroke-width: 1;"></rect>
+<rect id="MB_Pump2" x="1465" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump3" x="1480" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump4" x="1495" y="365" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump5" x="1510" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump6" x="1525" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump7" x="1540" y="367" width="7" height="2" style="fill: rgb(67, 67, 67); stroke: gray; stroke-width: 1;"></rect>
+
+<path d="M1270 220 L1390 220 L1390 310 L1450 310" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1420 310 L1420 380 L1450 380" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1430 310 L1430 275 L1445 275" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1450 380 L1550 380" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 380 L1460 400" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1490 380 L1490 420" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1540 380 L1540 410" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1475" y="378" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="1505" y="378" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="MB_F_Nimit_txt" x="1450" y="410" fill="#009EFF" style="font-size:10px">4879</text></a>
+<a href="#"><text id="MB_F_Ram_txt" x="1480" y="430" fill="#009EFF" style="font-size:10px">5325</text></a>
+<a href="#"><text id="MB_F_Suwin_txt" x="1530" y="420" fill="#009EFF" style="font-size:10px">6579</text></a>
+
+<a href="#"><text id="MB_Qin_txt" x="1440" y="270" fill="#00FF3D">18226</text></a>
+<text id="MB_Inlet_txt" x="1440" y="290" fill="#FFA030" style="font-size:12px">6.44</text>
+<a href="#"><text id="MB_F_txt" x="1520" y="270" fill="#00CFFC">16783</text></a>
+<text id="MB_P_txt" x="1520" y="290" fill="#FFA030" style="font-size:12px">14.12</text>
+<text id="UZ5304" x="1610" y="280" fill="#FDFDFD" style="cursor: pointer; display: none;">UZ5304</text>
+
+<text x="1510" y="298" fill="#009EFF" style="font-size:10px">Max 7.10</text>
+<text x="1510" y="360" fill="#009EFF" style="font-size:10px">7,745 Sqm</text>
+
+<text x="1590" y="298" fill="#009EFF" style="font-size:10px">Max 7.10</text>
+<text x="1570" y="360" fill="#009EFF" style="font-size:10px">4,216 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LK" target="_blank"><text x="1530" y="580" fill="#FDFDFD">LK</text></a>
+<a href="http://192.168.117.32/" target="_blank"><text x="1560" y="580" fill="#FDFDFD">♬</text></a>
+<rect id="LK_Level_px" x="1490" y="500" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LK_02_OVERVIEW" target="_blank"><rect id="LK_Level_bar" x="1490" y="-550" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.5631px;" transform="scale(1,-1)"></rect></a>
+<text id="LK_Level_txt" x="1530" y="540" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">4.68</text>
+
+<rect id="LK_Pump1" x="1475" y="500" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump2" x="1475" y="515" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump3" x="1475" y="530" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump4" x="1475" y="545" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M1390 310 L1390 450 L1500 450 L1500 500" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1460 450 L1460 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1500 475 L1525 475" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1460 500 L1460 550" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 525 L1430 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1430 500 L1430 550" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<a href="#"><text id="LK_F_Meen_txt" x="1410" y="490" fill="#009EFF" style="font-size:10px">2883</text></a>
+<a href="#"><text id="LK_F_Ladkra_txt" x="1410" y="560" fill="#009EFF" style="font-size:10px">8520</text></a>
+
+<a href="#"><text id="LK_Qin_txt" x="1520" y="470" fill="#00FF3D">13383</text></a>
+<text id="LK_Inlet_txt" x="1520" y="490" fill="#FFA030" style="font-size:12px">8.49</text>
+<a href="#"><text id="LK_F_txt" x="1600" y="470" fill="#00CFFC">11403</text></a>
+<text id="LK_P_txt" x="1600" y="490" fill="#FFA030" style="font-size:12px">7.21</text>
+<text id="U223" x="1620" y="530" fill="#FDFDFD" style="cursor: pointer; display: none;">U223</text>
+
+<text x="1550" y="498" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1550" y="560" fill="#009EFF" style="font-size:10px">9,000 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BP" target="_blank"><text x="1490" y="780" fill="#FDFDFD">BP</text></a>
+<a href="http://192.168.118.22/" target="_blank"><text x="1495" y="800" fill="#FDFDFD">♬</text></a>
+<rect id="BP_Level_px" x="1450" y="700" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=BP_02_OVERVIEW" target="_blank"><rect id="BP_Level_bar" x="1450" y="-750" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.1017px;" transform="scale(1,-1)"></rect></a>
+<text id="BP_Level_txt" x="1490" y="740" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;">4.85</text>
+
+<rect id="BP_Pump1" x="1450" y="680" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump2" x="1465" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump3" x="1480" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump4" x="1495" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump5" x="1510" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump6" x="1525" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M1390 450 L1390 740 L1450 740" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1420 740 L1420 675 L1450 675" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1440 740 L1440 780" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1450 675 L1535 675" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 675 L1460 620" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1505 675 L1505 630 L1515 620" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1530 675 L1530 650 L1510 650" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1510,650 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1500 650 L1460 650" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1490" y="672" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="1520" y="672" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#"><text id="BP_F_Kingkeaw1_txt" x="1420" y="660" fill="#009EFF" style="font-size:10px">6988</text></a>
+<a href="#"><text id="BP_F_Kingkeaw2_txt" x="1540" y="660" fill="#009EFF" style="font-size:10px">6999</text></a>
+<a href="#"><text id="BP_F_Epec_txt" x="1510" y="610" fill="#009EFF" style="font-size:10px">7513</text></a>
+
+<a href="#"><text id="BP_Qin_txt" x="1440" y="790" fill="#00FF3D">24620</text></a>
+<text id="BP_Inlet_txt" x="1440" y="810" fill="#FFA030" style="font-size:12px">8</text>
+<a href="#"><text id="BP_F_txt" x="1520" y="790" fill="#00CFFC">21462</text></a>
+<text id="BP_P_txt" x="1520" y="810" fill="#FFA030" style="font-size:12px">17.53</text>
+<text id="UZ1711" x="1580" y="710" fill="#FDFDFD" style="cursor: pointer; display: none;" stroke="red">UZ1711</text>
+<text id="P175" x="1580" y="730" fill="#FDFDFD" style="cursor: pointer; display: none;">P175</text>
+<text id="P177A" x="1580" y="750" fill="#FDFDFD" style="cursor: pointer; display: none;">P177A</text>
+
+<text x="1510" y="698" fill="#009EFF" style="font-size:10px">Max 5.90</text>
+<text x="1505" y="760" fill="#009EFF" style="font-size:10px">11,000 Sqm</text>
+
+<rect x="40" y="257" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="240" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="280" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="27" y="527" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="40" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="27" y="567" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="27" y="640" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="27" y="660" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="40" y="647" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="152" y="727" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="177" y="727" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="337" y="620" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="357" y="620" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="357" y="560" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="340" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="500" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="537" y="500" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="537" y="575" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="537" y="590" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="567" y="575" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="537" y="320" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="537" y="350" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="607" y="600" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="650" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="515" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="560" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="870" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="835" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1115" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1000" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1050" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1230" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1370" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1410" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1387" y="430" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1387" y="470" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1000" y="357" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1000" y="467" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="987" y="627" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="970" y="647" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1000" y="667" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> <rect x="1400" y="307" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1450" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1400" y="737" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;"></rect> 
+<circle r="4" cx="30" cy="590" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV48" x="40" y="590" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">ราชมนตรี</text>
+<text id="rcv48_txt" x="40" y="610" stroke="none" fill="#C8C8C8" font-size="10">0%</text>
+<text id="rcv48F_txt" x="65" y="610" stroke="none" fill="#C8C8C8" font-size="10">[null]</text>
+
+<circle r="4" cx="540" cy="245" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV27" x="490" y="245" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">ประชานุกูล</text>
+<text id="rcv27_txt" x="550" y="245" stroke="none" fill="#C8C8C8" font-size="10">44%</text>
+<text id="rcv27F_txt" x="575" y="245" stroke="none" fill="#C8C8C8" font-size="10">[3206]</text>
+
+<circle r="4" cx="540" cy="265" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV66" x="490" y="265" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">เฉลิมพันธ์</text>
+<text id="rcv66_txt" x="550" y="265" stroke="none" fill="#C8C8C8" font-size="10">15%</text>
+<text id="rcv66F_txt" x="575" y="265" stroke="none" fill="#C8C8C8" font-size="10">[828.00]</text>
+
+<circle r="4" cx="540" cy="285" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle>DU
+<text id="RCV64" x="490" y="285" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">ประดิพัทธ์</text>
+<text id="rcv64_txt" x="550" y="285" stroke="none" fill="#C8C8C8" font-size="10">15%</text>
+<text id="rcv64F_txt" x="575" y="285" stroke="none" fill="#C8C8C8" font-size="10">[null]</text>
+
+<circle r="4" cx="540" cy="335" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><path d="M544 335 L565 335 L565 416" stroke-dasharray="5,5" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="RCV28" x="495" y="325" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">สามเสน</text>
+<text id="rcv28_txt" x="550" y="325" stroke="none" fill="#C8C8C8" font-size="10">14%</text>
+<text id="rcv28F_txt" x="575" y="325" stroke="none" fill="#C8C8C8" font-size="10">[1352]</text>
+
+<circle r="4" cx="540" cy="610" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV60" x="550" y="610" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">สี่พระยา</text>
+<text id="rcv60_txt" x="550" y="630" stroke="none" fill="#C8C8C8" font-size="10">10%</text>
+<text id="rcv60F_txt" x="570" y="630" stroke="none" fill="#C8C8C8" font-size="10">[1000]</text>
+
+<circle r="4" cx="660" cy="650" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV13" x="660" y="670" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">ลุมพินี VC</text>
+
+<circle r="4" cx="860" cy="650" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV65" x="860" y="670" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">คลองเตย_VC</text>
+
+<circle r="4" cx="1290" cy="220" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV50" x="1280" y="210" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">มัยลาภ</text>
+<text id="rcv50_txt" x="1290" y="240" stroke="none" fill="#C8C8C8" font-size="10">29%</text>
+<text id="rcv50F_txt" x="1290" y="260" stroke="none" fill="#C8C8C8" font-size="10">[2225]</text>
+
+<circle r="4" cx="1340" cy="220" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV25" x="1330" y="210" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">นวมินทร์</text>
+<text id="rcv25_txt" x="1340" y="240" stroke="none" fill="#C8C8C8" font-size="10">40%</text>
+<text id="rcv25F_txt" x="1340" y="260" stroke="none" fill="#C8C8C8" font-size="10">[4658]</text>
+
+<circle r="4" cx="1290" cy="450" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV51" x="1270" y="440" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">พระราม9</text>
+<text id="rcv51_txt" x="1270" y="470" stroke="none" fill="#C8C8C8" font-size="10">0%</text>
+<text id="rcv51F_txt" x="1295" y="470" stroke="none" fill="#C8C8C8" font-size="10">[0]</text>
+
+<circle r="4" cx="450" cy="550" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV38" x="480" y="570" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;">ลอดแม่น้ำ</text>
+<text id="rcv38_txt" x="480" y="590" stroke="none" fill="#C8C8C8" font-size="10">5%</text>
+<text id="cross_river_txt" x="420" y="540" stroke="none" fill="#00FF3D" font-size="12">◀︎◀︎◀︎ -2194</text>
+
+
+<text id="tubchang_txt" x="1330" y="440" stroke="none" fill="#00FF3D" font-size="12">-4329 ▶︎▶︎</text>
+<text id="U128" x="490" y="630" fill="#FDFDFD" style="cursor: pointer; display: none;">U128</text>
+<text id="UZ1207" x="1300" y="180" fill="#FDFDFD" style="cursor: pointer; display: none;">UZ1207</text>
+<text id="U233" x="740" y="200" fill="#FDFDFD" style="cursor: pointer; display: none;">U233</text>
+<text id="UZ1609" x="1000" y="200" fill="#FDFDFD" style="cursor: pointer; display: block;" stroke="red">UZ1609</text>
+<text id="UZ5411" x="140" y="130" fill="#FDFDFD" style="cursor: pointer; display: none;">UZ5411</text>
+<text id="U022" x="140" y="150" fill="#FDFDFD" style="cursor: pointer; display: none;">U022</text>
+
+
+
+
+<text id="wctdctr" x="1400" y="840" stroke="none" fill="#DDDDDD" font-size="12">กองควบคุมระบบส่งและสูบจ่ายน้ำ โทร. 02-2782860-1</text>
+
+</svg>

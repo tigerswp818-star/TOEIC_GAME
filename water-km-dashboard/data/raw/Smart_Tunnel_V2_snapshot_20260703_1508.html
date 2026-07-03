@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)http://172.16.193.162/smartmap/tunnel.php -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" href="./Smart Tunnel V.2 - เทพอุโมงค์_files/css">
+<link rel="stylesheet" href="./Smart Tunnel V.2 - เทพอุโมงค์_files/css(1)">
+    <style>
+
+#wctdctr {
+  font-family: "Mitr", sans-serif;
+}
+body {
+  font-family: "OpenSans", sans-serif;
+}
+#RCV48, #RCV28, #RCV27, #RCV66, #RCV64, #RCV60, #RCV38, #RCV51, #RCV25, #RCV50, #RCV29, #RCV13, #RCV65 {
+  font-family: "Mitr", sans-serif;
+}
+
+    </style>
+<script src="./Smart Tunnel V.2 - เทพอุโมงค์_files/jquery-3.7.1.min.js.ดาวน์โหลด"></script>
+<script src="./Smart Tunnel V.2 - เทพอุโมงค์_files/mqtt.min.js.ดาวน์โหลด"></script>
+<script>
+
+        const AckTime = 15;
+        var openss = 0;
+        var openregress = 0;
+        var rtu_r = [];
+        var rtu_o = "";
+
+		////////// Global Var for Pump Bypass //////////
+		var pk_bp = 0;
+		var tp_bp = 0;
+		var rb_bp = 0;
+		var lp_bp = 0;
+		var la_bp = 0;
+		var sr_bp = 0;
+		var kt_bp = 0;
+		var mb_bp = 0;
+		var lk_bp = 0;
+		var bp_bp = 0;
+
+		//////////////////////////////////////////////////
+
+
+		window.onload = function () {
+            MHTR_Level_max = 5.4;
+            MHTR_Inlet_max = 28;
+            PK_Level_max = 6.7;
+            TP_Level_max = 5.63;
+            TB_Level_max = 4.8;
+            RB_Level_max = 5.6;
+            LP_Level_max = 5.70;
+            LA_Level_max = 5.63;
+            KT_Level_max = 5.63;
+            SR_Level_max = 5.63;
+            MB_Level_max = 7.10;
+            LK_Level_max = 5.63;
+            BP_Level_max = 5.90;
+            TB_Lev_max = 4.8;
+            BK_TR1_L1_max = 5.0;
+            BK_TR1_PS_max = 38;
+            BK_TR2_PS_max = 40;
+            BK_TR3_PS_max = 38;
+            BK_TR1_Pump = {'pre':'BK_TR1','numb':5,'out':'"PS"','in':"'P'+n"};
+            BK_TR2_Pump = {'pre':'BK_TR2','numb':6,'out':'"PS"','in':"'P'+n"};
+            BK_TR3_Pump = {'pre':'BK_TR3','numb':6,'out':'"PS"','in':"'P'+n"};
+
+			level_tag = ['MHTR_Level', 'PK_Level', 'MHTR_Inlet', 'TP_Level', 'RB_Level','LP_Level','LA_Level','KT_Level','SR_Level','MB_Level','LK_Level','BP_Level'];
+			tb_level_tag = ['TB_Lev'];
+			bk_tag = ['BK_TR1_L1', 'BK_TR1_PS', 'BK_TR2_PS', 'BK_TR3_PS','BK_TR1_FL','BK_TR2_FL','BK_TR3_FL', 'BK_03_CH','BK_03_NG','BK_03_ME','BK_04_VI','BK_04_PY'
+			];
+            bk_level_tag = ['BK_TR1_L1','BK_TR1_PS', 'BK_TR2_PS', 'BK_TR3_PS'];
+			pump_tag = ['PK_Pump1', 'PK_Pump2', 'PK_Pump3', 'PK_Pump4', 'PK_Pump5'
+				, 'TP_Pump1', 'TP_Pump2', 'TP_Pump3', 'TP_Pump4', 'TP_Pump5'
+				, 'RB_Pump1', 'RB_Pump2', 'RB_Pump3', 'RB_Pump4', 'RB_Pump5'
+                , 'LP_Pump1','LP_Pump2','LP_Pump3','LP_Pump4'
+                , 'LA_Pump1','LA_Pump2','LA_Pump3','LA_Pump4'
+                , 'KT_Pump1','KT_Pump2','KT_Pump3','KT_Pump4', 'KT_Pump5'
+                , 'SR_Pump1','SR_Pump2','SR_Pump3','SR_Pump4','SR_Pump5'
+                , 'MB_Pump1','MB_Pump2','MB_Pump3','MB_Pump4','MB_Pump5','MB_Pump6','MB_Pump7'
+                , 'LK_Pump1','LK_Pump2','LK_Pump3','LK_Pump4'
+                , 'BP_Pump1','BP_Pump2','BP_Pump3','BP_Pump4','BP_Pump5','BP_Pump6'
+                , 'MH_Pump1','MH_Pump2','MH_Pump3','MH_Pump4'
+			];
+            bk_pump_tag = ['BK_TR1_Pump1', 'BK_TR1_Pump2', 'BK_TR1_Pump3', 'BK_TR1_Pump4', 'BK_TR1_Pump5',
+                            ,'BK_TR2_Pump1', 'BK_TR2_Pump2', 'BK_TR2_Pump3', 'BK_TR2_Pump4','BK_TR2_Pump5','BK_TR2_Pump6'
+                            ,'BK_TR3_Pump1', 'BK_TR3_Pump2', 'BK_TR3_Pump3', 'BK_TR3_Pump4','BK_TR3_Pump5','BK_TR3_Pump6'
+                            ,'BK_03_Pump1','BK_03_Pump2','BK_03_Pump3','BK_03_Pump4','BK_03_Pump5'
+                            ,'BK_04_Pump1','BK_04_Pump2','BK_04_Pump3','BK_04_Pump4'
+            ];
+			text_tag = ['MHTR_Inlet', 'MHTR_Level','MHTR_TR','BK_TR1_F','BK_TR2_F','BK_TR3_F'
+				, 'MH_F','MH_F_A','MH_F_B','MH_F_C','MH_P'
+				, 'PK_F', 'PK_Qin', 'PK_P', 'PK_Inlet', 'PK_Level', 'PK_ZM01', 'PK_ZM02'
+				, 'TP_F', 'TP_Qin', 'TP_P', 'TP_Inlet', 'TP_Level', 'TP_F_Wong', 'TP_F_Petka', 'TP_F_Thapra', 'TP_P_Wong', 'TP_P_Petka', 'TP_P_Thapra'
+				, 'RB_F', 'RB_Qin', 'RB_P', 'RB_Inlet', 'RB_Level', 'RB_F_Ram2', 'RB_F_Yairom', 'RB_P_Ram2', 'RB_P_Yairom'
+                , 'LP_F','LP_Qin','LP_P','LP_Inlet','LP_Level','LP_F_Sarasin', 'LP_F_Sathon','LP_P_Sarasin', 'LP_P_Sathon'
+                , 'LA_F','LA_Qin','LA_P','LA_Inlet','LA_Level','LA_F_1200', 'LA_F_1500','LA_P_1200', 'LA_P_1500'
+                , 'KT_F','KT_Qin','KT_P','KT_Inlet','KT_Level','KT_P_Ram4_1000', 'KT_P_Ram4_1500','KT_P_Sukhum','KT_F_Praka','KT_F_Ram4_1000', 'KT_F_Ram4_1500','KT_F_Sukhum'
+                , 'SR_F','SR_Qin','SR_P','SR_Inlet','SR_Level','SR_F_1000','SR_F_1800','SR_P_1000','SR_P_1800'
+                , 'MB_F','MB_Qin','MB_P','MB_Inlet','MB_Level','MB_F_Nimit','MB_F_Ram','MB_F_Suwin','MB_P_Nimit','MB_P_Ram','MB_P_Suwin'
+                , 'LK_F','LK_Qin','LK_P','LK_Inlet','LK_Level','LK_F_Ladkra','LK_F_Meen'
+                , 'BP_F','BP_Qin','BP_P','BP_Inlet','BP_Level','BP_F_Epec','BP_F_Kingkeaw1','BP_F_Kingkeaw2','BP_P_Epec','BP_P_Kingkeaw1','BP_P_Kingkeaw2'
+			];    
+			//console.log(text_tag);
+			rcv_tag = ['rcv13','rcv25','rcv27','rcv28','rcv29','rcv38','rcv48','rcv50','rcv51','rcv60','rcv64','rcv66'];
+            rcv_tag_f = ['rcv13F','rcv25F','rcv27F','rcv28F','rcv29F','rcv38F','rcv48F','rcv50F','rcv51F','rcv60F','rcv64F','rcv66F',];
+            rcv_tag_py = ['rcv29F','rcv29I','rcv29P'];
+			ss_tag = ['DU1_F','DU1_P','K_F','K_P','O1_F','O1_P','O2_F','O2_P','SS4_LEV','S_F','S_P','T_F','T_P','U_F','U_P','X_F','X_P'];
+			tb_tag = ['TB_Qin', 'TB_F', 'TB_P', 'TB_Lev'];
+            cross_tag = ['MHTR_TR','PK_Qin','TP_Qin','RB_Qin']
+            tubchang_tag = ['BK_TR3_FL','MB_Qin','LK_Qin','BP_Qin']
+
+
+			updateData();
+			updateData1min();
+			setInterval(updateData1min, 10000);
+			setInterval(updateData, 5000);
+			setInterval(time_refresh, 60000);
+            time_refresh();
+			setInterval(time_refresh, 60000);
+            get_rtu_alert();
+            setInterval(get_rtu_alert,30000);
+		};
+		//--------------------------MQTT DATA-------------------------
+        const options = {
+            clientId: 'test' + Date.now(),
+            username: 'wctdctr',
+            password: 'P@ssw0rd',
+            keepalive: 30,
+            protocolId: 'MQTT',
+            protocolVersion: 4,
+            clean: true,
+            reconnectPeriod: 1000,
+            connectTimeout: 30 * 1000,
+            
+        };
+        const ack = {
+            U022 : 0,
+            U018 : 0
+
+
+        };
+        const client = mqtt.connect('ws://172.16.193.165:9001', options);
+        //const userMessageInput = document.getElementById('userMessage');
+        //const statusElement = document.getElementById('status');
+        //const topicInput = document.getElementById('TopicInput');
+
+
+        client.on('connect', () => {
+            //statusElement.textContent = 'Connected to the MQTT broker';
+            client.subscribe("ACK/#",{ qos: 0 }, (err) => {
+                if (!err) {
+                    console.log("Subscribed to topic: presence");
+                }
+            });
+        });
+
+        client.on('error', (err) => {
+            //statusElement.textContent = `Error: ${err.message}`;
+            console.log("Err connect MQTT");
+        });
+        client.on('message', (topic, message) => {
+
+top = topic.split('/')[1].toString()
+//ack[top] = message;
+ack[topic.split('/')[1]] = +message;
+// if (topic === 'ACK\U018') {
+
+//} else {
+// ... (same message handling code as before) ...
+//}
+});
+        
+        //--------------------------------------------------------------------------------------
+        
+        
+        
+        
+        
+        //data = null;
+
+
+
+		async function updateData() {
+                
+            var dd = document.getElementById("dd1").value;
+            var tt = document.getElementById("tt1").value;
+            //console.log(dd);
+            if(dd != "" && tt != ""){ //history
+                const response = await fetch("./data_station_hist.php?dd1="+dd+"&tt1="+tt);
+			    data = await response.json();
+			    const responseBK = await fetch("./data_bk_hist.php?dd1="+dd+"&tt1="+tt);
+			    dataBK = await responseBK.json();
+			    const response_rcv = await fetch("./data_rcv_hist.php?dd1="+dd+"&tt1="+tt);
+			    data_rcv = await response_rcv.json();
+                data['MHTR_TR'] = data['MHTR_TR']*10;
+            } else { //realtime
+                const response = await fetch("./data_station_real.php");
+			    data = await response.json();
+			    const responseBK = await fetch("./data_bk_real.php");
+			    dataBK = await responseBK.json();
+			    const response_rcv = await fetch("./data_rcv_real.php");
+			    data_rcv = await response_rcv.json();
+            }
+
+
+			//console.log(data_rcv);
+			//data['TP_F'] = 1*data['TP_F_Petka'] + 1*data['TP_F_Wong'] + 1*data['TP_F_Thapra'];
+			//data['RB_F'] = 1*data['RB_F_Ram2'] + 1*data['RB_F_Yairom'];
+		pk_bp = 0;
+		tp_bp = 0;
+		rb_bp = 0;
+		lp_bp = 0;
+		la_bp = 0;
+		sr_bp = 0;
+		kt_bp = 0;
+		mb_bp = 0;
+		lk_bp = 0;
+		bp_bp = 0;			
+			
+			
+			data['PK_Pump1'] = (data['PK_DV1'] - data['PK_SV1'] > 5) ? 'red' : '#434343';
+			data['PK_Pump2'] = (data['PK_DV2'] - data['PK_SV2'] > 5) ? 'red' : '#434343';
+			data['PK_Pump3'] = (data['PK_DV3'] - data['PK_SV3'] > 5) ? 'red' : '#434343';
+			data['PK_Pump4'] = (data['PK_DV4'] - data['PK_SV4'] > 5) ? 'red' : '#434343';
+			data['PK_Pump5'] = (data['PK_DV5'] - data['PK_SV5'] > 5) ? 'red' : '#434343';
+			
+			pk_bp += (data['PK_DV1'] - data['PK_SV1'] > 5) ? 1 : 0;
+			pk_bp += (data['PK_DV2'] - data['PK_SV2'] > 5) ? 1 : 0;
+			pk_bp += (data['PK_DV3'] - data['PK_SV3'] > 5) ? 1 : 0;
+			pk_bp += (data['PK_DV4'] - data['PK_SV4'] > 5) ? 1 : 0;
+			pk_bp += (data['PK_DV5'] - data['PK_SV5'] > 5) ? 1 : 0;			
+			
+			data['TP_Pump1'] = (data['TP_DV1'] - data['TP_SV1'] > 5) ? 'red' : '#434343';
+			data['TP_Pump2'] = (data['TP_DV2'] - data['TP_SV2'] > 5) ? 'red' : '#434343';
+			data['TP_Pump3'] = (data['TP_DV3'] - data['TP_SV3'] > 5) ? 'red' : '#434343';
+			data['TP_Pump4'] = (data['TP_DV4'] - data['TP_SV4'] > 5) ? 'red' : '#434343';
+			data['TP_Pump5'] = (data['TP_DV5'] - data['TP_SV5'] > 5) ? 'red' : '#434343';
+			
+			tp_bp += (data['TP_DV1'] - data['TP_SV1'] > 5) ? 1 : 0;		
+			tp_bp += (data['TP_DV2'] - data['TP_SV2'] > 5) ? 1 : 0;		
+			tp_bp += (data['TP_DV3'] - data['TP_SV3'] > 5) ? 1 : 0;		
+			tp_bp += (data['TP_DV4'] - data['TP_SV4'] > 5) ? 1 : 0;		
+			tp_bp += (data['TP_DV5'] - data['TP_SV5'] > 5) ? 1 : 0;				
+			
+			data['RB_Pump1'] = (data['RB_DV1'] - data['RB_SV1'] > 5) ? 'red' : '#434343';
+			data['RB_Pump2'] = (data['RB_DV2'] - data['RB_SV2'] > 5) ? 'red' : '#434343';
+			data['RB_Pump3'] = (data['RB_DV3'] - data['RB_SV3'] > 5) ? 'red' : '#434343';
+			data['RB_Pump4'] = (data['RB_DV4'] - data['RB_SV4'] > 5) ? 'red' : '#434343';
+			data['RB_Pump5'] = (data['RB_DV5'] - data['RB_SV5'] > 5) ? 'red' : '#434343';
+
+			rb_bp += (data['RB_DV1'] - data['RB_SV1'] > 5) ? 1 : 0;
+			rb_bp += (data['RB_DV2'] - data['RB_SV2'] > 5) ? 1 : 0;
+			rb_bp += (data['RB_DV3'] - data['RB_SV3'] > 5) ? 1 : 0;
+			rb_bp += (data['RB_DV4'] - data['RB_SV4'] > 5) ? 1 : 0;
+			rb_bp += (data['RB_DV5'] - data['RB_SV5'] > 5) ? 1 : 0;
+
+			data['LP_Pump1'] = (data['LP_DV1'] - data['LP_SV1'] > 5) ? 'red' : '#434343';
+			data['LP_Pump2'] = (data['LP_DV2'] - data['LP_SV2'] > 5) ? 'red' : '#434343';
+			data['LP_Pump3'] = (data['LP_DV3'] - data['LP_SV3'] > 5) ? 'red' : '#434343';
+			data['LP_Pump4'] = (data['LP_DV4'] - data['LP_SV4'] > 5) ? 'red' : '#434343';
+
+			lp_bp += (data['LP_DV1'] - data['LP_SV1'] > 5) ? 1 : 0;
+			lp_bp += (data['LP_DV2'] - data['LP_SV2'] > 5) ? 1 : 0;
+			lp_bp += (data['LP_DV3'] - data['LP_SV3'] > 5) ? 1 : 0;
+			lp_bp += (data['LP_DV4'] - data['LP_SV4'] > 5) ? 1 : 0;
+			
+            data['LA_Pump1'] = (data['LA_DV1'] - data['LA_SV1'] > 5) ? 'red' : '#434343';
+			data['LA_Pump2'] = (data['LA_DV2'] - data['LA_SV2'] > 5) ? 'red' : '#434343';
+			data['LA_Pump3'] = (data['LA_DV3'] - data['LA_SV3'] > 5) ? 'red' : '#434343';
+			data['LA_Pump4'] = (data['LA_DV4'] - data['LA_SV4'] > 5) ? 'red' : '#434343';
+
+            la_bp += (data['LA_DV1'] - data['LA_SV1'] > 5) ? 1 : 0;
+			la_bp += (data['LA_DV2'] - data['LA_SV2'] > 5) ? 1 : 0;
+			la_bp += (data['LA_DV3'] - data['LA_SV3'] > 5) ? 1 : 0;
+			la_bp += (data['LA_DV4'] - data['LA_SV4'] > 5) ? 1 : 0;			
+			
+            data['KT_Pump1'] = (data['KT_DV1'] - data['KT_SV1'] > 5) ? 'red' : '#434343';
+			data['KT_Pump2'] = (data['KT_DV2'] - data['KT_SV2'] > 5) ? 'red' : '#434343';
+			data['KT_Pump3'] = (data['KT_DV3'] - data['KT_SV3'] > 5) ? 'red' : '#434343';
+			data['KT_Pump4'] = (data['KT_DV4'] - data['KT_SV4'] > 5) ? 'red' : '#434343';
+			data['KT_Pump5'] = (data['KT_DV5'] - data['KT_SV5'] > 5) ? 'red' : '#434343';	
+			
+            kt_bp += (data['KT_DV1'] - data['KT_SV1'] > 5) ? 1 : 0;
+			kt_bp += (data['KT_DV2'] - data['KT_SV2'] > 5) ? 1 : 0;
+			kt_bp += (data['KT_DV3'] - data['KT_SV3'] > 5) ? 1 : 0;
+			kt_bp += (data['KT_DV4'] - data['KT_SV4'] > 5) ? 1 : 0;		
+			kt_bp += (data['KT_DV5'] - data['KT_SV5'] > 5) ? 1 : 0;			
+
+            data['SR_Pump1'] = (data['SR_DV1'] - data['SR_SV1'] > 5) ? 'red' : '#434343';
+			data['SR_Pump2'] = (data['SR_DV2'] - data['SR_SV2'] > 5) ? 'red' : '#434343';
+			data['SR_Pump3'] = (data['SR_DV3'] - data['SR_SV3'] > 5) ? 'red' : '#434343';
+			data['SR_Pump4'] = (data['SR_DV4'] - data['SR_SV4'] > 5) ? 'red' : '#434343';
+			data['SR_Pump5'] = (data['SR_DV5'] - data['SR_SV5'] > 5) ? 'red' : '#434343';
+
+            sr_bp += (data['SR_DV1'] - data['SR_SV1'] > 5) ? 1 : 0;	
+			sr_bp += (data['SR_DV2'] - data['SR_SV2'] > 5) ? 1 : 0;	
+			sr_bp += (data['SR_DV3'] - data['SR_SV3'] > 5) ? 1 : 0;	
+			sr_bp += (data['SR_DV4'] - data['SR_SV4'] > 5) ? 1 : 0;	
+			sr_bp += (data['SR_DV5'] - data['SR_SV5'] > 5) ? 1 : 0;	
+
+            data['MB_Pump1'] = (data['MB_DV1'] - data['MB_SV1'] > 5) ? 'red' : '#434343';
+			data['MB_Pump2'] = (data['MB_DV2'] - data['MB_SV2'] > 5) ? 'red' : '#434343';
+			data['MB_Pump3'] = (data['MB_DV3'] - data['MB_SV3'] > 5) ? 'red' : '#434343';
+			data['MB_Pump4'] = (data['MB_DV4'] - data['MB_SV4'] > 5) ? 'red' : '#434343';
+			data['MB_Pump5'] = (data['MB_DV5'] - data['MB_SV5'] > 5) ? 'red' : '#434343';
+			data['MB_Pump6'] = (data['MB_DV6'] - data['MB_SV6'] > 5) ? 'red' : '#434343';
+			data['MB_Pump7'] = (data['MB_DV7'] - data['MB_SV7'] > 5) ? 'red' : '#434343';
+
+            mb_bp += (data['MB_DV1'] - data['MB_SV1'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV2'] - data['MB_SV2'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV3'] - data['MB_SV3'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV4'] - data['MB_SV4'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV5'] - data['MB_SV5'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV6'] - data['MB_SV6'] > 5) ? 1 : 0;	
+			mb_bp += (data['MB_DV7'] - data['MB_SV7'] > 5) ? 1 : 0;	
+
+            data['LK_Pump1'] = (data['LK_DV1'] - data['LK_SV1'] > 5) ? 'red' : '#434343';
+			data['LK_Pump2'] = (data['LK_DV2'] - data['LK_SV2'] > 5) ? 'red' : '#434343';
+			data['LK_Pump3'] = (data['LK_DV3'] - data['LK_SV3'] > 5) ? 'red' : '#434343';
+			data['LK_Pump4'] = (data['LK_DV4'] - data['LK_SV4'] > 5) ? 'red' : '#434343';
+            
+            lk_bp += (data['LK_DV1'] - data['LK_SV1'] > 5) ? 1 : 0;	
+			lk_bp += (data['LK_DV2'] - data['LK_SV2'] > 5) ? 1 : 0;	
+			lk_bp += (data['LK_DV3'] - data['LK_SV3'] > 5) ? 1 : 0;	
+			lk_bp += (data['LK_DV4'] - data['LK_SV4'] > 5) ? 1 : 0;			
+			
+			data['BP_Pump1'] = (data['BP_DV1'] - data['BP_SV1'] > 5) ? 'red' : '#434343';
+			data['BP_Pump2'] = (data['BP_DV2'] - data['BP_SV2'] > 5) ? 'red' : '#434343';
+			data['BP_Pump3'] = (data['BP_DV3'] - data['BP_SV3'] > 5) ? 'red' : '#434343';
+			data['BP_Pump4'] = (data['BP_DV4'] - data['BP_SV4'] > 5) ? 'red' : '#434343';
+			data['BP_Pump5'] = (data['BP_DV5'] - data['BP_SV5'] > 5) ? 'red' : '#434343';
+			data['BP_Pump6'] = (data['BP_DV6'] - data['BP_SV6'] > 5) ? 'red' : '#434343';
+
+			bp_bp += (data['BP_DV1'] - data['BP_SV1'] > 5) ? 1 : 0;	
+			bp_bp += (data['BP_DV2'] - data['BP_SV2'] > 5) ? 1 : 0;	
+			bp_bp += (data['BP_DV3'] - data['BP_SV3'] > 5) ? 1 : 0;	
+			bp_bp += (data['BP_DV4'] - data['BP_SV4'] > 5) ? 1 : 0;	
+			bp_bp += (data['BP_DV5'] - data['BP_SV5'] > 5) ? 1 : 0;	
+			bp_bp += (data['BP_DV6'] - data['BP_SV6'] > 5) ? 1 : 0;	
+
+			data['MH_Pump1'] = (data['7PT02A'] - data['7PT01A'] > 2) ? 'red' : '#434343';
+			data['MH_Pump2'] = (data['7PT02B'] - data['7PT01B'] > 2) ? 'red' : '#434343';
+			data['MH_Pump3'] = (data['7PT02C'] - data['7PT01C'] > 2) ? 'red' : '#434343';
+			data['MH_Pump4'] = (data['7PT02D'] - data['7PT01D'] > 2) ? 'red' : '#434343';
+
+            data['TP_P'] = ((parseFloat(data['TP_P_Wong']) + parseFloat(data['TP_P_Petka']) + parseFloat(data['TP_P_Thapra']))/3).toFixed(2);
+            data['KT_P'] = ((parseFloat(data['KT_P_Ram4_1000']) + parseFloat(data['KT_P_Ram4_1500']) + parseFloat(data['KT_P_Sukhum']))/3).toFixed(2);
+            data['MB_P'] = ((parseFloat(data['MB_P_Nimit']) + parseFloat(data['MB_P_Ram']) + parseFloat(data['MB_P_Suwin']))/3).toFixed(2);
+            data['BP_P'] = ((parseFloat(data['BP_P_Epec']) + parseFloat(data['BP_P_Kingkeaw1']) + parseFloat(data['BP_P_Kingkeaw2']))/3).toFixed(2);
+            data['RB_P'] = ((parseFloat(data['RB_P_Ram2']) + parseFloat(data['RB_P_Yairom']))/2).toFixed(2);
+            data['LP_P'] = ((parseFloat(data['LP_P_Sarasin']) + parseFloat(data['LP_P_Sathon']))/2).toFixed(2);
+            data['LA_P'] = ((parseFloat(data['LA_P_1200']) + parseFloat(data['LA_P_1500']))/2).toFixed(2);
+            data['SR_P'] = ((parseFloat(data['SR_P_1000']) + parseFloat(data['SR_P_1800']))/2).toFixed(2);
+  
+            //console.log(data['TP_P']);
+
+            dataBK['BK_TR1_Pump1'] = (dataBK['BK_TR1_PS'] - dataBK['BK_TR1_P1'] < 5) ? 'red' : '#434343';
+            dataBK['BK_TR1_Pump2'] = (dataBK['BK_TR1_PS'] - dataBK['BK_TR1_P2'] < 5) ? 'red' : '#434343';
+            dataBK['BK_TR1_Pump3'] = (dataBK['BK_TR1_PS'] - dataBK['BK_TR1_P3'] < 5) ? 'red' : '#434343';
+            dataBK['BK_TR1_Pump4'] = (dataBK['BK_TR1_PS'] - dataBK['BK_TR1_P4'] < 5) ? 'red' : '#434343';
+            dataBK['BK_TR1_Pump5'] = (dataBK['BK_TR1_PS'] - dataBK['BK_TR1_P5'] < 5) ? 'red' : '#434343';
+            for(i=1;i<=6;i++){
+                tmpC = (dataBK['BK_TR2_PS']/dataBK['BK_TR2_P'+i] < 1.5) ? 'red' : '#434343';
+                dataBK['BK_TR2_Pump'+i] =  tmpC;
+                tmpC = (dataBK['BK_TR3_PS']/dataBK['BK_TR3_P'+i] < 1.5) ? 'red' : '#434343';
+                dataBK['BK_TR3_Pump'+i] =  tmpC;
+            }
+
+            dataBK['BK_03_Pump1'] = (dataBK['BK_03_PS'] - dataBK['BK_03_P1'] < 5) ? 'red' : '#434343';
+            dataBK['BK_03_Pump2'] = (dataBK['BK_03_PS'] - dataBK['BK_03_P2'] < 5) ? 'red' : '#434343';
+            dataBK['BK_03_Pump3'] = (dataBK['BK_03_PS'] - dataBK['BK_03_P3'] < 5) ? 'red' : '#434343';
+            dataBK['BK_03_Pump4'] = (dataBK['BK_03_PS'] - dataBK['BK_03_P4'] < 5) ? 'red' : '#434343';
+            dataBK['BK_03_Pump5'] = (dataBK['BK_03_PS'] - dataBK['BK_03_P5'] < 5) ? 'red' : '#434343';
+
+            dataBK['BK_04_Pump1'] = (dataBK['BK_04_PS'] - dataBK['BK_04_P1'] < 5) ? 'red' : '#434343';
+            dataBK['BK_04_Pump2'] = (dataBK['BK_04_PS'] - dataBK['BK_04_P2'] < 5) ? 'red' : '#434343';
+            dataBK['BK_04_Pump3'] = (dataBK['BK_04_PS'] - dataBK['BK_04_P3'] < 5) ? 'red' : '#434343';
+            dataBK['BK_04_Pump4'] = (dataBK['BK_04_PS'] - dataBK['BK_04_P4'] < 5) ? 'red' : '#434343';
+
+            
+
+
+/*
+            data_rcv['rcv13'] = data_rcv['rcv13F']; 
+            data_rcv['rcv25'] = data_rcv['rcv25F']; 
+            data_rcv['rcv27'] = data_rcv['rcv27F']; 
+            data_rcv['rcv28'] = data_rcv['rcv28F']; 
+            data_rcv['rcv29'] = data_rcv['rcv29F']; 
+            data_rcv['rcv48'] = data_rcv['rcv48F']; 
+            data_rcv['rcv50'] = data_rcv['rcv50F']; 
+            data_rcv['rcv51'] = data_rcv['rcv51F']; 
+            data_rcv['rcv60'] = data_rcv['rcv60F']; 
+            data_rcv['rcv64'] = data_rcv['rcv64F']; 
+            data_rcv['rcv66'] = data_rcv['rcv66F']; 
+*/
+
+			updateTxt(data, text_tag);
+			updateColor(data, pump_tag);
+			updateTank(data, level_tag);
+            updateColor(dataBK,bk_pump_tag);
+            updateTank(dataBK,bk_level_tag);
+            updateTxt(dataBK,bk_tag);
+            updateTxt_rcv(data_rcv,rcv_tag);
+            updateTxt_rcv_f(data_rcv,rcv_tag_f);
+            updateTxt_rcv_py(data_rcv,rcv_tag_py);
+            cross_river(data,cross_tag);
+            tubchang(dataBK,data,tubchang_tag);
+
+
+		};
+		async function updateData1min() {
+
+            var dd = document.getElementById("dd1").value;
+            var tt = document.getElementById("tt1").value;
+            if(dd != "" && tt != ""){   //history
+                const response_rcv = await fetch("./data_rcv_hist.php?dd1="+dd+"&tt1="+tt);
+			    data_rcv = await response_rcv.json();
+			    const response_ss = await fetch("./data_ss_hist.php?dd1="+dd+"&tt1="+tt);
+			    data_ss = await response_ss.json();
+			    const response_tb = await fetch("./data_tb_hist.php?dd1="+dd+"&tt1="+tt);
+			    data_tb = await response_tb.json();
+			    data_tb['TB_Qin'] = data_tb['TB_QinA'] + data_tb['TB_QinB'];
+            } else {    //realtime
+                const response_rcv = await fetch("./data_rcv_real.php");
+			    data_rcv = await response_rcv.json();
+			    const response_ss = await fetch("./data_ss_real.php");
+			    data_ss = await response_ss.json();
+			    const response_tb = await fetch("./data_tb_real.php");
+			    data_tb = await response_tb.json();
+			    data_tb['TB_Qin'] = data_tb['TB_QinA'] + data_tb['TB_QinB'];
+            }
+
+
+
+
+            updateTxt(data_ss, ss_tag);
+			updateTxt(data_tb, tb_tag);
+			updateTank(data_tb, tb_level_tag);
+
+			//console.log(data_tb);
+			//data['TP_F'] = 1*data['TP_F_Petka'] + 1*data['TP_F_Wong'] + 1*data['TP_F_Thapra'];
+			//data['RB_F'] = 1*data['RB_F_Ram2'] + 1*data['RB_F_Yairom'];
+			//updateTxt(data_rcv,rcv_tag);
+
+
+		};
+
+        function TR3_F(dat, tag, x){
+            //console.log(x);
+            var v;
+			tag.forEach((tag) => {
+                //console.log(tag);
+				try {
+            //console.log(tag);
+                    if(tag == x){
+                        v = dat[tag];
+                        //console.log(v);
+                    }
+				} catch (err) {
+					//console.log(err);
+				}
+
+			});
+                return v;
+
+        }
+
+        function tubchang(dat,dat2,tag){
+            var BKTR3F;
+            var MBIN;
+            var LKIN;
+            var BPIN;
+            MBIN = TR3_F(dat2,tag,"MB_Qin");
+            LKIN = TR3_F(dat2,tag,"LK_Qin");
+            BPIN = TR3_F(dat2,tag,"BP_Qin");
+            //console.log(MBIN);
+			tag.forEach((tag) => {
+                //console.log(tag);
+				try {
+                    if(tag == "BK_TR3_FL"){
+                        BKTR3F = dat[tag];
+                        //console.log(BKTR3F);
+
+                        v = BKTR3F - MBIN - LKIN - BPIN;
+                        //console.log(v);
+                        if(v<=0){
+                            document.getElementById('tubchang_txt').textContent = v+" ▶︎▶︎";
+                        } else {
+                            document.getElementById('tubchang_txt').textContent = "◀︎◀︎ "+v;
+
+                        }
+                    }
+
+
+                    
+
+				} catch (err) {
+					//console.log(err);
+				}
+
+			});
+
+
+        }
+
+		function updateTxt(dat, tag) {
+            //console.log(tag);
+			//Object.keys(data).forEach(function(key){
+			//	a = (key + "_txt.textContent = "+ data[key]+ ";");
+			//	eval(a);
+			//});
+			//MHTR_Level_txt.textContent=(data['MHTR_Level']);
+			//console.log(data['MHTR_Level']);
+			tag.forEach((tag) => {
+                //console.log(tag);
+				try {
+					t = tag + "_txt= document.getElementById('" + tag + "_txt')";
+					a = (tag + "_txt.textContent = " + dat[tag] + ";");
+					eval(t);
+					eval(a);
+                    //console.log(t);
+                    //console.log(a);
+				} catch (err) {
+					//console.log(err);
+				}
+
+			});
+
+		}
+
+
+		function updateTxt_rcv(dat, tag) {
+
+			tag.forEach((tag) => {
+                //console.log(tag);
+				try {
+
+                    p = "%";
+                    v = dat[tag];
+					t = tag + "_txt= document.getElementById('" + tag + "_txt')";
+					//a = (tag + "_txt.innerHTML = "+ dat[tag] +";");
+					a = (tag + "_txt.innerHTML = v+p;");
+					eval(t);
+					eval(a);
+                    //console.log(t);
+                    //console.log(a);
+				} catch (err) {
+					//console.log(err);
+				}
+
+			});
+
+		}        
+
+		function updateTxt_rcv_f(dat, tag) {
+
+            tag.forEach((tag) => {
+                //console.log(tag);
+                try {
+                    r1 = "[";
+                    r2 = "]";
+                    v = dat[tag];
+                    t = tag + "_txt= document.getElementById('" + tag + "_txt')";
+                    //a = (tag + "_txt.innerHTML = "+ dat[tag] +";");
+                    a = (tag + "_txt.innerHTML = r1+v+r2;");
+                    eval(t);
+                    eval(a);
+                    //console.log(t);
+                    //console.log(a);
+                } catch (err) {
+                    //console.log(err);
+                }
+
+            });
+
+        }    
+
+
+        
+		function cross_river(dat, tag) {
+            var MHTR;
+            var PKIN;
+            var TPIN;
+            var RBIN;
+            tag.forEach((tag) => {
+                //console.log(tag);
+                try {
+                    if(tag=="MHTR_TR"){
+                    MHTR = dat[tag];
+                    //console.log(MHTR);
+                }
+                if(tag=="PK_Qin"){
+                    PKIN = dat[tag];
+                }
+                if(tag=="TP_Qin"){
+                    TPIN = dat[tag];
+                }
+                if(tag=="RB_Qin"){
+                    RBIN = dat[tag];
+                }
+
+                } catch (err) {
+                    //console.log(err);
+                }
+            });
+                    v = MHTR - PKIN - TPIN - RBIN;
+                    d = '◀︎◀︎◀︎ ';
+                    dd= ' ▶︎▶︎▶︎';
+                    //console.log(v);
+                    //t = "cross_river_txt = document.getElementById('cross_river_txt')";
+                    if(v <= 0){
+                        a = ("cross_river_txt.innerHTML = d+v;");
+                    } else {
+                        a = ("cross_river_txt.innerHTML = v+dd;");
+                    }
+                    //eval(t);
+                    eval(a);
+                
+                
+
+        }    
+
+		function updateTxt_rcv_py(dat, tag) {
+
+            tag.forEach((tag) => {
+                try {
+                    t = tag + "_txt= document.getElementById('" + tag + "_txt')";
+                    a = (tag + "_txt.innerHTML = "+ dat[tag] +";");
+                    eval(t);
+                    eval(a);
+                } catch (err) {
+                }
+
+            });
+
+            }    
+
+		function updateTank(dat, tags) {
+
+			//Object.keys(data).forEach(function(key){
+			//	a = (key + "_txt.textContent = "+ data[key]+ ";");
+			//	eval(a);
+			//});
+			//MHTR_Level_txt.textContent=(data['MHTR_Level']);
+			//console.log(data['MHTR_Level']);
+			tags.forEach((tag) => {
+				try {
+
+					t = tag + "_bar= document.getElementById('" + tag + "_bar')";
+					tpx = tag + "_px= document.getElementById('" + tag + "_px').getAttribute('height')";
+					//a = (tag + "_txt.textContent = "+ data[tag]+ ";");
+					//console.log(tpx);
+					elm = eval(t);
+					eval(tpx);
+					//console.log(tpx);
+					//eval(a);
+                    var max_h = eval(tag+"_max");
+                    if(dat[tag]>=max_h){ dat[tag] = max_h;}
+
+					tmpL = "tmpLvl = " + tag + "_px * " + dat[tag] + "/" + tag + "_max";
+
+					tmpColor = perc2color(eval(dat[tag] + "/" + tag + "_max") * 100);
+					eval(tmpL);
+					tmp = tag + "_bar.style.height = " + tmpL;
+                    //console.log(tmp);
+					//t.style.fill =  tmpColor;
+					eval(tmp)
+					elm.style.fill = tmpColor;
+					//console.log(tmpColor);
+				} catch (err) {
+					console.log(err  + tag);
+				}
+
+			});
+
+
+
+			//console.log(data);
+		}
+		function updateColor(dat, tag) {
+
+			//Object.keys(data).forEach(function(key){
+			//	a = (key + "_txt.textContent = "+ data[key]+ ";");
+			//	eval(a);
+			//});
+			//MHTR_Level_txt.textContent=(data['MHTR_Level']);
+			//console.log(data['MHTR_Level']);
+			tag.forEach((tag) => {
+				try {
+					t = tag + "= document.getElementById('" + tag + "')";
+					a = (tag + ".style.fill = '" + dat[tag] + "';");
+					//console.log(t);
+					eval(t);
+					eval(a);
+
+				} catch (err) {
+					//console.log(err);
+				}
+
+			});
+
+		}
+		function perc2color(perc) {
+			if (perc <=  20) {
+				return '#ff6666';
+			} else if (perc >=  90) {
+				return '#4DFF4D';
+			} else {
+				return '#00D6FF';
+			}
+			//var r, g, b = 0;
+			//if (perc < 20) {
+			//	r = 255;
+			//	g = Math.round(2.1 * perc);
+			//}
+			//else if(perc < 80) {
+			//	b = 255;
+			//	r = Math.round(810 - 5.10 * perc);
+			//}else{
+			//	r = 255;
+			//	r = Math.round(810 - 5.10 * perc);
+			//}
+			//var h = r * 0x10000 + g * 0x100 + b * 0x1;
+			//return '#' + ('000000' + h.toString(16)).slice(-6);
+		}
+	</script>
+<style>
+
+.tank-chart-loading {
+    position:absolute;
+    inset:0;
+    z-index:3;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:#ffffff;
+    font-family:"Mitr", "OpenSans", sans-serif;
+    background:linear-gradient(145deg, #07192f 0%, #0c3c62 48%, #0985b8 100%);
+    border-radius:14px;
+    overflow:hidden;
+    transition:opacity .35s ease;
+}
+.tank-chart-loading:before {
+    content:"";
+    position:absolute;
+    width:270px;
+    height:270px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.22), rgba(255,255,255,0) 68%);
+    top:-105px;
+    right:-90px;
+    animation:tankGlow 2.5s ease-in-out infinite alternate;
+}
+.tank-chart-loading:after {
+    content:"";
+    position:absolute;
+    left:-20%;
+    right:-20%;
+    bottom:-105px;
+    height:190px;
+    border-radius:45%;
+    background:rgba(89, 203, 255, .26);
+    animation:tankWave 3.2s ease-in-out infinite;
+}
+.tank-chart-loading > * {
+    position:relative;
+    z-index:2;
+}
+.tank-loader-orbit {
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.25);
+    border-top-color:#ffffff;
+    border-right-color:#72e8ff;
+    box-shadow:0 0 26px rgba(114,232,255,.55);
+    animation:tankSpin .9s linear infinite;
+}
+.tank-loader-orbit span {
+    display:block;
+    width:18px;
+    height:18px;
+    margin:16px auto;
+    border-radius:50%;
+    background:#bff6ff;
+    box-shadow:0 0 18px rgba(191,246,255,.95);
+}
+.tank-loader-title {
+    font-size:22px;
+    letter-spacing:.2px;
+    font-weight:600;
+}
+.tank-loader-sub {
+    font-size:15px;
+    color:rgba(255,255,255,.86);
+}
+.tank-loader-progress {
+    width:230px;
+    height:7px;
+    margin-top:6px;
+    border-radius:999px;
+    overflow:hidden;
+    background:rgba(255,255,255,.22);
+}
+.tank-loader-progress span {
+    display:block;
+    width:42%;
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(90deg, rgba(255,255,255,.35), #ffffff, rgba(124,233,255,.95));
+    animation:tankLoadBar 1.35s ease-in-out infinite;
+}
+.tank-loader-hint {
+    margin-top:2px;
+    font-size:12px;
+    color:rgba(255,255,255,.68);
+}
+
+.tank-chart-open-link {
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:7;
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-family:"Mitr", "OpenSans", sans-serif;
+    font-size:23px;
+    line-height:1;
+    color:#07344d;
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(255,255,255,.88);
+    box-shadow:0 7px 18px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.95);
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.tank-chart-open-link:hover {
+    transform:translateY(-1px) scale(1.04);
+    background:#ffffff;
+    box-shadow:0 10px 24px rgba(0,0,0,.30), 0 0 18px rgba(114,232,255,.55);
+}
+.tank-chart-open-link:active {
+    transform:translateY(0) scale(.98);
+}
+
+@keyframes tankSpin {
+    to { transform:rotate(360deg); }
+}
+@keyframes tankLoadBar {
+    0% { transform:translateX(-110%); }
+    100% { transform:translateX(260%); }
+}
+@keyframes tankWave {
+    0%,100% { transform:translateX(-2%) rotate(0deg); }
+    50% { transform:translateX(3%) rotate(2deg); }
+}
+@keyframes tankGlow {
+    from { transform:scale(.92); opacity:.55; }
+    to { transform:scale(1.08); opacity:.9; }
+}
+
+</style>
+
+
+<script>
+    function time_refresh(){
+        //const now = new Date();
+        //const currentDateTime = now.toLocaleString();
+        //document.querySelector('#time_box').textContent = currentDateTime;
+        dd = document.getElementById("dd1").value;
+        tt = document.getElementById("tt1").value;
+        if(dd !="" && tt != ""){
+            //do nothing//
+        } else {
+        
+
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var d = new Date();
+        var day = days[d.getDay()];
+        var hr = d.getHours();
+        var min = d.getMinutes();
+        if (min < 10) {
+            min = "0" + min;
+        }
+        var ampm = " AM";
+        if( hr > 12 ) {
+            hr -= 12;
+            ampm = " PM";
+        }
+        var date = d.getDate();
+        var month = months[d.getMonth()];
+        var year = d.getFullYear();
+        var x = document.getElementById("time_box");
+        x.innerHTML = day + " " + date + " " + month + " " + year + " " + hr + ":" + min + ampm + " ";
+
+    }
+    }
+
+</script>
+
+</head>
+<body bgcolor="#000000" style="zoom: 65%;">
+<title>Smart Tunnel V.2 - เทพอุโมงค์</title>
+
+<div id="chartContainer" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5;" onclick="del_box_reg()"></div>
+<div id="chartContainer2" style="display:none; position:absolute; background:none; top:30%; left: 35%; padding:0px; border:0px solid black; height:400px; width: 630px; box-shadow: 5px 5px 5px grey;"></div>
+
+<div id="UZ5411_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U022_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P051_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U020_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U005_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P032_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U032_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0102_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1207_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U128_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0619_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0307_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U233_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1609_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U201_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U247_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U251_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U137_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P125_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P171_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ5304_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U223_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1711_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P175_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P177A_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ_RWT_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+
+<div id="UZ5411_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U022_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P051_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U020_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U005_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P032_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U032_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0102_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1207_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U128_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0619_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ0307_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U233_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1609_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U201_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U247_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U251_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U137_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P125_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P171_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ5304_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="U223_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ1711_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P175_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="P177A_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="UZ_RWT_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+
+<div id="UZ5411_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U022_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P051_box" style="display:none; position:absolute; cursor:notallowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U020_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U005_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P032_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U032_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ0102_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ1207_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U128_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ0619_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ0307_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U233_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ1609_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U201_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U247_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U251_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U137_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P125_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P171_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ5304_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="U223_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ1711_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P175_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="P177A_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+<div id="UZ_RWT_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV48_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV48_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV48_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV25_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV25_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV25_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV66_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV66_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV66_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV64_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV64_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV64_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV28_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV28_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV28_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV60_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV60_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV60_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV13_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV13_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV13_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV65_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV65_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV65_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV50_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV50_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV50_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV25_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV25_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV25_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV51_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV51_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV51_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV38_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV38_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV38_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+<div id="RCV27_boxes" style="display:none; position:absolute; background:none; top:200px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV27_boxes_f" style="display:none; position:absolute; background:none; top:460px; left: 690px; padding:0px; border:0px solid black; height:290px; width: 630px; box-shadow: 5px 5px 5px grey; z-index:2;"></div>
+<div id="RCV27_box" style="display:none; position:absolute; cursor:not-allowed; top:0px; left:0px; border:0px solid grey; height:100%; width: 100%; background:gray; opacity:0.5; z-index:1;" onclick="del_box(this.id)" oncontextmenu="return confirm(&#39;Mute 24 hours?&#39;)?del_box_1day(this.id):&#39;&#39;;"></div>
+
+
+<center><h style="color:#FFFFFF;">เทพอุโมงค์ (Smart Tunnel)</h></center>
+<center><svg style="height:850px; width: 1700px; border:1px solid none; background:#000000">
+
+<text id="time_box" x="1300" y="40" fill="#FFFFFF" style="font-size:28px">Friday 3 Jul 2026 3:08 PM </text>
+<foreignobject x="1300" y="60" width="400" height="30">
+<div>
+    <input id="dd1" type="date" name="dd1" value="">
+    <input id="tt1" type="time" name="tt1" value="">
+    <input id="bt1" type="button" name="bt1" value="เลือกวัน-เวลา" onclick="click_his();">
+    <input id="bt2" type="button" name="bt1" value="Reset" onclick="click_his2();">
+
+</div>
+</foreignobject>
+
+<foreignobject x="1480" y="0" width="400" height="30">
+<div>
+    <form action="http://172.16.193.162/smartmap/tunnel.php#" method="POST">
+        <input type="submit" name="bt2" value="N/D">
+        <input type="hidden" name="nd" value="1">
+    </form>
+</div>
+</foreignobject>
+
+<foreignobject x="1400" y="90" width="290" height="150">
+    <div id="chartContainer3" style="display: block; position: absolute; padding: 1px; border: 0px solid red; height: 140px; width: 280px; left: -5px; top: -5px; box-shadow: grey 0px 0px 0px;"><iframe src="./Smart Tunnel V.2 - เทพอุโมงค์_files/index.html" scrolling="no" style="border:0px; width:300px; height:300px;"></iframe></div>
+</foreignobject>
+
+
+<!-- // Layer // -->
+<text id="layer1" x="500" y="720" fill="#FFFFFF" style="font-size:14px; cursor:pointer;" onclick="show_lay_rtu()">☐ RTU</text>
+<text id="alert_mode" x="560" y="720" fill="#FFFFFF" style="font-size:14px; cursor:pointer;" onclick="show_lay_rtu_alert()">☐ Alert Mode</text>
+<a href="http://172.16.193.162/smartmap/tunnel.pdf" target="_blank"><text x="500" y="740" stroke="none" fill="#DDDDDD" font-size="14">☐ ผังอุโมงค์</text></a>
+<rect x="502" y="750" width="9" height="9" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect><text x="516" y="760" stroke="none" fill="#DDDDDD" font-size="14">Non-Actived Pump</text>
+<rect x="502" y="770" width="9" height="9" style="fill:red; stroke:#FFFFFF; stroke-width:1"></rect><text x="516" y="780" stroke="none" fill="#DDDDDD" font-size="14">Actived Pump</text>
+<rect x="660" y="716" width="9" height="2" style="fill:#33FF00; stroke:#33FF00; stroke-width:1"></rect><text x="680" y="720" stroke="none" fill="#DDDDDD" font-size="14">Tunnel</text>
+<rect x="660" y="736" width="9" height="2" style="fill:#009EFF; stroke:#009EFF; stroke-width:1"></rect><text x="680" y="740" stroke="none" fill="#DDDDDD" font-size="14">Trunk Main</text>
+<text x="660" y="760" stroke="none" fill="#DDDDDD" font-size="14">♬ Recorder</text>
+<text x="660" y="780" stroke="none" fill="#DDDDDD" font-size="14"><a href="http://172.16.193.162/smartmap/newgraph/st_regress.php" target="_blank">ᯓ Level Prediction</a></text>
+
+<rect id="MHTR_Level_px" x="20" y="20" width="200" height="80" style="fill:#000000; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="MHTR_Level_bar" x="20" y="-100" width="200" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; opacity: 0.7; height: 60px;" transform="scale(1,-1)"></rect>
+<text id="MHTR_Level_txt" x="180" y="90" fill="#0000FF" stroke="#FFFFFF">4.05</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=MH" target="_blank"><text x="20" y="15" fill="#FFFFFF">MH</text></a>
+<a href="http://172.16.198.25/" target="_blank"><text x="60" y="15" fill="#FDFDFD">♬</text></a>
+<path d="M20 80 L10 80 L10 220 L20 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path>
+<rect id="MHTR_Inlet_px" x="20" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="MHTR_Inlet_bar" x="20" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: cyan; stroke-width: 0; height: 62.9143px;" transform="scale(1,-1)"></rect>
+<text id="MHTR_Inlet_txt" x="15" y="145" fill="#FFAD00" style="font-size:14px">22.02</text>
+<text id="MHTR_TR_txt" x="65" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">39250</text>
+
+<rect id="MH_Pump1" x="230" y="40" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump2" x="230" y="55" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump3" x="230" y="70" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="MH_Pump4" x="230" y="85" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+
+<path d="M250 40 L250 95" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M250 50 L300 50" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M250 80 L300 80 M280 80 L280 50" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M265 80 L265 120 L240 120" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<a href="http://172.16.193.162/smartmap/img/mh_valve.jpg" target="_blank"><text x="280" y="120" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+
+<rect x="257" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="270" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="290" y="47" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="257" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="270" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="290" y="77" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="MH_F_txt" x="340" y="50" fill="#00CFFC">23807</text>
+<text id="MH_P_txt" x="340" y="70" fill="#FFA030" style="font-size:12px">27.97</text>
+
+<text id="MH_F_A_txt" x="310" y="50" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;Line_A&quot;)">15761</text>
+<text id="MH_F_B_txt" x="310" y="80" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;Line_B&quot;)">8046</text>
+<text id="MH_F_C_txt" x="205" y="125" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;Line_C&quot;)">8017</text>
+
+
+
+<rect id="BK_TR1_L1_px" x="500" y="20" width="700" height="80" style="fill:#000000; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR1_L1_bar" x="500" y="-100" width="700" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; opacity: 0.7; height: 55.68px;" transform="scale(1,-1)"></rect>
+<text x="500" y="15" fill="#FFFFFF">BK</text>
+<text id="BK_TR1_L1_txt" x="1050" y="90" fill="#FFFFFF" stroke="#0000FF" stroke-width="1">3.48</text>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BK03" target="_blank"><text x="690" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">BK03</text></a>
+<a href="http://192.168.86.99/" target="_blank"><text x="730" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+<rect id="BK_03_Pump1" x="670" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump2" x="685" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump3" x="700" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump4" x="715" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_03_Pump5" x="730" y="90" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M673 105 L735 105" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M673 105 L673 160 L650 160" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M688 105 L688 180 L650 180" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M713 105 L713 200 L650 200 M713 200 L713 250 L960 250" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M728 105 L728 240 L945 240" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="695" y="103" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="815" y="247" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="710" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="725" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="BK_03_CH_txt" x="600" y="160" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;แจ้งวัฒนะ&quot;)">3109</text>
+<text id="BK_03_NG_txt" x="600" y="180" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;งามวงศ์วาน&quot;)">5518</text>
+<text id="BK_03_ME_txt" x="600" y="200" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;เมืองทอง&quot;)">5841</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BK04" target="_blank"><text x="950" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">BK04</text></a>
+<a href="http://172.17.197.65/" target="_blank"><text x="990" y="80" fill="black" stroke="#009EFF" stroke-width="0.5" style="font-size:12px">♬</text></a>
+<rect id="BK_04_Pump1" x="940" y="90" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump2" x="955" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump3" x="970" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BK_04_Pump4" x="985" y="90" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M940 105 L995 105" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M945 105 L945 240" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M960 105 L960 250" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M985 105 L985 140 M960 140 L1010 140" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M945 160 L955 160 M 965 160 L1010 160" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M965,160 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="942" y="120" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="970" y="137" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<text id="BK_04_VI_txt" x="1020" y="140" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;วิภาวดี&quot;)">9440</text>
+<text id="BK_04_PY_txt" x="1020" y="160" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;พหลโยธิน&quot;)">229</text>
+
+<text x="525" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR1</text>
+<a href="http://172.17.197.17/" target="_blank"><text x="565" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR1_Pump1" x="500" y="110" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump2" x="520" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump3" x="540" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump4" x="560" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR1_Pump5" x="580" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR1_PS_txt" x="525" y="145" fill="#FFAD00" style="font-size:14px">33.37</text>
+<text id="BK_TR1_FL_txt" x="510" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">46474</text>
+
+<rect id="BK_TR1_PS_px" x="530" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR1_PS_bar" x="530" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 70.2526px;" transform="scale(1,-1)"></rect>
+
+<text x="820" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR2</text>
+<a href="http://172.17.197.49/" target="_blank"><text x="860" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR2_Pump1" x="780" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump2" x="800" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump3" x="820" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump4" x="840" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump5" x="860" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR2_Pump6" x="880" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR2_PS_txt" x="875" y="145" fill="#FFAD00" style="font-size:14px">36.03</text>
+<text id="BK_TR2_FL_txt" x="800" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">46510</text>
+
+<rect id="BK_TR2_PS_px" x="880" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR2_PS_bar" x="880" y="-230" width="20" height="40" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 72.06px;" transform="scale(1,-1)"></rect>
+
+<text x="1120" y="90" fill="black" stroke="black" stroke-width="1" style="font-size:18px">TR3</text>
+<a href="http://172.17.197.81/" target="_blank"><text x="1160" y="90" fill="#FDFDFD">♬</text></a>
+<rect id="BK_TR3_Pump1" x="1080" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump2" x="1100" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump3" x="1120" y="110" width="9" height="9" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump4" x="1140" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump5" x="1160" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<rect id="BK_TR3_Pump6" x="1180" y="110" width="9" height="9" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 1;"></rect>
+<text id="BK_TR3_PS_txt" x="1250" y="145" fill="#FFAD00" style="font-size:14px">25.1</text>
+<text id="BK_TR3_FL_txt" x="1100" y="50" stroke="#FFFFFF" fill="#18C600" stroke-width="0.5" style="font-size:28px">51900</text>
+
+<rect id="BK_TR3_PS_px" x="1250" y="150" width="20" height="80" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="BK_TR3_PS_bar" x="1250" y="-230" width="20" height="40" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 52.8421px;" transform="scale(1,-1)"></rect>
+
+<path d="M500 130 L525 130 M500 130 L500 220 L530 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M545 130 L780 130 M575 130 L575 220 L550 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M780 130 L890 130 M855 130 L855 220 L880 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1080 130 L1080 220 L900 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1080 130 L1210 130 L1210 220 L1250 220" style="fill:none; stroke:#33FF00; stroke-width:2"></path> 
+
+
+<rect x="430" y="20" width="40" height="800" style="fill:#8FBAFF; stroke:#8FBAFF; stroke-width:1; opacity:0.5;"></rect>
+<text x="440" y="50" fill="black" stroke="black" stroke-width="1" style="font-size:18px">C</text>
+<text x="440" y="80" fill="black" stroke="black" stroke-width="1" style="font-size:18px">H</text>
+<text x="440" y="110" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+<text x="440" y="140" fill="black" stroke="black" stroke-width="1" style="font-size:18px">O</text>
+<text x="440" y="170" fill="black" stroke="black" stroke-width="1" style="font-size:18px">P</text>
+<text x="440" y="200" fill="black" stroke="black" stroke-width="1" style="font-size:18px">H</text>
+<text x="440" y="230" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<text x="440" y="260" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+<text x="440" y="290" fill="black" stroke="black" stroke-width="1" style="font-size:18px">Y</text>
+<text x="440" y="320" fill="black" stroke="black" stroke-width="1" style="font-size:18px">A</text>
+
+<text x="440" y="395" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<text x="440" y="425" fill="black" stroke="black" stroke-width="1" style="font-size:18px">I</text>
+<text x="440" y="455" fill="black" stroke="black" stroke-width="1" style="font-size:18px">V</text>
+<text x="440" y="485" fill="black" stroke="black" stroke-width="1" style="font-size:18px">E</text>
+<text x="440" y="515" fill="black" stroke="black" stroke-width="1" style="font-size:18px">R</text>
+<rect x="480" y="20" width="8" height="368" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+<rect x="420" y="340" width="60" height="8" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+<rect x="488" y="380" width="72" height="8" style="fill:#C5AA00; stroke:#BE9400; stroke-width:1; opacity:0.7;"></rect>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=PK" target="_blank"><text x="230" y="320" fill="#FDFDFD">PK</text></a>
+<a href="http://192.168.113.51/" target="_blank"><text x="260" y="320" fill="#FDFDFD">♬</text></a>
+<rect id="PK_Level_px" x="120" y="290" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=PK_02_OVERVIEW" target="_blank"><rect id="PK_Level_bar" x="120" y="-340" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 40.3731px;" transform="scale(1,-1)"></rect></a>
+<text id="PK_Level_txt" x="160" y="330" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;PK&quot;,pk_bp)">5.41</text>
+
+<rect id="PK_Pump1" x="100" y="295" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump2" x="100" y="305" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump3" x="100" y="315" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump4" x="100" y="325" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="PK_Pump5" x="100" y="335" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 230 L30 260 L130 260 L130 290" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M90 260 L90 295" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M90 295 L90 340 M90 295 L60 295 L60 280 M60 295 L60 320" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=PK&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="PK_ZM02_txt" x="50" y="275" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ZM02&quot;)">4504</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=PK&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="PK_ZM01_txt" x="50" y="330" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ZM01&quot;)">7923</text></a>
+
+<path d="M80 260 L80 230 L110 230" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=PK_in&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="PK_Qin_txt" x="110" y="230" fill="#00FF3D">16336</text></a>
+<text id="PK_Inlet_txt" x="90" y="250" fill="#FFA030" style="font-size:12px">18.69</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=PK_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="PK_F_txt" x="200" y="230" fill="#00CFFC">12480</text></a>
+<text id="PK_P_txt" x="200" y="250" fill="#FFA030" style="font-size:12px">12.92</text>
+<text id="P051" x="160" y="200" fill="#FDFDFD" style="cursor: pointer; display: block;" onclick="show_rtu(&quot;P051&quot;,&quot;P051_boxes&quot;)" stroke="#D576FF">P051</text>
+
+<text x="180" y="288" fill="#009EFF" style="font-size:10px">Max 6.70</text>
+<text x="170" y="350" fill="#009EFF" style="font-size:10px">10,500 Sqm</text>
+
+
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=TP" target="_blank"><text x="230" y="450" fill="#FDFDFD">TP</text></a>
+<a href="http://192.168.119.31/" target="_blank"><text x="235" y="470" fill="#FDFDFD">♬</text></a>
+<rect id="TP_Level_px" x="120" y="420" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=TP_02_OVERVIEW" target="_blank"><rect id="TP_Level_bar" x="120" y="-470" width="100" height="25" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 46.5364px;" transform="scale(1,-1)"></rect></a>
+<text id="TP_Level_txt" x="160" y="460" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;TP&quot;,tp_bp)">5.24</text>
+
+<rect id="TP_Pump1" x="120" y="485" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump2" x="140" y="485" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump3" x="160" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump4" x="180" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="TP_Pump5" x="200" y="485" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 260 L30 550 L260 550" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 550 L540 550" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 550 L260 405 L130 405 L130 420" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M260 500 L210 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M210 500 L120 500" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M150 500 L150 515 L110 515" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M180 500 L180 515 L180 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M200 500 L200 515 L220 515 L220 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=TP1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="TP_F_Thapra_txt" x="80" y="520" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;รัชดาฯ&quot;)">4774</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=TP2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="TP_F_Petka_txt" x="170" y="540" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;เพชรเกษม&quot;)">2529</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=TP3&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="TP_F_Wong_txt" x="220" y="540" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;วงเวียนใหญ่&quot;)">4199</text></a>
+
+<rect x="132" y="498" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="172" y="498" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<path d="M130 410 L120 410 L120 380" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=TP_in&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="TP_Qin_txt" x="110" y="380" fill="#00FF3D">11632</text></a>
+<text id="TP_Inlet_txt" x="130" y="400" fill="#FFA030" style="font-size:12px">12.08</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=TP_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="TP_F_txt" x="200" y="380" fill="#00CFFC">11502</text></a>
+<text id="TP_P_txt" x="200" y="400" fill="#FFA030" style="font-size:12px">9.55</text>
+<text id="U020" x="280" y="450" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U020&quot;,&quot;U020_boxes&quot;)">U020</text>
+<text id="U005" x="280" y="470" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U005&quot;,&quot;U005_boxes&quot;)">U005</text>
+
+<text x="180" y="418" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="175" y="480" fill="#009EFF" style="font-size:10px">8,120 Sqm</text>
+
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=RB" target="_blank"><text x="310" y="780" fill="#FDFDFD">RB</text></a>
+<a href="http://192.168.110.51/" target="_blank"><text x="340" y="780" fill="#FDFDFD">♬</text></a>
+<rect id="RB_Level_px" x="200" y="750" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=RB_02_OVERVIEW" target="_blank"><rect id="RB_Level_bar" x="200" y="-800" width="100" height="25" style="fill: rgb(77, 255, 77); stroke: rgb(255, 255, 255); stroke-width: 0; height: 47.4107px;" transform="scale(1,-1)"></rect></a>
+<text id="RB_Level_txt" x="240" y="790" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;RB&quot;,rb_bp)">5.31</text>
+
+<rect id="RB_Pump1" x="200" y="730" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump2" x="220" y="730" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump3" x="240" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump4" x="260" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="RB_Pump5" x="280" y="730" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M30 550 L30 660 M30 650 L120 650 L140 680 L150 680 a5,5 0 0,1 10,0 L180 680 L180 740 L155 740" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 740 L155 650 L360 650 L360 550 M360 610 L340 610 L340 630 L360 630" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 740 L155 780 L200 780" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M155 720 L175 720 a5,5 0 0,1 10,0 L200 720" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M200 720 L290 720" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M220 720 L220 700" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M260 720 L260 700" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=RB1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="RB_F_Ram2_txt" x="210" y="690" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;พระราม2&quot;)">5090</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=RB2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="RB_F_Yairom_txt" x="255" y="690" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;วัดยายร่ม&quot;)">9443</text></a>
+
+<rect x="232" y="718" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="252" y="718" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<path d="M165 780 L165 820 L180 820" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=RB_in&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="RB_Qin_txt" x="190" y="830" fill="#00FF3D">13476</text></a>
+<text id="RB_Inlet_txt" x="165" y="775" fill="#FFA030" style="font-size:12px">12.39</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=RB_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="RB_F_txt" x="280" y="830" fill="#00CFFC">14533</text></a>
+<text id="RB_P_txt" x="280" y="850" fill="#FFA030" style="font-size:12px">16.36</text>
+<text id="P032" x="360" y="760" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;P032&quot;,&quot;P032_boxes&quot;)">P032</text>
+<text id="U032" x="360" y="780" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U032&quot;,&quot;U032_boxes&quot;)">U032</text>
+
+<text x="260" y="748" fill="#009EFF" style="font-size:10px">Max 5.60</text>
+<text x="250" y="810" fill="#009EFF" style="font-size:10px">10,025 Sqm</text>
+
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=TB" target="_blank"><text x="380" y="380" fill="#FDFDFD">TB</text></a>
+<text x="440" y="338" fill="#C5AA00" style="font-size:10px; cursor:pointer;" onclick="show_rtu(&quot;UZ_RWT&quot;,&quot;UZ_RWT_boxes&quot;)">น้ำดิบ</text>
+<rect id="TB_Lev_px" x="320" y="310" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect id="TB_Lev_bar" x="320" y="-360" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 27.6042px;" transform="scale(1,-1)"></rect>
+<text id="TB_Lev_txt" x="360" y="350" fill="#0000FF" stroke="#0000FF" stroke-width="1">2.65</text>
+
+<text id="TB_Qin_txt" x="432" y="365" fill="#C5AA00" style="font-size:14px; ">4535</text>
+<text id="TB_F_txt" x="380" y="280" fill="#00CFFC">4944</text>
+<text id="TB_P_txt" x="380" y="300" fill="#FFA030" style="font-size:12px">6.4</text>
+<text id="UZ0102" x="340" y="250" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ0102&quot;,&quot;UZ0102_boxes&quot;)" stroke="red">UZ0102</text>
+
+<text x="320" y="308" fill="#009EFF" style="font-size:10px">Max 4.80</text>
+<text x="320" y="370" fill="#009EFF" style="font-size:10px">3,857 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS" target="_blank"><text x="720" y="445" fill="#FDFDFD">SS</text></a>
+<rect x="560" y="370" width="150" height="107" stroke-dasharray="3,3" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect>
+
+<rect id="ss3" x="615" y="375" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS3" target="_blank"><text x="620" y="385" fill="#C8C8C8" style="font-size:8px;">SS3</text></a>
+<path d="M615 385 L600 385" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M645 385 L650 385 M660 385 L680 385" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M650,385 a5,5 0 0,1 10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="O1_F_txt" x="575" y="385" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;O1&quot;)">3044</text>
+<text id="U_F_txt" x="685" y="385" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;U&quot;)">-1</text>
+
+<rect id="ss1" x="615" y="405" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS1" target="_blank"><text x="620" y="415" fill="#C8C8C8" style="font-size:8px;">SS1</text></a>
+<path d="M615 415 L560 415" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M590 415 L590 445" stroke-dasharray="2,3" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M645 415 L655 415 L655 355" stroke-dasharray="2,3" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <rect x="588" y="430" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <text id="DU1_F_txt" x="575" y="410" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;DU1&quot;)">1855</text>
+<text id="S_F_txt" x="655" y="355" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;S&quot;)">0</text>
+<text id="RCV54" x="558" y="435" fill="#009EFF" style="font-size:8px">RCV54</text>
+
+<rect id="ss4" x="600" y="435" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS4" target="_blank"><text x="605" y="445" fill="#C8C8C8" style="font-size:8px;">SS4</text></a>
+<path d="M600 445 L570 445" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="X_F_txt" x="575" y="455" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;X&quot;)">2280</text>
+
+<rect id="ss2" x="675" y="430" width="30" height="20" style="fill:none; stroke:#FFFFFF; stroke-width:0.5"></rect> <a href="http://172.16.193.162/smartmap/station/ptc.php?st=SS2" target="_blank"><text x="680" y="440" fill="#C8C8C8" style="font-size:8px;">SS2</text></a>
+<path d="M675 435 L670 435 M660 435 L650 435 L650 455 L650 455" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M670,435 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M675 445 L665 445 L665 385 M665 445 L665 455" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+
+<text id="O2_F_txt" x="640" y="465" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;O2&quot;)">-1</text>
+<text id="K_F_txt" x="665" y="465" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;K&quot;)">-88</text>
+
+<text x="675" y="480" fill="#C8C8C8" stroke="#C8C8C8" stroke-width="0.1" style="font-size:10px; cursor:zoom-in; opacity:0.5;" onclick="open_ss()">ZOOM</text>
+
+
+<text id="UZ0619" x="580" y="360" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ0619&quot;,&quot;UZ0619_boxes&quot;)">UZ0619</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=PY" target="_blank"><text x="810" y="420" fill="#FDFDFD">PY</text></a>
+<a href="http://192.168.86.99/" target="_blank"><text x="840" y="420" fill="#FDFDFD">♬</text></a>
+<rect x="770" y="360" width="100" height="40" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="770" y="375" width="100" height="0" style="fill:#00D6FF; stroke:#FFFFFF; stroke-width:0"></rect>
+<text x="800" y="390" fill="#33FF00" stroke="#33FF00" stroke-width="0.1">Bypass</text>
+
+<rect x="800" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="820" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="840" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+<rect x="860" y="345" width="5" height="5" style="fill:black; stroke:#FFFFFF; stroke-width:1"></rect>
+
+<path d="M540 230 L540 300 L750 300" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M750 300 L750 390 L770 390" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M770 300 L990 300" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M770 300 L750 330" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M750 335 L790 335" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M790 335 L870 335" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M825 335 L825 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M865 335 L865 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M790 310 L900 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="815" y="333" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="855" y="333" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<circle r="4" cx="750" cy="335" style="fill:black; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV29" x="690" y="335" stroke="none" fill="#C8C8C8" font-size="10" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;พหลโยธิน&quot;)">พหลโยธิน</text>
+
+<text id="rcv29_txt" x="710" y="350" fill="#C8C8C8" style="font-size:10px">22%</text>
+<text id="rcv29I_txt" x="720" y="315" fill="#FFA030" style="font-size:12px">32769</text>
+<text id="rcv29F_txt" x="920" y="320" fill="#00CFFC">6831</text>
+<text id="rcv29P_txt" x="920" y="340" fill="#FFA030" style="font-size:12px">8.4</text>
+<text id="UZ0307" x="900" y="390" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ0307&quot;,&quot;UZ0307_boxes&quot;)">UZ0307</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LP" target="_blank"><text x="690" y="630" fill="#FDFDFD">LP</text></a>
+<a href="http://192.168.115.31/" target="_blank"><text x="720" y="630" fill="#FDFDFD">♬</text></a>
+<rect id="LP_Level_px" x="650" y="550" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LP_02_OVERVIEW" target="_blank"><rect id="LP_Level_bar" x="650" y="-600" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 36.8421px;" transform="scale(1,-1)"></rect></a>
+<text id="LP_Level_txt" x="690" y="590" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;LP&quot;,lp_bp)">4.2</text>
+
+<rect id="LP_Pump1" x="760" y="550" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump2" x="760" y="565" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump3" x="760" y="580" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LP_Pump4" x="760" y="595" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M540 300 L540 550 L540 610" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M540 550 L640 650 L990 650" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M610 620 L610 560 L650 560" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M780 550 L780 600" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M780 555 L810 555" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M780 575 L800 575" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M800 575 L810 600" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M615 560 L615 520 L640 520" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <rect x="778" y="560" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LP1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LP_F_Sarasin_txt" x="815" y="560" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;สารสินธุ์&quot;)">6018</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LP2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LP_F_Sathon_txt" x="815" y="610" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;สาทร&quot;)">9121</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LP_in&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LP_Qin_txt" x="640" y="515" fill="#00FF3D">12057</text></a>
+<text id="LP_Inlet_txt" x="620" y="550" fill="#FFA030" style="font-size:12px">13.2</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LP_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LP_F_txt" x="720" y="515" fill="#00CFFC">15147</text></a>
+<text id="LP_P_txt" x="720" y="535" fill="#FFA030" style="font-size:12px">6.81</text>
+<text id="U201" x="880" y="580" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U201&quot;,&quot;U201_boxes&quot;)">U201</text>
+
+<text x="710" y="548" fill="#009EFF" style="font-size:10px">Max 5.70</text>
+<text x="710" y="610" fill="#009EFF" style="font-size:10px">8,570 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LA" target="_blank"><text x="1210" y="340" fill="#FDFDFD">LA</text></a>
+<a href="http://192.168.112.51/" target="_blank"><text x="1240" y="340" fill="#FDFDFD">♬</text></a>
+<rect id="LA_Level_px" x="1050" y="300" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LA_02_OVERVIEW" target="_blank"><rect id="LA_Level_bar" x="1050" y="-350" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 38.3659px;" transform="scale(1,-1)"></rect></a>
+<text id="LA_Level_txt" x="1090" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;LA&quot;,la_bp)">4.32</text>
+
+<a href="#" onclick="window.open(&#39;http://192.168.112.32/la_hq.php&#39;, target=&#39;_blank&#39;); return false;"><rect id="LA_Pump1" x="1160" y="300" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/la_kwh.php&#39;,&#39;lap2&#39;,&#39;width=700,height=400&#39;); return false;"><rect id="LA_Pump2" x="1160" y="315" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/la_rpm.php&#39;,&#39;lap3&#39;,&#39;width=700,height=400&#39;); return false;"><rect id="LA_Pump3" x="1160" y="330" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/la_pdisc.php&#39;,&#39;lap4&#39;,&#39;width=700,height=400&#39;); return false;"><rect id="LA_Pump4" x="1160" y="345" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect></a>
+
+<path d="M990 220 L990 360 L1010 360" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1010 360 L1010 310 L1050 310" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M990 450 L1390 450" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1180 300 L1180 350" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 310 L1210 310" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 340 L1200 340 L1210 360" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1030 310 L1030 390 L1050 390 " stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1010 310 L1010 280 L1180 280 L1180 300" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> 
+<rect x="1178" y="325" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LA1&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LA_F_1500_txt" x="1215" y="315" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ไลน์_1500&quot;)">10025</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LA2&#39;,&#39;lal2&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LA_F_1200_txt" x="1215" y="365" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ไลน์_1200&quot;)">3729</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LA_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LA_Qin_txt" x="1050" y="390" fill="#00FF3D">133</text></a>
+<text id="LA_Inlet_txt" x="1050" y="410" fill="#FFA030" style="font-size:12px">19.13</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LA_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LA_F_txt" x="1120" y="390" fill="#00CFFC">13754</text></a>
+<text id="LA_P_txt" x="1120" y="410" fill="#FFA030" style="font-size:12px">11.18</text>
+<text id="U247" x="1260" y="330" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U247&quot;,&quot;U247_boxes&quot;)">U247</text>
+
+<text x="1110" y="298" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1110" y="360" fill="#009EFF" style="font-size:10px">13,815 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=KT" target="_blank"><text x="1210" y="550" fill="#FDFDFD">KT</text></a>
+<a href="http://192.168.114.31/" target="_blank"><text x="1240" y="550" fill="#FDFDFD">♬</text></a>
+<rect id="KT_Level_px" x="1100" y="520" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=KT_02_OVERVIEW" target="_blank"><rect id="KT_Level_bar" x="1100" y="-570" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.7407px;" transform="scale(1,-1)"></rect></a>
+<text id="KT_Level_txt" x="1140" y="560" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;KT&quot;,kt_bp)">4.7</text>
+
+<rect id="KT_Pump1" x="1085" y="500" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump2" x="1085" y="515" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump3" x="1085" y="530" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump4" x="1085" y="545" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="KT_Pump5" x="1085" y="560" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M990 360 L990 470 L1110 470 L1110 520" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1110 495 L1135 495" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1070 470 L1070 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1070 500 L1070 565" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 520 L1050 520 L1050 500" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 550 L1020 550 L1020 580 M1020 550 L1020 520" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1070 565 L1060 565 L1060 580" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1068" y="540" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_F_Ram4_1000_txt" x="1040" y="490" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ไลน์_1000&quot;)">350</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_F_Sukhum_txt" x="1010" y="510" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;สุขุมวิท&quot;)">4241</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT3&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_F_Ram4_1500_txt" x="1010" y="590" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;พระราม4&quot;)">941</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT4&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_F_Praka_txt" x="1050" y="590" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;พระโขนง&quot;)">3258</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_Qin_txt" x="1130" y="490" fill="#00FF3D">-6</text></a>
+<text id="KT_Inlet_txt" x="1130" y="510" fill="#FFA030" style="font-size:12px">13.58</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=KT_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="KT_F_txt" x="1200" y="490" fill="#00CFFC">8790</text></a>
+<text id="KT_P_txt" x="1200" y="510" fill="#FFA030" style="font-size:12px">4.84</text>
+<text id="U137" x="1260" y="540" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U137&quot;,&quot;U137_boxes&quot;)">U137</text>
+<text id="U251" x="1260" y="560" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U251&quot;,&quot;U251_boxes&quot;)">U251</text>
+
+<text x="1160" y="518" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1160" y="580" fill="#009EFF" style="font-size:10px">8,120 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=SR" target="_blank"><text x="1210" y="695" fill="#FDFDFD">SR</text></a>
+<a href="http://192.168.116.31/" target="_blank"><text x="1240" y="695" fill="#FDFDFD">♬</text></a>
+<rect id="SR_Level_px" x="1050" y="660" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=SR_02_OVERVIEW" target="_blank"><rect id="SR_Level_bar" x="1050" y="-710" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 29.3961px;" transform="scale(1,-1)"></rect></a>
+<text id="SR_Level_txt" x="1090" y="700" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;SR&quot;,sr_bp)">3.31</text>
+
+<rect id="SR_Pump1" x="1160" y="660" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump2" x="1160" y="675" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump3" x="1160" y="690" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump4" x="1160" y="705" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="SR_Pump5" x="1160" y="720" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M990 470 L990 670 L1050 670" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1040 670 L1040 640 L1180 640 L1180 660" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1020 670 L1020 755 L1055 755" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1180 660 L1180 725" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 665 L1210 665" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1180 715 L1210 715" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1178" y="670" width="5" height="1" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=SR1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="SR_F_1000_txt" x="1215" y="670" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ไลน์_1000&quot;)">6385</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=SR2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="SR_F_1800_txt" x="1215" y="720" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ไลน์_1800&quot;)">13797</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=SR_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="SR_Qin_txt" x="1050" y="750" fill="#00FF3D">19577</text></a>
+<text id="SR_Inlet_txt" x="1050" y="770" fill="#FFA030" style="font-size:12px">4.88</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=SR_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="SR_F_txt" x="1120" y="750" fill="#00CFFC">20151</text></a>
+<text id="SR_P_txt" x="1120" y="770" fill="#FFA030" style="font-size:12px">14.96</text>
+<text id="P125" x="1260" y="680" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;P125&quot;,&quot;P125_boxes&quot;)">P125</text>
+<text id="P171" x="1260" y="700" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;P171&quot;,&quot;P171_boxes&quot;)" stroke="#D576FF">P171</text>
+
+<text x="1110" y="658" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1110" y="720" fill="#009EFF" style="font-size:10px">14,081 Sqm</text>   
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=MB" target="_blank"><text x="1620" y="330" fill="#FDFDFD">MB</text></a>
+<a href="http://192.168.111.31/" target="_blank"><text x="1650" y="330" fill="#FDFDFD">♬</text></a>
+<rect id="MB_Level_px" x="1450" y="300" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?area=/&amp;cmd=MB_2_OVERVIEW" target="_blank"><rect id="MB_Level_bar" x="1450" y="-350" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 38.9437px;" transform="scale(1,-1)"></rect></a>
+<text id="MB_Level_txt" x="1490" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;MB&quot;,mb_bp)">5.53</text>
+
+<rect id="MB_Level_px" x="1555" y="300" width="50" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?area=/&amp;cmd=MB_2_OVERVIEW" target="_blank"><rect id="MB_Level_bar2" x="1555" y="-350" width="50" height="25" style="fill:#00D6FF; stroke:#FFFFFF; stroke-width:0" transform="scale(1,-1)"></rect></a>
+<text id="MB_Level2_txt" x="1575" y="340" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;MB&quot;,mb_bp)">LV</text>
+
+<rect id="MB_Pump1" x="1450" y="367" width="7" height="2" style="fill: rgb(67, 67, 67); stroke: gray; stroke-width: 1;"></rect>
+<rect id="MB_Pump2" x="1465" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump3" x="1480" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump4" x="1495" y="365" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump5" x="1510" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump6" x="1525" y="365" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="MB_Pump7" x="1540" y="367" width="7" height="2" style="fill: rgb(67, 67, 67); stroke: gray; stroke-width: 1;"></rect>
+
+<path d="M1270 220 L1390 220 L1390 310 L1450 310" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1420 310 L1420 380 L1450 380" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1430 310 L1430 275 L1445 275" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1450 380 L1550 380" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 380 L1460 400" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1490 380 L1490 420" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1540 380 L1540 410" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1475" y="378" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="1505" y="378" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=MB1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="MB_F_Nimit_txt" x="1450" y="410" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;นินิตรใหม่&quot;)">4879</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=MB2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="MB_F_Ram_txt" x="1480" y="430" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;รามอินทรา&quot;)">5325</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=MB3&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="MB_F_Suwin_txt" x="1530" y="420" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;สุวินทวงศ์&quot;)">6579</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=MB_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="MB_Qin_txt" x="1440" y="270" fill="#00FF3D">18226</text></a>
+<text id="MB_Inlet_txt" x="1440" y="290" fill="#FFA030" style="font-size:12px">6.44</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=MB_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="MB_F_txt" x="1520" y="270" fill="#00CFFC">16783</text></a>
+<text id="MB_P_txt" x="1520" y="290" fill="#FFA030" style="font-size:12px">14.12</text>
+<text id="UZ5304" x="1610" y="280" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ5304&quot;,&quot;UZ5304_boxes&quot;)">UZ5304</text>
+
+<text x="1510" y="298" fill="#009EFF" style="font-size:10px">Max 7.10</text>
+<text x="1510" y="360" fill="#009EFF" style="font-size:10px">7,745 Sqm</text>
+
+<text x="1590" y="298" fill="#009EFF" style="font-size:10px">Max 7.10</text>
+<text x="1570" y="360" fill="#009EFF" style="font-size:10px">4,216 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=LK" target="_blank"><text x="1530" y="580" fill="#FDFDFD">LK</text></a>
+<a href="http://192.168.117.32/" target="_blank"><text x="1560" y="580" fill="#FDFDFD">♬</text></a>
+<rect id="LK_Level_px" x="1490" y="500" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=LK_02_OVERVIEW" target="_blank"><rect id="LK_Level_bar" x="1490" y="-550" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.5631px;" transform="scale(1,-1)"></rect></a>
+<text id="LK_Level_txt" x="1530" y="540" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;LK&quot;,lk_bp)">4.68</text>
+
+<rect id="LK_Pump1" x="1475" y="500" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump2" x="1475" y="515" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump3" x="1475" y="530" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="LK_Pump4" x="1475" y="545" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M1390 310 L1390 450 L1500 450 L1500 500" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1460 450 L1460 500" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1500 475 L1525 475" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1460 500 L1460 550" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 525 L1430 525" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1430 500 L1430 550" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LK1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LK_F_Meen_txt" x="1410" y="490" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;มีนบุรี&quot;)">2883</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LK2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LK_F_Ladkra_txt" x="1410" y="560" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;ลาดกระบัง&quot;)">8520</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LK_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LK_Qin_txt" x="1520" y="470" fill="#00FF3D">13383</text></a>
+<text id="LK_Inlet_txt" x="1520" y="490" fill="#FFA030" style="font-size:12px">8.49</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=LK_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="LK_F_txt" x="1600" y="470" fill="#00CFFC">11403</text></a>
+<text id="LK_P_txt" x="1600" y="490" fill="#FFA030" style="font-size:12px">7.21</text>
+<text id="U223" x="1620" y="530" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U223&quot;,&quot;U223_boxes&quot;)">U223</text>
+
+<text x="1550" y="498" fill="#009EFF" style="font-size:10px">Max 5.63</text>
+<text x="1550" y="560" fill="#009EFF" style="font-size:10px">9,000 Sqm</text>
+
+<a href="http://172.16.193.162/smartmap/station/ptc.php?st=BP" target="_blank"><text x="1490" y="780" fill="#FDFDFD">BP</text></a>
+<a href="http://192.168.118.22/" target="_blank"><text x="1495" y="800" fill="#FDFDFD">♬</text></a>
+<rect id="BP_Level_px" x="1450" y="700" width="100" height="50" style="fill:none; stroke:#FFFFFF; stroke-width:1"></rect>
+<a href="http://172.16.183.113/FTVP/ViewPoint.aspx?cmd=BP_02_OVERVIEW" target="_blank"><rect id="BP_Level_bar" x="1450" y="-750" width="100" height="25" style="fill: rgb(0, 214, 255); stroke: rgb(255, 255, 255); stroke-width: 0; height: 41.1017px;" transform="scale(1,-1)"></rect></a>
+<text id="BP_Level_txt" x="1490" y="740" fill="#0000FF" stroke="#0000FF" stroke-width="1" style="cursor:zoom-in;" onclick="regress(&quot;BP&quot;,bp_bp)">4.85</text>
+
+<rect id="BP_Pump1" x="1450" y="680" width="7" height="7" style="fill: rgb(67, 67, 67); stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump2" x="1465" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump3" x="1480" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump4" x="1495" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump5" x="1510" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+<rect id="BP_Pump6" x="1525" y="680" width="7" height="7" style="fill: red; stroke: rgb(255, 255, 255); stroke-width: 0;"></rect>
+
+<path d="M1390 450 L1390 740 L1450 740" style="fill:none; stroke:#33FF00; stroke-width:2"></path> <path d="M1420 740 L1420 675 L1450 675" stroke-dasharray="3,3" style="fill:none; stroke:#CFCFCF; stroke-width:1"></path> <path d="M1440 740 L1440 780" stroke-dasharray="5,5" style="fill:none; stroke:#00FF3D; stroke-width:1;"></path> <path d="M1450 675 L1535 675" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1460 675 L1460 620" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1505 675 L1505 630 L1515 620" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1530 675 L1530 650 L1510 650" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1510,650 a5,5 0 1,0 -10,0" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <path d="M1500 650 L1460 650" style="fill:none; stroke:#009EFF; stroke-width:1"></path> 
+<rect x="1490" y="672" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> <rect x="1520" y="672" width="1" height="5" style="fill:none; stroke:#009EFF; stroke-width:2"></rect> 
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=BP1&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="BP_F_Kingkeaw1_txt" x="1420" y="660" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;กิงแก้ว1&quot;)">6988</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=BP2&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="BP_F_Kingkeaw2_txt" x="1540" y="660" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;กิ่งแก้ว2&quot;)">6999</text></a>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=BP3&#39;,&#39;newwindow&#39;,&#39;width=700,height=740&#39;); return false;"><text id="BP_F_Epec_txt" x="1510" y="610" fill="#009EFF" style="font-size:10px" onmouseover="overs(this.id,&quot;Epec&quot;)">7513</text></a>
+
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=BP_in&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="BP_Qin_txt" x="1440" y="790" fill="#00FF3D">24620</text></a>
+<text id="BP_Inlet_txt" x="1440" y="810" fill="#FFA030" style="font-size:12px">8</text>
+<a href="#" onclick="window.open(&#39;http://172.16.193.162/smartmap/newgraph/split.php?rtu=BP_flow&#39;,&#39;lal1&#39;,&#39;width=700,height=740&#39;); return false;"><text id="BP_F_txt" x="1520" y="790" fill="#00CFFC">21462</text></a>
+<text id="BP_P_txt" x="1520" y="810" fill="#FFA030" style="font-size:12px">17.53</text>
+<text id="UZ1711" x="1580" y="710" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ1711&quot;,&quot;UZ1711_boxes&quot;)" stroke="red">UZ1711</text>
+<text id="P175" x="1580" y="730" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;P175&quot;,&quot;P175_boxes&quot;)">P175</text>
+<text id="P177A" x="1580" y="750" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;P177A&quot;,&quot;P177A_boxes&quot;)">P177A</text>
+
+<text x="1510" y="698" fill="#009EFF" style="font-size:10px">Max 5.90</text>
+<text x="1505" y="760" fill="#009EFF" style="font-size:10px">11,000 Sqm</text>
+
+<rect x="40" y="257" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;L2&quot;);"></rect> <rect x="240" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;J2&quot;);"></rect> <rect x="280" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;J1&quot;);"></rect> <rect x="27" y="527" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Q1&quot;);"></rect> <rect x="40" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Q2&quot;);"></rect> <rect x="27" y="567" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Q3&quot;);"></rect> <rect x="27" y="640" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;M2&quot;);"></rect> <rect x="27" y="660" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;M3&quot;);"></rect> <rect x="40" y="647" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;M1&quot;);"></rect> <rect x="152" y="727" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;N1&quot;);"></rect> <rect x="177" y="727" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;N2&quot;);"></rect> <rect x="337" y="620" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;i1&quot;);"></rect> <rect x="357" y="620" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;i2&quot;);"></rect> <rect x="357" y="560" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;F1&quot;);"></rect> <rect x="340" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;F2&quot;);"></rect> <rect x="500" y="547" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;E2&quot;);"></rect> <rect x="537" y="500" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;E1&quot;);"></rect> <rect x="537" y="575" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;E4&quot;);"></rect> <rect x="537" y="590" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;E5&quot;);"></rect> <rect x="567" y="575" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;E3&quot;);"></rect> <rect x="537" y="320" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;D3&quot;);"></rect> <rect x="537" y="350" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;D2&quot;);"></rect> <rect x="607" y="600" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;B3&quot;);"></rect> <rect x="650" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV1800&quot;);"></rect> <rect x="515" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV2400&quot;);"></rect> <rect x="560" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV2400&quot;);"></rect> <rect x="870" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV3200&quot;);"></rect> <rect x="835" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV2600&quot;);"></rect> <rect x="1115" y="127" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV2000&quot;);"></rect> <rect x="1000" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV1200&quot;);"></rect> <rect x="1050" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV2000&quot;);"></rect> <rect x="1230" y="217" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;BV3000&quot;);"></rect> <rect x="1370" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Z2&quot;);"></rect> <rect x="1410" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Z3&quot;);"></rect> <rect x="1387" y="430" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Z1&quot;);"></rect> <rect x="1387" y="470" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Z4&quot;);"></rect> <rect x="1000" y="357" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1000" y="467" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="987" y="627" width="7" height="2" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;P1&quot;);"></rect> <rect x="970" y="647" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;P2&quot;);"></rect> <rect x="1000" y="667" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;P3&quot;);"></rect> <rect x="1400" y="307" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1450" y="447" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2"></rect> <rect x="1400" y="737" width="2" height="7" style="fill:none; stroke:#33FF00; stroke-width:2; cursor:pointer;" onclick="name_tnn(&quot;Z5&quot;);"></rect> 
+<circle r="4" cx="30" cy="590" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV48" x="40" y="590" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;ราชมนตรี&quot;)" onclick="show_rcv(this.id,&quot;RCV48&quot;)">ราชมนตรี</text>
+<text id="rcv48_txt" x="40" y="610" stroke="none" fill="#C8C8C8" font-size="10">0%</text>
+<text id="rcv48F_txt" x="65" y="610" stroke="none" fill="#C8C8C8" font-size="10">[null]</text>
+
+<circle r="4" cx="540" cy="245" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV27" x="490" y="245" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;ประชานุกูล&quot;)" onclick="show_rcv(this.id,&quot;RCV27&quot;)">ประชานุกูล</text>
+<text id="rcv27_txt" x="550" y="245" stroke="none" fill="#C8C8C8" font-size="10">44%</text>
+<text id="rcv27F_txt" x="575" y="245" stroke="none" fill="#C8C8C8" font-size="10">[3206]</text>
+
+<circle r="4" cx="540" cy="265" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV66" x="490" y="265" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;เฉลิมพันธ์&quot;)" onclick="show_rcv(this.id,&quot;RCV66&quot;)">เฉลิมพันธ์</text>
+<text id="rcv66_txt" x="550" y="265" stroke="none" fill="#C8C8C8" font-size="10">15%</text>
+<text id="rcv66F_txt" x="575" y="265" stroke="none" fill="#C8C8C8" font-size="10">[828.00]</text>
+
+<circle r="4" cx="540" cy="285" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle>DU
+<text id="RCV64" x="490" y="285" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;ประดิพัทธ์&quot;)" onclick="show_rcv(this.id,&quot;RCV64&quot;)">ประดิพัทธ์</text>
+<text id="rcv64_txt" x="550" y="285" stroke="none" fill="#C8C8C8" font-size="10">15%</text>
+<text id="rcv64F_txt" x="575" y="285" stroke="none" fill="#C8C8C8" font-size="10">[null]</text>
+
+<circle r="4" cx="540" cy="335" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><path d="M544 335 L565 335 L565 416" stroke-dasharray="5,5" style="fill:none; stroke:#009EFF; stroke-width:1"></path> <text id="RCV28" x="495" y="325" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;สามเสน&quot;)" onclick="show_rcv(this.id,&quot;RCV28&quot;)">สามเสน</text>
+<text id="rcv28_txt" x="550" y="325" stroke="none" fill="#C8C8C8" font-size="10">14%</text>
+<text id="rcv28F_txt" x="575" y="325" stroke="none" fill="#C8C8C8" font-size="10">[1352]</text>
+
+<circle r="4" cx="540" cy="610" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV60" x="550" y="610" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;สี่พระยา&quot;)" onclick="show_rcv(this.id,&quot;RCV60&quot;)">สี่พระยา</text>
+<text id="rcv60_txt" x="550" y="630" stroke="none" fill="#C8C8C8" font-size="10">10%</text>
+<text id="rcv60F_txt" x="570" y="630" stroke="none" fill="#C8C8C8" font-size="10">[1000]</text>
+
+<circle r="4" cx="660" cy="650" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV13" x="660" y="670" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;ลุมพินี_VC&quot;)" onclick="show_rcv(this.id,&quot;RCV13&quot;)">ลุมพินี VC</text>
+
+<circle r="4" cx="860" cy="650" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV65" x="860" y="670" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;คลองเตย_VC&quot;)" onclick="show_rcv(this.id,&quot;RCV65&quot;)">คลองเตย_VC</text>
+
+<circle r="4" cx="1290" cy="220" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV50" x="1280" y="210" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;มัยลาภ&quot;)" onclick="show_rcv(this.id,&quot;RCV50&quot;)">มัยลาภ</text>
+<text id="rcv50_txt" x="1290" y="240" stroke="none" fill="#C8C8C8" font-size="10">29%</text>
+<text id="rcv50F_txt" x="1290" y="260" stroke="none" fill="#C8C8C8" font-size="10">[2225]</text>
+
+<circle r="4" cx="1340" cy="220" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV25" x="1330" y="210" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;นวมินทร์&quot;)" onclick="show_rcv(this.id,&quot;RCV25&quot;)">นวมินทร์</text>
+<text id="rcv25_txt" x="1340" y="240" stroke="none" fill="#C8C8C8" font-size="10">40%</text>
+<text id="rcv25F_txt" x="1340" y="260" stroke="none" fill="#C8C8C8" font-size="10">[4658]</text>
+
+<circle r="4" cx="1290" cy="450" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV51" x="1270" y="440" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;พระราม9&quot;)" onclick="show_rcv(this.id,&quot;RCV51&quot;)">พระราม9</text>
+<text id="rcv51_txt" x="1270" y="470" stroke="none" fill="#C8C8C8" font-size="10">0%</text>
+<text id="rcv51F_txt" x="1295" y="470" stroke="none" fill="#C8C8C8" font-size="10">[0]</text>
+
+<circle r="4" cx="450" cy="550" style="fill:#000000; stroke:#33FF00; stroke-width:1.0"></circle><text id="RCV38" x="480" y="570" stroke="none" fill="#C8C8C8" font-size="10" style="cursor:pointer;" onmouseover="over(this.id)" onmouseout="out(this.id,&quot;ลอดแม่น้ำ&quot;)" onclick="show_rcv(this.id,&quot;RCV38&quot;)">ลอดแม่น้ำ</text>
+<text id="rcv38_txt" x="480" y="590" stroke="none" fill="#C8C8C8" font-size="10">5%</text>
+<text id="cross_river_txt" x="420" y="540" stroke="none" fill="#00FF3D" font-size="12">◀︎◀︎◀︎ -2194</text>
+
+
+<text id="tubchang_txt" x="1330" y="440" stroke="none" fill="#00FF3D" font-size="12">-4329 ▶︎▶︎</text>
+<text id="U128" x="490" y="630" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U128&quot;,&quot;U128_boxes&quot;)">U128</text>
+<text id="UZ1207" x="1300" y="180" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ1207&quot;,&quot;UZ1207_boxes&quot;)">UZ1207</text>
+<text id="U233" x="740" y="200" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U233&quot;,&quot;U233_boxes&quot;)">U233</text>
+<text id="UZ1609" x="1000" y="200" fill="#FDFDFD" style="cursor: pointer; display: block;" onclick="show_rtu(&quot;UZ1609&quot;,&quot;UZ1609_boxes&quot;)" stroke="red">UZ1609</text>
+<text id="UZ5411" x="140" y="130" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;UZ5411&quot;,&quot;UZ5411_boxes&quot;)">UZ5411</text>
+<text id="U022" x="140" y="150" fill="#FDFDFD" style="cursor: pointer; display: none;" onclick="show_rtu(&quot;U022&quot;,&quot;U022_boxes&quot;)">U022</text>
+
+
+
+
+<text id="wctdctr" x="1400" y="840" stroke="none" fill="#DDDDDD" font-size="12" onclick="name_tnn(&quot;&quot;)">กองควบคุมระบบส่งและสูบจ่ายน้ำ โทร. 02-2782860-1</text>
+
+</svg></center>
+
+<div id="tnn" style="position:absolute; left:10px; top:10px; font-size:14px; color:#FFFFFF;"></div>
+
+
+
+
+
+<script>
+	gety = window.innerHeight;
+	getx = window.innerWidth;
+	fitt = gety/900*100;
+	document.body.style.zoom = fitt+"%";
+
+	
+    //get_rtu_alert();
+
+
+    var rtu_ajax = "{}";
+function get_rtu_alert(){
+
+    var alm = document.getElementById("alert_mode").textContent;
+    if(alm == "☐ Alert Mode"){ alm = 1; } else if(alm == "☑ Alert Mode") { alm = 0; }
+    var url = "./rtu_query2.php";
+
+    $.ajax({url: url, cache: false}).done(function( data ) {  
+
+            rtu_ajax = eval(data);
+
+    var rtu_list = ["UZ5411","U022","P051","U020","U005","P032","U032","UZ0102","UZ1207","U128","UZ0619","UZ0307","U233","UZ1609","U201","U247","U251","U137","P125","P171","UZ5304","U223","UZ1711","P175","P177A"];
+    let i = 0;
+    let len = rtu_list.length;
+
+    for (; i < len; ) {
+        var check_rtu = eval("rtu_ajax[0]."+rtu_list[i]+"_A");
+        ackVal = ack[rtu_list[i]];
+        ts = Date.now()
+        ackChk = (+ackVal > ts)? 1: 0;
+        //console.log(rtu_list[i] + ' is ' + ackChk + ' : ' + ackVal);
+        //console.log((ackVal-ts)/1000/60/60);
+        
+        if(check_rtu =="#11FF69" ){     //ปกติ
+            if(rtu_o == ""){
+            document.getElementById(rtu_list[i]).style.display = "none";
+            document.getElementById(rtu_list[i]+'_box').style.display = "none";
+            document.getElementById(rtu_list[i]+'_boxes').style.display = "none";
+            document.getElementById(rtu_list[i]+'_boxes_f').style.display = "none";
+            }
+            
+        } else if(check_rtu =="#FF0000"){   //แดง
+            //console.log(rtu_list[i]);
+            //console.log(ackVal);
+            //console.log(ts);
+            document.getElementById(rtu_list[i]).setAttribute("stroke", 'red');
+            document.getElementById(rtu_list[i]).style.display = "block";
+            bx = rtu_list[i]+'_boxes';
+            //show_rtu(rtu_list[i],bx);
+            if(ackChk == 0){
+                if(openss == 0 && openregress == 0 && alm == 0){
+                    show_rtu_auto(rtu_list[i],bx);
+                    rtu_r.push(rtu_list[i]);
+                }
+
+            } else {
+                    rtu_r.push(rtu_list[i]);   
+                    if(rtu_o == ""){
+                        document.getElementById(rtu_list[i]+'_box').style.display = "none";
+                        document.getElementById(rtu_list[i]+'_boxes').style.display = "none";
+                        document.getElementById(rtu_list[i]+'_boxes_f').style.display = "none";
+                   }
+
+            }
+
+            
+        } else if(check_rtu =="#D576FF"){   //ม่วง
+            document.getElementById(rtu_list[i]).setAttribute("stroke", '#D576FF');
+            document.getElementById(rtu_list[i]).style.display = "block";
+            bx = rtu_list[i]+'_boxes';
+            //show_rtu(rtu_list[i],bx);
+            
+                //show_rtu_lower(rtu_list[i],bx);
+                rtu_r.push(rtu_list[i]);
+
+           // 
+            //console.log(rtu_list[i] + ' is ' + ack[rtu_list[i]]);
+
+
+        }
+    i++;
+    
+    if(openss == 0 && openregress == 0){
+        show_rtu_lower();   //Random RTU กรณีมีหลายตัวออกนอกเทรนด์//
+    }
+    }
+
+
+    });		
+}
+
+
+
+function over(x){
+            document.getElementById(x).textContent = x;
+}
+function overs(x,y){
+            document.getElementById(x).textContent = y;
+}
+ function out(x,y){
+            document.getElementById(x).textContent = y;
+}
+
+function del_box(x){
+    openss = 0;
+    openregress = 0;
+    rtu_o = "";
+    tmpSite = x.split('_')[0];
+    //console.log(tmpSite);
+    tsAck = Date.now() + (AckTime * 60 * 1000);
+    client.publish('ACK/'+tmpSite, tsAck.toString(), { qos: 0, retain: true })
+    xx = x +'es';
+    xxx = x +'es_f';
+    document.getElementById(x).style.display = "none";
+    document.getElementById(xx).style.display = "none";
+    document.getElementById(xxx).style.display = "none";
+}
+
+function del_box_1day(x){
+    openss = 0;
+    openregress = 0;
+    rtu_o = "";
+    tmpSite = x.split('_')[0];
+    //console.log(tmpSite);
+    tsAck = Date.now() + (AckTime * 60 * 60 * 24 * 1000);
+    client.publish('ACK/'+tmpSite, tsAck.toString(), { qos: 0, retain: true })
+    //console.log(tsAck);
+    xx = x +'es';
+    xxx = x +'es_f';
+    document.getElementById(x).style.display = "none";
+    document.getElementById(xx).style.display = "none";
+    document.getElementById(xxx).style.display = "none";
+
+}
+
+function del_box_reg(){
+    openss = 0;
+    openregress = 0;
+    document.getElementById("chartContainer").style.display = "none";
+    document.getElementById("chartContainer2").style.display = "none";
+    document.getElementById("chartContainer2").innerHTML = "";
+}
+
+function tankChartLoaded(){
+    var loadingBox = document.getElementById("tankChartLoading");
+    var chartFrame = document.getElementById("tankChartFrame");
+    if(chartFrame){
+        chartFrame.style.opacity = "1";
+    }
+    if(loadingBox){
+        loadingBox.style.opacity = "0";
+        setTimeout(function(){
+            if(loadingBox && loadingBox.parentNode){
+                loadingBox.parentNode.removeChild(loadingBox);
+            }
+        }, 350);
+    }
+}
+
+function regress(st,bp){
+    openregress = 1;
+    var chartUrl = "http://172.16.193.162/smartmap/newgraph/st_regress.php?station_tab="+encodeURIComponent(st)+"&popup_chart=tank";
+    var fullChartUrl = "http://172.16.193.162/smartmap/newgraph/st_regress.php?&station_tab="+encodeURIComponent(st);
+    var stLabel = String(st).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+    var popupBox = document.getElementById("chartContainer2");
+
+    document.getElementById("chartContainer").style.display = "block";
+    popupBox.style.display = "block";
+    popupBox.style.left = "35%";
+    popupBox.style.top = "30%";
+    popupBox.style.width = "630px";
+    popupBox.style.height = "400px";
+    popupBox.style.overflow = "hidden";
+    popupBox.style.borderRadius = "14px";
+    popupBox.style.background = "#07192f";
+    popupBox.style.boxShadow = "0 18px 45px rgba(0,0,0,.45)";
+    popupBox.innerHTML = "<a class='tank-chart-open-link' href='"+fullChartUrl+"' target='_blank' rel='noopener noreferrer' title='เปิดกราฟเต็มในแท็บใหม่: สถานี "+stLabel+"' onclick='event.stopPropagation();'>↩</a>"
+        + "<div id='tankChartLoading' class='tank-chart-loading'>"
+        + "<div class='tank-loader-orbit'><span></span></div>"
+        + "<div class='tank-loader-title'>กำลังโหลดกราฟระดับน้ำ</div>"
+        + "<div class='tank-loader-sub'>สถานี "+stLabel+" · กรุณารอสักครู่</div>"
+        + "<div class='tank-loader-progress'><span></span></div>"
+        + "<div class='tank-loader-hint'>คลิกพื้นหลังสีเทาเพื่อปิด</div>"
+        + "</div>"
+        + "<iframe id='tankChartFrame' src='"+chartUrl+"' onload='tankChartLoaded()' scrolling='no' style='border:0px; width:630px; height:400px; opacity:0; transition:opacity .25s ease; background:#ffffff; display:block;'></iframe>";
+
+}
+
+function show_rtu(rtu,box){
+    delbox = rtu+'_box';
+    box = rtu+'_boxes';
+    box_flow = rtu+'_boxes_f';
+    rtu_o = rtu;
+    //console.log(box);
+    document.getElementById(delbox).style.display = "block";
+    document.getElementById(box).style.display = "block";
+    document.getElementById(box).style.width = "450px";
+    document.getElementById(box).style.height = "250px";
+    document.getElementById(box).innerHTML = "<iframe src='http://172.16.193.162/smartmap/load_graph_ptc.php?&rtu="+rtu+"&rtu_f=p' scrolling='no' style='border:0px; width:500px; height:350px;'>";
+
+    let p_or_u = rtu.charAt(0);
+        if(p_or_u == "U"){
+    document.getElementById(box_flow).style.display = "block";
+    document.getElementById(box_flow).style.width = "450px";
+    document.getElementById(box_flow).style.height = "250px";
+    document.getElementById(box_flow).innerHTML = "<iframe src='http://172.16.193.162/smartmap/load_graph_ptc.php?rtu="+rtu+"&rtu_f=f' scrolling='no' style='border:0px; width:500px; height:350px;'>";
+    }
+}
+
+function show_rcv(rtu,box){
+    delbox = rtu+'_box';
+    box = rtu+'_boxes';
+    box_flow = rtu+'_boxes_f';
+
+    //console.log(box);
+    document.getElementById(delbox).style.display = "block";
+    document.getElementById(box).style.display = "block";
+    document.getElementById(box).style.width = "450px";
+    document.getElementById(box).style.height = "230px";
+    document.getElementById(box).innerHTML = "<iframe src='http://172.16.193.162/smartmap/newgraph/rcv_set.php?rtu="+rtu+"&rtu_f=p' scrolling='no' style='border:0px; width:450px; height:230px;'>";
+
+    document.getElementById(box_flow).style.display = "block";
+    document.getElementById(box_flow).style.width = "450px";
+    document.getElementById(box_flow).style.height = "230px";
+    document.getElementById(box_flow).innerHTML = "<iframe src='http://172.16.193.162/smartmap/newgraph/rcv_set.php?rtu="+rtu+"&rtu_f=f' scrolling='no' style='border:0px; width:450px; height:230px;'>";
+    
+}
+
+function show_rtu_auto(rtu,box){
+    delbox = rtu+'_box';
+    box = rtu+'_boxes';
+    box_flow = rtu+'_boxes_f';
+    document.getElementById(delbox).style.display = "block";
+    document.getElementById(box).style.display = "block";
+    document.getElementById(box).style.width = "450px";
+    document.getElementById(box).style.height = "230px";
+    document.getElementById(box).innerHTML = "<iframe src='http://172.16.193.162/smartmap/load_graph_ptc.php?rtu="+rtu+"&rtu_f=p' scrolling='no' style='border:0px; width:450px; height:230px;'>";
+        
+    let p_or_u = rtu.charAt(0);
+        if(p_or_u == "U"){
+    document.getElementById(box_flow).style.display = "block";
+    document.getElementById(box_flow).style.width = "450px";
+    document.getElementById(box_flow).style.height = "230px";
+    document.getElementById(box_flow).innerHTML = "<iframe src='http://172.16.193.162/smartmap/load_graph_ptc.php?rtu="+rtu+"&rtu_f=f' scrolling='no' style='border:0px; width:450px; height:230px;'>";
+    }
+
+}
+
+function show_rtu_lower(rtu,box){
+    //delbox = rtu+'_box';
+    //#FFFFFFbox = rtu+'_box';
+    //document.getElementById("chartContainer").style.display = "block";
+    
+    cc = rtu_r.length;
+    rd = Math.floor((Math.random() * cc));
+    rtu = rtu_r[rd];
+
+    document.getElementById("chartContainer3").style.display = "block";
+    //document.getElementById("chartContainer3").style.left = "0px";
+    //document.getElementById("chartContainer3").style.top = "0px";
+    //document.getElementById("chartContainer3").style.width = "290px";
+    //document.getElementById("chartContainer3").style.height = "300px";
+    document.getElementById("chartContainer3").innerHTML = "<iframe src='http://172.16.193.162/smartmap/newgraph/index.php?rtu="+rtu+"&rtu_f=p&dd1=&dd2=&dd3=&dd4=&dd6=' scrolling='no' style='border:0px; width:300px; height:300px;'>";
+
+}
+
+function show_lay_rtu(){
+    v = document.getElementById("layer1").textContent;
+    if(v == "☐ RTU"){
+        document.getElementById("layer1").textContent = "☑ RTU";
+        document.getElementById("UZ5411").style.display = "block";
+        document.getElementById("U022").style.display = "block";
+        document.getElementById("P051").style.display = "block";
+        document.getElementById("U020").style.display = "block";
+        document.getElementById("U005").style.display = "block";
+        document.getElementById("P032").style.display = "block";
+        document.getElementById("U032").style.display = "block";
+        document.getElementById("UZ0102").style.display = "block";
+        document.getElementById("UZ0619").style.display = "block";
+        document.getElementById("UZ0307").style.display = "block";
+        document.getElementById("U201").style.display = "block";
+        document.getElementById("U128").style.display = "block";
+        document.getElementById("U247").style.display = "block";
+        document.getElementById("U137").style.display = "block";
+        document.getElementById("U251").style.display = "block";
+        document.getElementById("P125").style.display = "block";
+        document.getElementById("P171").style.display = "block";
+        document.getElementById("UZ5304").style.display = "block";
+        document.getElementById("U223").style.display = "block";
+        document.getElementById("P175").style.display = "block";
+        document.getElementById("UZ1711").style.display = "block";
+        document.getElementById("P177A").style.display = "block";
+        document.getElementById("UZ1207").style.display = "block";
+        document.getElementById("U233").style.display = "block";
+        document.getElementById("UZ1609").style.display = "block";
+
+
+
+
+    } else {
+        document.getElementById("layer1").textContent = "☐ RTU";
+        document.getElementById("UZ5411").style.display = "none";
+        document.getElementById("U022").style.display = "none";
+        document.getElementById("P051").style.display = "none";
+        document.getElementById("U020").style.display = "none";
+        document.getElementById("U005").style.display = "none";
+        document.getElementById("P032").style.display = "none";
+        document.getElementById("U032").style.display = "none";
+        document.getElementById("UZ0102").style.display = "none";
+        document.getElementById("UZ0619").style.display = "none";
+        document.getElementById("UZ0307").style.display = "none";
+        document.getElementById("U201").style.display = "none";
+        document.getElementById("U128").style.display = "none";
+        document.getElementById("U247").style.display = "none";
+        document.getElementById("U137").style.display = "none";
+        document.getElementById("U251").style.display = "none";
+        document.getElementById("P125").style.display = "none";
+        document.getElementById("P171").style.display = "none";
+        document.getElementById("UZ5304").style.display = "none";
+        document.getElementById("U223").style.display = "none";
+        document.getElementById("P175").style.display = "none";
+        document.getElementById("UZ1711").style.display = "none";
+        document.getElementById("P177A").style.display = "none";
+        document.getElementById("UZ1207").style.display = "none";
+        document.getElementById("U233").style.display = "none";
+        document.getElementById("UZ1609").style.display = "none";        
+    }
+}
+
+
+function show_lay_rtu_alert(){
+    v = document.getElementById("alert_mode").textContent;
+    if(v == "☐ Alert Mode"){
+        document.getElementById("alert_mode").textContent = "☑ Alert Mode";
+    } else if(v == "☑ Alert Mode"){
+        document.getElementById("alert_mode").textContent = "☐ Alert Mode";
+    }
+}
+
+
+function open_ss(){
+    openss = 1;
+    document.getElementById("chartContainer").style.display = "block";
+    document.getElementById("chartContainer2").style.display = "block";
+    document.getElementById("chartContainer2").style.left = "20%";
+    document.getElementById("chartContainer2").style.top = "20px";
+    document.getElementById("chartContainer2").style.width = "1150px";
+    document.getElementById("chartContainer2").style.height = "850px";
+    document.getElementById("chartContainer2").innerHTML = "<iframe src='http://172.16.193.162/smartmap/samsen.php' scrolling='no' style='border:0px; width:1150px; height:850px;'>";
+
+}
+
+
+function name_tnn(x){
+    let xx = event.clientX + "px";
+    let yy = event.clientY - 30 + "px";
+    document.getElementById("tnn").style.left = xx;
+    document.getElementById("tnn").style.top = yy;
+    document.getElementById("tnn").textContent = x;
+
+
+}
+
+
+function click_his(){
+    updateData();
+    updateData1min();
+    dd = document.getElementById("dd1").value;
+    tt = document.getElementById("tt1").value;
+    if(dd !="" && tt != ""){
+    document.getElementById("time_box").textContent = "ย้อนหลัง ▶ "+dd+" "+tt+":00";
+    }
+}
+
+function click_his2(){
+
+    document.getElementById("dd1").value ="";
+    document.getElementById("tt1").value ="";
+
+    updateData();
+    updateData1min();
+    time_refresh();
+}
+
+//console.log(rtu_r);
+</script>
+
+
+
+
+</body></html>

@@ -2,7 +2,7 @@
   "projectName": "Water Operation KM Dashboard",
   "projectNameTh": "ระบบจัดการองค์ความรู้งานสูบส่งและสูบจ่ายน้ำ",
   "lastUpdate": "2026-07-03",
-  "dataVersion": 8,
+  "dataVersion": 9,
   "changeLog": [
     {
       "version": 1,
@@ -43,6 +43,11 @@
       "version": 8,
       "date": "2026-07-03",
       "detail": "ชุดที่ 7: Excel ข้อมูลรายชั่วโมง 10 สถานี (มี.ค.–พ.ค. 2025 และ 2026, 43,900 แถว) — Qin/Level/Inlet/Flow-Pressure จ่ายออกรายทิศทาง, สถิติรายสถานี, Data Quality Findings, ยืนยันความหมายตัวเลขสถานีบน SCADA"
+    },
+    {
+      "version": 9,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 8: ไฟล์หน้าจอจริง Smart Tunnel V.2 (SVG + ค่าสด 3 ก.ค. 2026 15:08) — สถานะปั๊มจริง 80 ตัว, รายชื่อ RCV 14 จุดพร้อม % เปิด, รหัส RTU 25 จุด, Level Max ทางการทุกสถานี, Snapshot ครั้งที่ 2, System Map ใช้ SVG จริง"
     }
   ],
   "waterTreatmentPlants": [
@@ -103,7 +108,22 @@
       "status": "ยังไม่มีข้อมูล",
       "issue": "ยังไม่มีข้อมูล",
       "note": "ค่าอื่นบนจอฝั่ง MH: 21.94, 23807, 27.97, 15761, 8046, 8017 — รอยืนยันความหมาย / จุดวัดแรงดัน P051 อยู่ใกล้ MH",
-      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "39250 (MHTR_TR)",
+        "level": "4.05 (MHTR_Level, Max 5.4)",
+        "inlet": "22.02 (Max 28)",
+        "branches": {
+          "MH_F": "23807 (P 27.97)",
+          "MH_F_A": "15761",
+          "MH_F_B": "8046",
+          "MH_F_C": "8017"
+        }
+      },
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 3
+      }
     },
     {
       "systemCode": "TR1",
@@ -117,8 +137,17 @@
       "rtu": "ยังไม่มีข้อมูล",
       "status": "ยังไม่มีข้อมูล",
       "issue": "ยังไม่มีข้อมูล",
-      "note": "BK03 คือชุดวาล์ว/จุดเชื่อมฝั่ง TR1-TR2 (รอยืนยัน)",
-      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"
+      "note": "BK03 = จุดจ่ายกิ่ง 3 เส้น: CH 3109, NG 5518, ME 5841 (ชื่อเต็มรอยืนยัน) พร้อมปั๊ม 5 ตัว (ทำงาน 4)",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "46474",
+        "pressure": "33.37",
+        "level": "3.48 (BK_TR1_L1)"
+      },
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3
+      }
     },
     {
       "systemCode": "TR2",
@@ -132,8 +161,16 @@
       "rtu": "ยังไม่มีข้อมูล",
       "status": "ยังไม่มีข้อมูล",
       "issue": "ยังไม่มีข้อมูล",
-      "note": "ค่า 3.44 และ BK04 ปรากฏใกล้ TR2/TR3 — รอยืนยันความหมาย / UZ1609 เป็นจุดอุปกรณ์ใกล้เคียง",
-      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"
+      "note": "BK04 = จุดจ่ายกิ่ง: VI 9440, PY 229 (ชื่อเต็มรอยืนยัน) พร้อมปั๊ม 4 ตัว (ทำงาน 3) / ค่า 3.44-3.48 คือระดับ/ค่าฝั่ง TR (รอยืนยัน)",
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "46510",
+        "pressure": "36.03"
+      },
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 5
+      }
     },
     {
       "systemCode": "TR3",
@@ -148,7 +185,15 @@
       "status": "ยังไม่มีข้อมูล",
       "issue": "ยังไม่มีข้อมูล",
       "note": "ยังไม่มีข้อมูล",
-      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี"
+      "keyLearning": "แรงดันในอุโมงค์สัมพันธ์กับการรับน้ำของสถานีปลายทาง: หากหลายสถานี (เช่น สจ.ท่าพระ, สจ.ราษฎร์บูรณะ) หรี่การรับน้ำพร้อมกัน แรงดันในอุโมงค์จะเพิ่มสูงขึ้นทันทีเพราะน้ำไม่มีที่ไป / อุโมงค์มีแรงดันมหาศาล สามารถนำมาจ่ายตรงผ่าน By-pass ได้ในบางกรณี",
+      "snapshot1508": {
+        "flow": "51900",
+        "pressure": "25.1"
+      },
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 2
+      }
     }
   ],
   "pumpingStations": [
@@ -169,7 +214,8 @@
         "levelM": "3.31",
         "maxLevelM": "5.63",
         "areaSqm": "14,081",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ตำแหน่งบนผัง: ฝั่งตะวันออกตอนล่าง ใกล้ BP",
       "hourlyStats": {
@@ -200,7 +246,26 @@
         "พบ Error Code (32769/65538 = 16-bit overflow) 390 ชม.",
         "ระดับถังอ่านได้ 0.0 จำนวน 60 ชม. (คาดว่าสัญญาณหลุด)",
         "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "19577",
+        "out": "20151",
+        "lvl": "3.31",
+        "inlet": "4.88",
+        "p": "14.96"
+      }
     },
     {
       "stationCode": "KT",
@@ -214,12 +279,13 @@
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
       "status": "ยังไม่มีข้อมูล",
-      "issue": "ยังไม่มีข้อมูล",
+      "issue": "ณ 15:08 ปั๊มไม่ทำงานทุกตัวแต่ยังจ่ายน้ำ (LA Qin=133, KT Qin=-6) — คาดว่าจ่ายแบบ By-pass ด้วยแรงดันอุโมงค์ (รอยืนยัน)",
       "clearWaterTank": {
         "levelM": "4.69",
         "maxLevelM": "5.63",
         "areaSqm": "8,120",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "มี คลองเตย VC (Valve Chamber) บนแนวอุโมงค์",
       "hourlyStats": {
@@ -257,7 +323,26 @@
       "dataQuality": [
         "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)",
         "Flow ติดลบ 7 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 0,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "-6",
+        "out": "8790",
+        "lvl": "4.7",
+        "inlet": "13.58",
+        "p": "4.84"
+      }
     },
     {
       "stationCode": "BP",
@@ -276,7 +361,8 @@
         "levelM": "4.61",
         "maxLevelM": "5.90",
         "areaSqm": "11,000",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ยังไม่มีข้อมูล",
       "hourlyStats": {
@@ -310,7 +396,27 @@
       "dataQuality": [
         "พบ Error Code (32769/65538 = 16-bit overflow) 2 ชม.",
         "Flow ติดลบ 982 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 6,
+        "activeAt1508": 5,
+        "statusList": [
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "24620",
+        "out": "21462",
+        "lvl": "4.85",
+        "inlet": "8",
+        "p": "17.53"
+      }
     },
     {
       "stationCode": "LK",
@@ -329,7 +435,8 @@
         "levelM": "4.42",
         "maxLevelM": "5.63",
         "areaSqm": "9,000",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ยังไม่มีข้อมูล",
       "hourlyStats": {
@@ -358,7 +465,25 @@
       ],
       "dataQuality": [
         "พบ Error Code (32769/65538 = 16-bit overflow) 30 ชม."
-      ]
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 2,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "13383",
+        "out": "11403",
+        "lvl": "4.68",
+        "inlet": "8.49",
+        "p": "7.21"
+      }
     },
     {
       "stationCode": "MB",
@@ -377,7 +502,8 @@
         "levelM": "5.47",
         "maxLevelM": "7.10",
         "areaSqm": "7,745",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "บนจอมีช่อง LV และพื้นที่ 4,216 Sqm เพิ่มอีกหนึ่งค่า — อาจมีถัง 2 ใบ รอยืนยัน",
       "hourlyStats": {
@@ -407,7 +533,28 @@
           "code": "MB_F_Suwin",
           "nameTh": "สุวินทวงศ์ (รอยืนยันชื่อ)"
         }
-      ]
+      ],
+      "pumps": {
+        "total": 7,
+        "activeAt1508": 4,
+        "statusList": [
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "18226",
+        "out": "16783",
+        "lvl": "5.53",
+        "inlet": "6.44",
+        "p": "14.12"
+      }
     },
     {
       "stationCode": "LP",
@@ -426,7 +573,8 @@
         "levelM": "4.13",
         "maxLevelM": "5.70",
         "areaSqm": "8,570",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "มี ลุมพินี VC (Valve Chamber) บนแนวอุโมงค์",
       "hourlyStats": {
@@ -455,7 +603,25 @@
       ],
       "dataQuality": [
         "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 3,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "12057",
+        "out": "15147",
+        "lvl": "4.2",
+        "inlet": "13.2",
+        "p": "6.81"
+      }
     },
     {
       "stationCode": "LA",
@@ -469,12 +635,13 @@
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
       "status": "ยังไม่มีข้อมูล",
-      "issue": "ยังไม่มีข้อมูล",
+      "issue": "ณ 15:08 ปั๊มไม่ทำงานทุกตัวแต่ยังจ่ายน้ำ (LA Qin=133, KT Qin=-6) — คาดว่าจ่ายแบบ By-pass ด้วยแรงดันอุโมงค์ (รอยืนยัน)",
       "clearWaterTank": {
         "levelM": "4.29",
         "maxLevelM": "5.63",
         "areaSqm": "13,815",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ยังไม่มีข้อมูล",
       "hourlyStats": {
@@ -504,7 +671,25 @@
       "dataQuality": [
         "ระดับถังอ่านได้ 0.0 จำนวน 248 ชม. (คาดว่าสัญญาณหลุด)",
         "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 4,
+        "activeAt1508": 0,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Non-Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "133",
+        "out": "13754",
+        "lvl": "4.32",
+        "inlet": "19.13",
+        "p": "11.18"
+      }
     },
     {
       "stationCode": "TP",
@@ -523,7 +708,8 @@
         "levelM": "5.29",
         "maxLevelM": "5.63",
         "areaSqm": "8,120",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกของแม่น้ำเจ้าพระยา",
       "hourlyStats": {
@@ -556,7 +742,26 @@
       ],
       "dataQuality": [
         "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
-      ]
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "11632",
+        "out": "11502",
+        "lvl": "5.24",
+        "inlet": "12.08",
+        "p": "9.55"
+      }
     },
     {
       "stationCode": "RB",
@@ -573,9 +778,10 @@
       "issue": "ยังไม่มีข้อมูล",
       "clearWaterTank": {
         "levelM": "5.4",
-        "maxLevelM": "5.60",
+        "maxLevelM": "5.6",
         "areaSqm": "10,025",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกตอนล่าง",
       "hourlyStats": {
@@ -601,7 +807,26 @@
           "code": "RB_F_Yairom",
           "nameTh": "รอยืนยันชื่อ"
         }
-      ]
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "13476",
+        "out": "14533",
+        "lvl": "5.31",
+        "inlet": "12.39",
+        "p": "16.36"
+      }
     },
     {
       "stationCode": "PK",
@@ -618,9 +843,10 @@
       "issue": "ยังไม่มีข้อมูล",
       "clearWaterTank": {
         "levelM": "4.97",
-        "maxLevelM": "6.70",
+        "maxLevelM": "6.7",
         "areaSqm": "10,500",
-        "asOf": "2026-07-03 14:05 (SCADA)"
+        "asOf": "2026-07-03 14:05 (SCADA)",
+        "maxSource": "ค่าคงที่ในระบบ Smart Tunnel V.2 (ทางการ)"
       },
       "note": "ตำแหน่งบนผัง: ฝั่งตะวันตก ใกล้แนวท่อส่งน้ำมหาสวัสดิ์ (เส้นสีเขียวบนแผนที่)",
       "hourlyStats": {
@@ -646,7 +872,26 @@
       "dataQuality": [
         "พบ Error Code (32769/65538 = 16-bit overflow) 210 ชม.",
         "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)"
-      ]
+      ],
+      "pumps": {
+        "total": 5,
+        "activeAt1508": 3,
+        "statusList": [
+          "Actived",
+          "Non-Actived",
+          "Non-Actived",
+          "Actived",
+          "Actived"
+        ],
+        "asOf": "2026-07-03 15:08"
+      },
+      "snapshot1508": {
+        "qin": "16336",
+        "out": "12480",
+        "lvl": "5.41",
+        "inlet": "18.69",
+        "p": "12.92"
+      }
     }
   ],
   "otherNodesOnScada": [
@@ -691,7 +936,333 @@
       "note": "มีกล่อง Bypass — จุดจ่ายน้ำแบบ Bypass จากอุโมงค์เข้าท่อประธาน (รอยืนยัน) ไม่อยู่ในสถานีสูบจ่าย 10 แห่ง"
     }
   ],
-  "rtuList": [],
+  "rtuList": [
+    {
+      "rtuName": "P051",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U020",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U005",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "P032",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U032",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ0102",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ0619",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ0307",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U201",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U247",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U137",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U251",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "P125",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "P171",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ5304",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U223",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ1711",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "P175",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "P177A",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U128",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ1207",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U233",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ1609",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "UZ5411",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    },
+    {
+      "rtuName": "U022",
+      "stationCode": "",
+      "stationName": "ยังไม่มีข้อมูล",
+      "sourceSystem": "ยังไม่มีข้อมูล",
+      "monitoringValues": [
+        "P = Pressure, U/UZ = Flow+Pressure (ตามประเภท)"
+      ],
+      "communicationStatus": "ยังไม่มีข้อมูล",
+      "lastUpdate": "ยังไม่มีข้อมูล",
+      "alarm": "ยังไม่มีข้อมูล",
+      "note": "พบบนจอ Smart Tunnel V.2"
+    }
+  ],
   "flowPressureData": [
     {
       "recordType": "SCADA Snapshot (ค่าดิบ รอยืนยันความหมายของแต่ละตำแหน่งตัวเลข)",
@@ -975,6 +1546,85 @@
       ],
       "storage": "water-km-dashboard/data/timeseries/*.csv (ข้อมูลเต็ม) + summary.json (สถิติ/โปรไฟล์)",
       "note": "ผู้ใช้ระบุว่าเป็น 'ตัวอย่างข้อมูล' ของแต่ละสถานี"
+    },
+    {
+      "recordType": "SCADA Snapshot ครั้งที่ 2 (จากไฟล์หน้าจอจริง — ความหมายค่ายืนยันด้วย element id)",
+      "date": "2026-07-03",
+      "time": "15:08",
+      "source": "Smart Tunnel V.2 (tunnel.php) บันทึกจากหน้างาน",
+      "stations": {
+        "SR": {
+          "qin": "19577",
+          "out": "20151",
+          "lvl": "3.31",
+          "inlet": "4.88",
+          "p": "14.96"
+        },
+        "KT": {
+          "qin": "-6",
+          "out": "8790",
+          "lvl": "4.7",
+          "inlet": "13.58",
+          "p": "4.84"
+        },
+        "BP": {
+          "qin": "24620",
+          "out": "21462",
+          "lvl": "4.85",
+          "inlet": "8",
+          "p": "17.53"
+        },
+        "LK": {
+          "qin": "13383",
+          "out": "11403",
+          "lvl": "4.68",
+          "inlet": "8.49",
+          "p": "7.21"
+        },
+        "MB": {
+          "qin": "18226",
+          "out": "16783",
+          "lvl": "5.53",
+          "inlet": "6.44",
+          "p": "14.12"
+        },
+        "LP": {
+          "qin": "12057",
+          "out": "15147",
+          "lvl": "4.2",
+          "inlet": "13.2",
+          "p": "6.81"
+        },
+        "LA": {
+          "qin": "133",
+          "out": "13754",
+          "lvl": "4.32",
+          "inlet": "19.13",
+          "p": "11.18"
+        },
+        "TP": {
+          "qin": "11632",
+          "out": "11502",
+          "lvl": "5.24",
+          "inlet": "12.08",
+          "p": "9.55"
+        },
+        "RB": {
+          "qin": "13476",
+          "out": "14533",
+          "lvl": "5.31",
+          "inlet": "12.39",
+          "p": "16.36"
+        },
+        "PK": {
+          "qin": "16336",
+          "out": "12480",
+          "lvl": "5.41",
+          "inlet": "18.69",
+          "p": "12.92"
+        }
+      },
+      "note": "id ยืนยัน: Qin=รับเข้า, F=TotalFlow จ่ายออก, P=แรงดันจ่าย, Inlet=แรงดันขาเข้า, Level=ระดับถัง / KT_Qin=-6 และ LA_Qin=133 สอดคล้องโหมด By-pass"
     }
   ],
   "shiftHandoverData": [],
@@ -1338,9 +1988,227 @@
       "relatedStation": "ทุกสถานี",
       "relatedSystem": "",
       "keyTakeaway": "1 สถานี = หลายเส้นจ่าย แต่ละเส้นมี Flow/Pressure ของตัวเอง"
+    },
+    {
+      "category": "กระบวนการ",
+      "topic": "สังเกตโหมด By-pass จากจอ SCADA",
+      "description": "เมื่อสถานีจ่ายน้ำโดยปั๊มดับทุกตัว (Non-Actived ทั้งหมด) แต่ TotalFlow ยังมีค่า แสดงว่ากำลังจ่ายแบบ By-pass ใช้แรงดันจากอุโมงค์โดยตรง — ตัวอย่างจริง 3 ก.ค. 2026 15:08: LA (Qin 133, จ่าย 13,754) และ KT (Qin -6, จ่าย 8,790) ปั๊ม 0/4 และ 0/5 ตัว (รอยืนยันกับหน้างาน)",
+      "example": "โค้ดหน้าจอมีตัวแปร pk_bp, tp_bp, ..., bp_bp สำหรับติดตาม Pump Bypass ทุกสถานี",
+      "relatedStation": "LA, KT",
+      "relatedSystem": "",
+      "keyTakeaway": "ปั๊มดับหมดแต่น้ำยังไหล = By-pass กำลังทำงาน"
     }
   ],
-  "pumpData": [],
+  "pumpData": [
+    {
+      "unit": "MH",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_03",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 4,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "BK_04",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR1",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR2",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 5,
+      "statusList": [
+        "Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BK_TR3",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 2,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "PK",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "TP",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "RB",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "LP",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "LA",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 0,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "KT",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 0,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "SR",
+      "totalPumps": 5,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 3,
+      "statusList": [
+        "Non-Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "MB",
+      "totalPumps": 7,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 4,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Non-Actived"
+      ]
+    },
+    {
+      "unit": "LK",
+      "totalPumps": 4,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 2,
+      "statusList": [
+        "Actived",
+        "Non-Actived",
+        "Non-Actived",
+        "Actived"
+      ]
+    },
+    {
+      "unit": "BP",
+      "totalPumps": 6,
+      "activedAt": "2026-07-03 15:08",
+      "actived": 5,
+      "statusList": [
+        "Non-Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived",
+        "Actived"
+      ]
+    }
+  ],
   "systemMapReference": {
     "scadaScreen": {
       "title": "เทพอุโมงค์ (Smart Tunnel)",
@@ -1478,18 +2346,17 @@
     }
   ],
   "pendingConfirmations": [
-    "ค่า % ตามจุดต่าง ๆ (เช่น นวมินทร์ 40%, มัยลาภ 29%) คือ % เปิดวาล์ว RCV ใช่หรือไม่",
     "แต่ละสถานีรับน้ำจากระบบใด (sourceSystem: MH / TR1 / TR2 / TR3) — จากภาพยังสรุปแน่ชัดไม่ได้",
     "จะรวม TB (ธนบุรี), SS (สามเสน), PY (พหลโยธิน) เข้าใน Dashboard ด้วยหรือไม่ (ไม่อยู่ใน Master 10 สถานี)",
-    "MB มีถัง 2 ใบหรือไม่ (มีค่า LV และพื้นที่ 4,216 Sqm เพิ่ม)",
-    "ชื่อจุด 'เอลิมพันธ์' อ่านจากภาพอาจคลาดเคลื่อน",
+    "MB มีถัง 2 ใบหรือไม่ — จอจริงมีช่อง MB_Level2 แสดง 'LV' (ไม่มีตัวเลข ณ 15:08) และพื้นที่ 4,216 Sqm — ยังรอยืนยัน",
     "จำนวนจุด RTU: Playbook ยืนยัน 'Over 210 tracking points' สอดคล้องบันทึกการเรียนรู้ — ส่วน 81 จุดบน Legend แผนที่คาดว่าเป็นชุดย่อยที่แสดงบนแผนที่ (รอยืนยันขั้นสุดท้าย)",
     "คำว่า 'Blackout' ในการจัดการน้ำเค็ม — น่าจะเป็น Blending หรือการบริหารจัดการน้ำดิบ รอยืนยันคำที่ถูกต้อง",
     "บทบาท 'บางกอกน้อย' ใน Interdependence Rule: Playbook กล่าวถึงเสมือนเป็นโหนดรับน้ำข้างเคียงเพชรเกษม/ท่าพระ แต่ไม่อยู่ใน 10 สถานีสูบจ่ายหลัก (เป็นชื่อสาขา/โซน 01) — รอยืนยันสถานะ",
     "หน่วยของ Flow ในข้อมูลรายชั่วโมง (คาดว่า ลบ.ม./ชม.) และหน่วย Inlet/Pressure (คาดว่า ม.)",
     "ชื่อเต็มภาษาไทยของเส้นจ่ายบางเส้น: TP_Wong, RB_Yairom, KT_Praka, BP_Epec, MB_Nimit/Ram/Suwin",
     "SR TotalFlow สูงสุด 55,392 (11 เม.ย. 2025 11:00) สูงผิดปกติ — เหตุการณ์จริงหรือความผิดพลาดข้อมูล",
-    "MB ระดับถังสูงสุด 7.23 ม. เกิน Max 7.10 บนจอ SCADA เล็กน้อย — ยืนยันค่า Max จริงของถัง MB"
+    "ชื่อเต็มกิ่งจ่ายของบางเขน: BK03 → CH/NG/ME และ BK04 → VI/PY (อักษรย่อบนจอ) — รอยืนยัน",
+    "จุด 'ทับช้าง(?)' มีค่า -4329 ▶▶ (tubchang) — รอยืนยันชื่อและความหมาย"
   ],
   "futureAddOn": [
     "Pump Capacity",
@@ -1526,6 +2393,100 @@
   },
   "resolvedConfirmations": [
     "กำลังการผลิต (คลี่คลายโดย Playbook ชุดที่ 6): บางเขน ~4.2 ล้าน ลบ.ม./วัน (~67%), มหาสวัสดิ์ ~1.9 ล้าน (~30%), สามเสน 3-4%, ธนบุรี <1% → กำลังผลิตรวมทั้งระบบ ~6 ล้าน, Demand รายวัน ~5 ล้าน — ตัวเลข '4 ล้าน' (ชุด 1) คือบางเขนแห่งเดียว ส่วน '5-6 ล้าน' (ชุด 2/4) คือภาพรวมระบบ",
-    "ความหมายตัวเลขสถานีบน SCADA (คลี่คลายโดย Excel ชุดที่ 7): คู่เลขใหญ่ = Qin (รับเข้า) กับ TotalFlow (จ่ายออกรวม), เลขทศนิยม = Inlet Pressure และแรงดันจ่ายรายเส้น, กล่องถัง = Level (ม.) — เหลือยืนยันเฉพาะหน่วยของ Flow (คาดว่า ลบ.ม./ชม.)"
+    "ความหมายตัวเลขสถานีบน SCADA (คลี่คลายโดย Excel ชุดที่ 7): คู่เลขใหญ่ = Qin (รับเข้า) กับ TotalFlow (จ่ายออกรวม), เลขทศนิยม = Inlet Pressure และแรงดันจ่ายรายเส้น, กล่องถัง = Level (ม.) — เหลือยืนยันเฉพาะหน่วยของ Flow (คาดว่า ลบ.ม./ชม.)",
+    "ค่า % บนจอ (คลี่คลายโดยไฟล์จอจริง): คือเปอร์เซ็นต์เปิดวาล์ว RCV — ทุกจุดมีรหัส RCV กำกับ (เช่น นวมินทร์ = RCV25 40%, ประชานุกูล = RCV27 44%)",
+    "ชื่อจุด 'เอลิมพันธ์' ที่อ่านจากภาพ (คลี่คลาย): ชื่อจริงคือ 'เฉลิมพันธ์' (RCV66)",
+    "Max ถัง MB (คลี่คลาย): ค่าทางการในระบบ = 7.10 ม. (MB_Level_max) — ค่า 7.23 ใน Time Series คือ overshoot ของเซนเซอร์ช่วงสั้น"
+  ],
+  "rcvList": [
+    {
+      "code": "RCV27",
+      "name": "ประชานุกูล",
+      "percentOpen": "44%",
+      "flow": "3206"
+    },
+    {
+      "code": "RCV66",
+      "name": "เฉลิมพันธ์",
+      "percentOpen": "15%",
+      "flow": "828.00"
+    },
+    {
+      "code": "RCV64",
+      "name": "ประดิพัทธ์",
+      "percentOpen": "15%",
+      "flow": "null"
+    },
+    {
+      "code": "RCV28",
+      "name": "สามเสน",
+      "percentOpen": "14%",
+      "flow": "1352"
+    },
+    {
+      "code": "RCV29",
+      "name": "พหลโยธิน",
+      "percentOpen": "22%",
+      "flow": "6831",
+      "pressure": "8.4",
+      "inletRaw": "32769 (Error Code)"
+    },
+    {
+      "code": "RCV60",
+      "name": "สี่พระยา",
+      "percentOpen": "10%",
+      "flow": "1000"
+    },
+    {
+      "code": "RCV50",
+      "name": "มัยลาภ",
+      "percentOpen": "29%",
+      "flow": "2225"
+    },
+    {
+      "code": "RCV25",
+      "name": "นวมินทร์",
+      "percentOpen": "40%",
+      "flow": "4658"
+    },
+    {
+      "code": "RCV51",
+      "name": "พระราม9",
+      "percentOpen": "0%",
+      "flow": "0"
+    },
+    {
+      "code": "RCV38",
+      "name": "ลอดแม่น้ำ",
+      "percentOpen": "5%",
+      "flow": "cross river -2194"
+    },
+    {
+      "code": "RCV48",
+      "name": "ราชมนตรี",
+      "percentOpen": "0%",
+      "flow": "null"
+    },
+    {
+      "code": "RCV13",
+      "name": "ลุมพินี VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV65",
+      "name": "คลองเตย VC",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "code": "RCV54",
+      "name": "(บริเวณสามเสน)",
+      "percentOpen": "ยังไม่มีข้อมูล",
+      "flow": ""
+    },
+    {
+      "note": "ข้อมูล ณ 2026-07-03 15:08 จากจอ Smart Tunnel V.2 — % คือเปอร์เซ็นต์เปิดวาล์ว, [ตัวเลข] คือ Flow"
+    }
   ]
 }

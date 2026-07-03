@@ -2,7 +2,7 @@
   "projectName": "Water Operation KM Dashboard",
   "projectNameTh": "ระบบจัดการองค์ความรู้งานสูบส่งและสูบจ่ายน้ำ",
   "lastUpdate": "2026-07-03",
-  "dataVersion": 7,
+  "dataVersion": 8,
   "changeLog": [
     {
       "version": 1,
@@ -38,6 +38,11 @@
       "version": 7,
       "date": "2026-07-03",
       "detail": "ชุดที่ 6: Smart Waterworks Playbook (สไลด์ 10 หน้า) — สัดส่วนกำลังผลิตโรงผลิต 4 แห่ง, Journey of Water 4 Stage, Interdependence Rule, SCADA Chain (RTU→DNP3→OPC), RTU Nomenclature (UZ 0114), Pressure Optimization Curve (±0.5m), Diagnostic Signatures, RCV Diversion Scenario"
+    },
+    {
+      "version": 8,
+      "date": "2026-07-03",
+      "detail": "ชุดที่ 7: Excel ข้อมูลรายชั่วโมง 10 สถานี (มี.ค.–พ.ค. 2025 และ 2026, 43,900 แถว) — Qin/Level/Inlet/Flow-Pressure จ่ายออกรายทิศทาง, สถิติรายสถานี, Data Quality Findings, ยืนยันความหมายตัวเลขสถานีบน SCADA"
     }
   ],
   "waterTreatmentPlants": [
@@ -151,10 +156,10 @@
       "stationCode": "SR",
       "stationName": "สถานีสูบจ่ายสำโรง",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 17,287 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 8.16 / สูงสุด 21.92 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 55,392 เมื่อ 2025-04-11 11:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -166,16 +171,45 @@
         "areaSqm": "14,081",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ตำแหน่งบนผัง: ฝั่งตะวันออกตอนล่าง ใกล้ BP"
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันออกตอนล่าง ใกล้ BP",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 17287,
+        "qinMax": 22038,
+        "totalFlowAvg": 20205,
+        "totalFlowMax": 55392,
+        "totalFlowMaxAt": "2025-04-11 11:00",
+        "levelMin": 0.0,
+        "levelMax": 5.62,
+        "levelAvg": 3.25,
+        "inletAvg": 8.16,
+        "inletMax": 21.92,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "SR_F_1800",
+          "nameTh": "ท่อ ø1800"
+        },
+        {
+          "code": "SR_F_1000",
+          "nameTh": "ท่อ ø1000"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 390 ชม.",
+        "ระดับถังอ่านได้ 0.0 จำนวน 60 ชม. (คาดว่าสัญญาณหลุด)",
+        "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "KT",
       "stationName": "สถานีสูบจ่ายคลองเตย",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 9,796 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 13.39 / สูงสุด 21.94 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 19,708 เมื่อ 2025-05-24 07:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -187,16 +221,52 @@
         "areaSqm": "8,120",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "มี คลองเตย VC (Valve Chamber) บนแนวอุโมงค์"
+      "note": "มี คลองเตย VC (Valve Chamber) บนแนวอุโมงค์",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 9796,
+        "qinMax": 19652,
+        "totalFlowAvg": 11786,
+        "totalFlowMax": 19708,
+        "totalFlowMaxAt": "2025-05-24 07:00",
+        "levelMin": 0.45,
+        "levelMax": 5.58,
+        "levelAvg": 4.04,
+        "inletAvg": 13.39,
+        "inletMax": 21.94,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "KT_F_Sukhum",
+          "nameTh": "สุขุมวิท"
+        },
+        {
+          "code": "KT_F_Praka",
+          "nameTh": "พระโขนง (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "KT_F_Ram4_1500",
+          "nameTh": "พระราม 4 ท่อ ø1500"
+        },
+        {
+          "code": "KT_F_Ram4_1000",
+          "nameTh": "พระราม 4 ท่อ ø1000"
+        }
+      ],
+      "dataQuality": [
+        "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)",
+        "Flow ติดลบ 7 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "BP",
       "stationName": "สถานีสูบจ่ายบางพลี",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 22,566 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 7.09 / สูงสุด 13.11 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 41,753 เมื่อ 2026-05-10 00:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -208,16 +278,48 @@
         "areaSqm": "11,000",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ยังไม่มีข้อมูล"
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 22566,
+        "qinMax": 27583,
+        "totalFlowAvg": 22225,
+        "totalFlowMax": 41753,
+        "totalFlowMaxAt": "2026-05-10 00:00",
+        "levelMin": 0.93,
+        "levelMax": 5.83,
+        "levelAvg": 3.95,
+        "inletAvg": 7.09,
+        "inletMax": 13.11,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "BP_F_Kingkeaw1",
+          "nameTh": "กิ่งแก้ว 1"
+        },
+        {
+          "code": "BP_F_Kingkeaw2",
+          "nameTh": "กิ่งแก้ว 2"
+        },
+        {
+          "code": "BP_F_Epec",
+          "nameTh": "รอยืนยันชื่อ (EPEC)"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 2 ชม.",
+        "Flow ติดลบ 982 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "LK",
       "stationName": "สถานีสูบจ่ายลาดกระบัง",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 13,675 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 6.96 / สูงสุด 17.02 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 27,382 เมื่อ 2026-04-25 21:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -229,16 +331,43 @@
         "areaSqm": "9,000",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ยังไม่มีข้อมูล"
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 13675,
+        "qinMax": 28401,
+        "totalFlowAvg": 13616,
+        "totalFlowMax": 27382,
+        "totalFlowMaxAt": "2026-04-25 21:00",
+        "levelMin": 1.43,
+        "levelMax": 5.65,
+        "levelAvg": 4.05,
+        "inletAvg": 6.96,
+        "inletMax": 17.02,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LK_F_Meen",
+          "nameTh": "มีนบุรี"
+        },
+        {
+          "code": "LK_F_Ladkra",
+          "nameTh": "ลาดกระบัง"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 30 ชม."
+      ]
     },
     {
       "stationCode": "MB",
       "stationName": "สถานีสูบจ่ายมีนบุรี",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 16,595 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 6.93 / สูงสุด 558.88 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 23,139 เมื่อ 2026-05-30 10:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -250,16 +379,44 @@
         "areaSqm": "7,745",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "บนจอมีช่อง LV และพื้นที่ 4,216 Sqm เพิ่มอีกหนึ่งค่า — อาจมีถัง 2 ใบ รอยืนยัน"
+      "note": "บนจอมีช่อง LV และพื้นที่ 4,216 Sqm เพิ่มอีกหนึ่งค่า — อาจมีถัง 2 ใบ รอยืนยัน",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 16595,
+        "qinMax": 20217,
+        "totalFlowAvg": 16371,
+        "totalFlowMax": 23139,
+        "totalFlowMaxAt": "2026-05-30 10:00",
+        "levelMin": 1.3,
+        "levelMax": 7.23,
+        "levelAvg": 4.67,
+        "inletAvg": 6.93,
+        "inletMax": 558.88,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "MB_F_Nimit",
+          "nameTh": "นิมิตใหม่ (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "MB_F_Ram",
+          "nameTh": "รามอินทรา (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "MB_F_Suwin",
+          "nameTh": "สุวินทวงศ์ (รอยืนยันชื่อ)"
+        }
+      ]
     },
     {
       "stationCode": "LP",
       "stationName": "สถานีสูบจ่ายลุมพินี",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 9,565 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 13.66 / สูงสุด 21.87 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 33,981 เมื่อ 2025-05-13 12:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -271,16 +428,43 @@
         "areaSqm": "8,570",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "มี ลุมพินี VC (Valve Chamber) บนแนวอุโมงค์"
+      "note": "มี ลุมพินี VC (Valve Chamber) บนแนวอุโมงค์",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 9565,
+        "qinMax": 23580,
+        "totalFlowAvg": 12203,
+        "totalFlowMax": 33981,
+        "totalFlowMaxAt": "2025-05-13 12:00",
+        "levelMin": 2.07,
+        "levelMax": 5.49,
+        "levelAvg": 3.99,
+        "inletAvg": 13.66,
+        "inletMax": 21.87,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LP_F_Sarasin",
+          "nameTh": "สารสิน"
+        },
+        {
+          "code": "LP_F_Sathon",
+          "nameTh": "สาทร"
+        }
+      ],
+      "dataQuality": [
+        "Flow ติดลบ 3 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "LA",
       "stationName": "สถานีสูบจ่ายลาดพร้าว",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 8,986 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 18.04 / สูงสุด 24.33 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 20,938 เมื่อ 2025-04-05 08:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -292,16 +476,44 @@
         "areaSqm": "13,815",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ยังไม่มีข้อมูล"
+      "note": "ยังไม่มีข้อมูล",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 8986,
+        "qinMax": 21842,
+        "totalFlowAvg": 14846,
+        "totalFlowMax": 20938,
+        "totalFlowMaxAt": "2025-04-05 08:00",
+        "levelMin": 0.0,
+        "levelMax": 5.43,
+        "levelAvg": 3.25,
+        "inletAvg": 18.04,
+        "inletMax": 24.33,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "LA_F_1500",
+          "nameTh": "ท่อ ø1500"
+        },
+        {
+          "code": "LA_F_1200",
+          "nameTh": "ท่อ ø1200"
+        }
+      ],
+      "dataQuality": [
+        "ระดับถังอ่านได้ 0.0 จำนวน 248 ชม. (คาดว่าสัญญาณหลุด)",
+        "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "TP",
       "stationName": "สถานีสูบจ่ายท่าพระ",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 12,902 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 7.76 / สูงสุด 15.5 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 30,762 เมื่อ 2026-03-02 12:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -313,16 +525,47 @@
         "areaSqm": "8,120",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกของแม่น้ำเจ้าพระยา"
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกของแม่น้ำเจ้าพระยา",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 12902,
+        "qinMax": 22913,
+        "totalFlowAvg": 12825,
+        "totalFlowMax": 30762,
+        "totalFlowMaxAt": "2026-03-02 12:00",
+        "levelMin": 1.82,
+        "levelMax": 5.66,
+        "levelAvg": 4.29,
+        "inletAvg": 7.76,
+        "inletMax": 15.5,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "TP_F_Wong",
+          "nameTh": "วงเวียนใหญ่ (รอยืนยันชื่อ)"
+        },
+        {
+          "code": "TP_F_Petka",
+          "nameTh": "เพชรเกษม"
+        },
+        {
+          "code": "TP_F_Thapra",
+          "nameTh": "ท่าพระ"
+        }
+      ],
+      "dataQuality": [
+        "Flow ติดลบ 4 ชม. (คาดว่าไหลย้อน/ทิศมิเตอร์ — รอยืนยัน)"
+      ]
     },
     {
       "stationCode": "RB",
       "stationName": "สถานีสูบจ่ายราษฎร์บูรณะ",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 17,216 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 5.74 / สูงสุด 15.31 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 24,353 เมื่อ 2025-04-25 07:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -334,16 +577,40 @@
         "areaSqm": "10,025",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกตอนล่าง"
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตกตอนล่าง",
+      "hourlyStats": {
+        "period": "2025-03-01 ถึง 2026-05-31 (184 วัน, 4390 ชม.)",
+        "qinAvg": 17216,
+        "qinMax": 23591,
+        "totalFlowAvg": 17011,
+        "totalFlowMax": 24353,
+        "totalFlowMaxAt": "2025-04-25 07:00",
+        "levelMin": 1.53,
+        "levelMax": 5.59,
+        "levelAvg": 3.97,
+        "inletAvg": 5.74,
+        "inletMax": 15.31,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "RB_F_Ram2",
+          "nameTh": "พระราม 2"
+        },
+        {
+          "code": "RB_F_Yairom",
+          "nameTh": "รอยืนยันชื่อ"
+        }
+      ]
     },
     {
       "stationCode": "PK",
       "stationName": "สถานีสูบจ่ายเพชรเกษม",
       "sourceSystem": "ยังไม่มีข้อมูล",
-      "flow": "ยังไม่มีข้อมูล (มีค่าดิบจาก SCADA รอยืนยัน — ดู flowPressureData)",
-      "pressureIn": "ยังไม่มีข้อมูล",
+      "flow": "Qin เฉลี่ย 13,616 (มี.ค.–พ.ค. 2025/2026 — หน่วยรอยืนยัน)",
+      "pressureIn": "Inlet เฉลี่ย 15.57 / สูงสุด 20.8 (รอยืนยันหน่วย)",
       "pressureOut": "ยังไม่มีข้อมูล",
-      "maxFlowToday": "ยังไม่มีข้อมูล",
+      "maxFlowToday": "TotalFlow สูงสุดในชุดข้อมูล 37,695 เมื่อ 2026-04-29 14:00",
       "maxPressureToday": "ยังไม่มีข้อมูล",
       "serviceArea": "ยังไม่มีข้อมูล",
       "rtu": "ยังไม่มีข้อมูล",
@@ -355,7 +622,31 @@
         "areaSqm": "10,500",
         "asOf": "2026-07-03 14:05 (SCADA)"
       },
-      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตก ใกล้แนวท่อส่งน้ำมหาสวัสดิ์ (เส้นสีเขียวบนแผนที่)"
+      "note": "ตำแหน่งบนผัง: ฝั่งตะวันตก ใกล้แนวท่อส่งน้ำมหาสวัสดิ์ (เส้นสีเขียวบนแผนที่)",
+      "hourlyStats": {
+        "period": "2026-03-01 ถึง 2026-05-31 (92 วัน, 2190 ชม.)",
+        "qinAvg": 13616,
+        "qinMax": 18609,
+        "totalFlowAvg": 13793,
+        "totalFlowMax": 37695,
+        "totalFlowMaxAt": "2026-04-29 14:00",
+        "levelMin": 2.77,
+        "levelMax": 6.64,
+        "levelAvg": 4.89,
+        "inletAvg": 15.57,
+        "inletMax": 20.8,
+        "unitNote": "Flow คาดว่าเป็น ลบ.ม./ชม. และ Inlet เป็น ม. — หน่วยรอยืนยัน"
+      },
+      "distributionLines": [
+        {
+          "code": "PK_F",
+          "nameTh": "เส้นจ่ายหลัก (มี Zone Meter ZM01/ZM02)"
+        }
+      ],
+      "dataQuality": [
+        "พบ Error Code (32769/65538 = 16-bit overflow) 210 ชม.",
+        "ระดับถังพุ่งเกินจริง 1 ชม. (เซนเซอร์ผิดพลาด)"
+      ]
     }
   ],
   "otherNodesOnScada": [
@@ -663,6 +954,27 @@
         ]
       },
       "note": "สมมติฐานการตีความ (ยังไม่ยืนยัน): ตัวเลข 5 หลัก = Flow, ทศนิยม 2 ตำแหน่ง = Pressure/ระดับน้ำ, % = เปอร์เซ็นต์เปิดวาล์ว/RCV"
+    },
+    {
+      "recordType": "Hourly Dataset",
+      "source": "Water_Level_3rd5th_month.xlsx",
+      "period": "มี.ค.–พ.ค. 2025 และ มี.ค.–พ.ค. 2026 (PK เฉพาะปี 2026)",
+      "coverage": "10 สถานี × รายชั่วโมง รวม 41,700+ แถว",
+      "fields": {
+        "Qin": "อัตราการไหลรับเข้าสถานี (คาดว่า ลบ.ม./ชม. — หน่วยรอยืนยัน)",
+        "Level": "ระดับน้ำถังเก็บน้ำใส (ม.)",
+        "Inlet": "แรงดันขาเข้า (คาดว่า ม. — รอยืนยัน)",
+        "F_x / P_x": "Flow / Pressure จ่ายออกรายทิศทางหรือรายขนาดท่อ",
+        "ZM": "Zone Meter (เฉพาะ PK: ZM01, ZM02)",
+        "TotalFlow": "Flow จ่ายออกรวมของสถานี"
+      },
+      "cleaningRules": [
+        "ตัดค่า Flow ที่เป็น Error Code (32768/32769/65535/65536/65538 = 16-bit overflow) และ >60000 ออกจากสถิติ",
+        "ตัดค่า Level > 8 ม. (เกินความจุถังจริง = สัญญาณเซนเซอร์ผิดพลาด)",
+        "ค่า Flow ติดลบ (เช่น BP_F_Kingkeaw1) คงไว้ — อาจเป็นการไหลย้อน รอยืนยัน"
+      ],
+      "storage": "water-km-dashboard/data/timeseries/*.csv (ข้อมูลเต็ม) + summary.json (สถิติ/โปรไฟล์)",
+      "note": "ผู้ใช้ระบุว่าเป็น 'ตัวอย่างข้อมูล' ของแต่ละสถานี"
     }
   ],
   "shiftHandoverData": [],
@@ -981,6 +1293,51 @@
       "relatedStation": "",
       "relatedSystem": "",
       "keyTakeaway": "เป้าหมายร่วมของทุกด้านคือรักษาสมดุลของระบบ (System Equilibrium)"
+    },
+    {
+      "category": "คุณภาพข้อมูล",
+      "topic": "Error Code จากเซนเซอร์: 32769 / 65538 (16-bit Overflow)",
+      "description": "ค่า Flow ที่อ่านได้เป็น 32768/32769/65535/65538 คือค่าผิดพลาดจากการล้นของตัวเลข 16-bit ไม่ใช่ค่าจริง ต้องคัดออกก่อนวิเคราะห์ — พบใน PK (210 ชม.), SR (390 ชม.), LK (30 ชม.) และค่า 32769 ยังปรากฏบนจอ SCADA (จุด PY) ด้วย",
+      "example": "PK OutMax ดิบ = 65538 (ผิดพลาด) → คัดแล้วเหลือ 37,695",
+      "relatedStation": "PK, SR, LK, PY",
+      "relatedSystem": "",
+      "keyTakeaway": "เห็น 32769/65538 เมื่อไร ให้สงสัยว่าเป็น Error ไม่ใช่น้ำจริง"
+    },
+    {
+      "category": "คุณภาพข้อมูล",
+      "topic": "Flow ติดลบ = การไหลย้อน (Reverse Flow)",
+      "description": "BP_F_Kingkeaw1 ติดลบถึง 982 ชั่วโมง แสดงว่าน้ำไหลย้อนทิศในบางช่วงเวลา (หรือทิศทางติดตั้งมิเตอร์) — เป็นพฤติกรรมโครงข่ายที่ควรเข้าใจ ไม่ใช่ข้อมูลเสียเสมอไป",
+      "example": "BP_F_Kingkeaw1 ช่วงกลางคืนติดลบ (-13 ถึง -196) แล้วพลิกเป็นบวกช่วงกลางวัน",
+      "relatedStation": "BP",
+      "relatedSystem": "",
+      "keyTakeaway": "ค่าติดลบของ Flow อาจเป็นการไหลย้อนจริง — ตรวจสอบทิศทางก่อนตัดทิ้ง"
+    },
+    {
+      "category": "ไฮดรอลิก",
+      "topic": "วัฏจักรรายวันของถังเก็บน้ำใส (Tank Cycle)",
+      "description": "จากข้อมูลรายชั่วโมงจริง: ระดับถังไต่ขึ้นตลอดคืน (สะสมน้ำช่วง Off-peak) ไปสูงสุดราว 05:00-06:00 แล้วถูกดึงลงต่อเนื่องช่วง Peak เช้า (07:00-11:00) — ตรงกับหลักการ Buffer และการเดินปั๊มตาม PTC Curve",
+      "example": "TP: Level 3.09 (เที่ยงคืน) → 5.43 (06:00) → ลดลงช่วงสาย / TotalFlow ต่ำสุดตี 3 สูงสุด 8.00-12.00",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "คืนเติมถัง–เช้าระบาย: เห็นวัฏจักรนี้ในข้อมูลจริงทุกสถานี"
+    },
+    {
+      "category": "คำศัพท์",
+      "topic": "ZM (Zone Meter)",
+      "description": "มิเตอร์วัดการจ่ายน้ำรายโซนของสถานี — พบใน PK (ZM01, ZM02) สอดคล้องกับรหัส ZM1105/ZM1108 บนแผนที่บริเวณเพชรเกษม โดย ZM01+ZM02 ≈ PK_F (เส้นจ่ายหลัก)",
+      "example": "PK: ZM01 5,644 + ZM02 2,573 ≈ TotalFlow 8,218",
+      "relatedStation": "PK",
+      "relatedSystem": "",
+      "keyTakeaway": "ZM ช่วยแยกว่าน้ำที่จ่ายออกไปโซนไหนเท่าไร"
+    },
+    {
+      "category": "โครงสร้างพื้นฐาน",
+      "topic": "เส้นจ่ายออกของสถานี (Distribution Lines)",
+      "description": "แต่ละสถานีจ่ายน้ำออกหลายทิศทาง/หลายท่อ และวัด Flow+Pressure แยกรายเส้น เช่น TP→(Wong, เพชรเกษม, ท่าพระ), KT→(สุขุมวิท, พระโขนง?, พระราม 4 ø1500/ø1000), SR→(ø1800, ø1000), BP→(กิ่งแก้ว 1/2, EPEC?), LK→(มีนบุรี, ลาดกระบัง), MB→(นิมิตใหม่?, รามอินทรา?, สุวินทวงศ์?), LP→(สารสิน, สาทร), RB→(พระราม 2, Yairom?), LA→(ø1500, ø1200)",
+      "example": "ชื่อย่อจากคอลัมน์ Excel — ชื่อเต็มภาษาไทยหลายเส้นรอยืนยัน",
+      "relatedStation": "ทุกสถานี",
+      "relatedSystem": "",
+      "keyTakeaway": "1 สถานี = หลายเส้นจ่าย แต่ละเส้นมี Flow/Pressure ของตัวเอง"
     }
   ],
   "pumpData": [],
@@ -1121,7 +1478,6 @@
     }
   ],
   "pendingConfirmations": [
-    "ความหมายและหน่วยของตัวเลขบนจอ SCADA: เลข 5 หลัก = Flow (หน่วยอะไร: ลบ.ม./ชม.?), เลขทศนิยม = Pressure หรือระดับน้ำ (หน่วย ม.?)",
     "ค่า % ตามจุดต่าง ๆ (เช่น นวมินทร์ 40%, มัยลาภ 29%) คือ % เปิดวาล์ว RCV ใช่หรือไม่",
     "แต่ละสถานีรับน้ำจากระบบใด (sourceSystem: MH / TR1 / TR2 / TR3) — จากภาพยังสรุปแน่ชัดไม่ได้",
     "จะรวม TB (ธนบุรี), SS (สามเสน), PY (พหลโยธิน) เข้าใน Dashboard ด้วยหรือไม่ (ไม่อยู่ใน Master 10 สถานี)",
@@ -1129,7 +1485,11 @@
     "ชื่อจุด 'เอลิมพันธ์' อ่านจากภาพอาจคลาดเคลื่อน",
     "จำนวนจุด RTU: Playbook ยืนยัน 'Over 210 tracking points' สอดคล้องบันทึกการเรียนรู้ — ส่วน 81 จุดบน Legend แผนที่คาดว่าเป็นชุดย่อยที่แสดงบนแผนที่ (รอยืนยันขั้นสุดท้าย)",
     "คำว่า 'Blackout' ในการจัดการน้ำเค็ม — น่าจะเป็น Blending หรือการบริหารจัดการน้ำดิบ รอยืนยันคำที่ถูกต้อง",
-    "บทบาท 'บางกอกน้อย' ใน Interdependence Rule: Playbook กล่าวถึงเสมือนเป็นโหนดรับน้ำข้างเคียงเพชรเกษม/ท่าพระ แต่ไม่อยู่ใน 10 สถานีสูบจ่ายหลัก (เป็นชื่อสาขา/โซน 01) — รอยืนยันสถานะ"
+    "บทบาท 'บางกอกน้อย' ใน Interdependence Rule: Playbook กล่าวถึงเสมือนเป็นโหนดรับน้ำข้างเคียงเพชรเกษม/ท่าพระ แต่ไม่อยู่ใน 10 สถานีสูบจ่ายหลัก (เป็นชื่อสาขา/โซน 01) — รอยืนยันสถานะ",
+    "หน่วยของ Flow ในข้อมูลรายชั่วโมง (คาดว่า ลบ.ม./ชม.) และหน่วย Inlet/Pressure (คาดว่า ม.)",
+    "ชื่อเต็มภาษาไทยของเส้นจ่ายบางเส้น: TP_Wong, RB_Yairom, KT_Praka, BP_Epec, MB_Nimit/Ram/Suwin",
+    "SR TotalFlow สูงสุด 55,392 (11 เม.ย. 2025 11:00) สูงผิดปกติ — เหตุการณ์จริงหรือความผิดพลาดข้อมูล",
+    "MB ระดับถังสูงสุด 7.23 ม. เกิน Max 7.10 บนจอ SCADA เล็กน้อย — ยืนยันค่า Max จริงของถัง MB"
   ],
   "futureAddOn": [
     "Pump Capacity",
@@ -1165,6 +1525,7 @@
     "source": "Smart Waterworks Playbook (ชุดที่ 6)"
   },
   "resolvedConfirmations": [
-    "กำลังการผลิต (คลี่คลายโดย Playbook ชุดที่ 6): บางเขน ~4.2 ล้าน ลบ.ม./วัน (~67%), มหาสวัสดิ์ ~1.9 ล้าน (~30%), สามเสน 3-4%, ธนบุรี <1% → กำลังผลิตรวมทั้งระบบ ~6 ล้าน, Demand รายวัน ~5 ล้าน — ตัวเลข '4 ล้าน' (ชุด 1) คือบางเขนแห่งเดียว ส่วน '5-6 ล้าน' (ชุด 2/4) คือภาพรวมระบบ"
+    "กำลังการผลิต (คลี่คลายโดย Playbook ชุดที่ 6): บางเขน ~4.2 ล้าน ลบ.ม./วัน (~67%), มหาสวัสดิ์ ~1.9 ล้าน (~30%), สามเสน 3-4%, ธนบุรี <1% → กำลังผลิตรวมทั้งระบบ ~6 ล้าน, Demand รายวัน ~5 ล้าน — ตัวเลข '4 ล้าน' (ชุด 1) คือบางเขนแห่งเดียว ส่วน '5-6 ล้าน' (ชุด 2/4) คือภาพรวมระบบ",
+    "ความหมายตัวเลขสถานีบน SCADA (คลี่คลายโดย Excel ชุดที่ 7): คู่เลขใหญ่ = Qin (รับเข้า) กับ TotalFlow (จ่ายออกรวม), เลขทศนิยม = Inlet Pressure และแรงดันจ่ายรายเส้น, กล่องถัง = Level (ม.) — เหลือยืนยันเฉพาะหน่วยของ Flow (คาดว่า ลบ.ม./ชม.)"
   ]
 }

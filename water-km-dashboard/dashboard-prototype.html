@@ -472,21 +472,181 @@ window.TS = {"meta": {"source": "Water_Level_3rd5th_month.xlsx (ผู้ใช�
   })();
 
   /* ============================================================
-     SYSTEM MAP
+     SYSTEM MAP  (Sample simulation on authentic SVG)
   ============================================================ */
   (function sysmap() {
     const p = $("#pane-sysmap");
     p.innerHTML = `
-      <h2>System Map — หน้าจอจริง Smart Tunnel V.2 "เทพอุโมงค์"</h2>
-      <p class="sub">กราฟิกเวกเตอร์ต้นฉบับจากระบบจริง (tunnel.php) พร้อมค่าที่บันทึก ณ 3 ก.ค. 2026 15:08 — ปั๊มสีแดง = Actived กำลังทำงาน, เขียว = Tunnel, น้ำเงิน = Trunk Main, ป้าย % = เปอร์เซ็นต์เปิดวาล์ว RCV</p>
+      <h2>System Map — Smart Tunnel V.2 (โหมดจำลอง Sample)</h2>
+      <p class="sub">เลย์เอาต์คือ SVG ต้นฉบับจากระบบจริง แต่ค่าที่เห็นเป็น <b>Sample Data จำลองจากโปรไฟล์ 24 ชม. ของข้อมูลจริง</b> (มี.ค.–พ.ค. 2025/2026) — ตัวเลข ระดับถัง และปั๊ม ปรับตามช่วงเวลาโดยอัตโนมัติ</p>
+      <div class="chips" style="align-items:center">
+        <span class="badge b-sample" style="font-size:12px;padding:5px 12px">SAMPLE DATA — ค่าจำลอง ไม่ใช่ข้อมูลสด</span>
+        <button class="chip on" id="sm-play" type="button">⏸ หยุดจำลอง</button>
+        <button class="chip" id="sm-speed" type="button">ความเร็ว ×1</button>
+        <button class="chip" id="sm-snap" type="button">ดูค่าจริง ณ 3 ก.ค. 15:08</button>
+      </div>
       <div class="card" style="padding:10px">
         <div class="scroll-x" id="scada-real"></div>
       </div>
       <div class="grid cols-2" style="margin-top:12px">
-        <div class="note-box"><b>ค่าคงที่ ไม่อัปเดตสด:</b> หน้าจอจริงรับข้อมูลผ่าน MQTT ในเครือข่ายภายในของ กปน. เท่านั้น — ภาพนี้คือสถานะที่บันทึกมา ณ 15:08 / ปุ่มเลือกวัน-เวลาและกราฟย้อนหลังถูกปิดไว้ (ต้องใช้เซิร์ฟเวอร์ภายใน)</div>
-        <div class="note-box"><b>ข้อสังเกต ณ 15:08:</b> LA และ KT ปั๊มไม่ทำงานทุกตัวแต่ยังจ่ายน้ำอยู่ (LA จ่าย 13,754 / KT จ่าย 8,790) — คาดว่าเป็นการจ่ายแบบ <b>By-pass</b> ด้วยแรงดันอุโมงค์ · จุด RCV29 พหลโยธิน ค่า Inlet แสดง 32769 = Error Code ของเซนเซอร์</div>
+        <div class="note-box"><b>กติกาการจำลอง:</b> Flow รับเข้า/จ่ายออกและระดับถังของ 10 สถานี เดินตามค่าเฉลี่ยรายชั่วโมงจากข้อมูลจริง + ความแปรปรวนเล็กน้อย · สัดส่วนเส้นจ่ายรายทิศคงตามหน้างาน · จำนวนปั๊มที่ติด (สีแดง) ปรับตามภาระการจ่าย (กติกาจำลอง ไม่ใช่ตรรกะจริงของระบบ) · ค่า MH/TR ปรับตามภาระรวมของแต่ละฝั่ง · % วาล์ว RCV คงที่</div>
+        <div class="note-box"><b>ดูของจริง:</b> กดปุ่ม "ดูค่าจริง ณ 3 ก.ค. 15:08" เพื่อหยุดการจำลองและแสดงค่าที่บันทึกจากหน้างานทุกจุด (ข้อสังเกตของจริง: LA และ KT จ่ายแบบ By-pass ปั๊มดับทุกตัว, RCV29 แสดง 32769 = Error Code)</div>
       </div>`;
-    $("#scada-real").innerHTML = window.SCADA_SVG;
+
+    const root = $("#scada-real");
+    root.innerHTML = window.SCADA_SVG;
+    const byId = id => root.querySelector('[id="' + id + '"]');
+
+    /* ---------- capture snapshot state for restore ---------- */
+    const touched = new Set();
+    const snapText = new Map(), snapAttr = new Map();
+    function setText(id, v) {
+      const el = byId(id); if (!el) return;
+      if (!snapText.has(el)) snapText.set(el, el.textContent);
+      el.textContent = v; touched.add(id);
+    }
+    /* bars use transform="scale(1,-1)" + inline style height — drive style only */
+    function setBar(el, hpx, fill) {
+      if (!el) return;
+      if (!snapAttr.has(el)) snapAttr.set(el, { h: el.style.height, f: el.style.fill });
+      el.style.height = hpx + "px";
+      if (fill) el.style.fill = fill;
+    }
+    function setPumpFill(el, fill) {
+      if (!el) return;
+      if (!snapAttr.has(el)) snapAttr.set(el, { h: null, f: el.style.fill });
+      el.style.fill = fill;
+    }
+    function restoreAll() {
+      snapText.forEach((v, el) => el.textContent = v);
+      snapAttr.forEach((a, el) => {
+        if (a.h != null && a.h !== "") el.style.height = a.h;
+        if (a.f) el.style.fill = a.f;
+      });
+    }
+
+    /* ---------- station configs ---------- */
+    const ST = ["SR","KT","BP","LK","MB","LP","LA","TP","RB","PK"];
+    const EAST = ["SR","KT","BP","LK","MB","LP","LA"], WEST = ["TP","RB","PK"];
+    const cfg = {};
+    ST.forEach(code => {
+      const s = TS.stations[code]; if (!s) return;
+      const outEl = byId(code + "_F_txt");
+      const out0 = parseFloat(outEl ? outEl.textContent : "0") || 1;
+      const lineEls = Array.from(root.querySelectorAll('text[id]')).filter(el =>
+        el.id.indexOf(code + "_") === 0 && /_txt$/.test(el.id) && (/_F_./.test(el.id) || /_ZM\d/.test(el.id)));
+      const lines = lineEls.map(el => ({ id: el.id, share: (parseFloat(el.textContent) || 0) / out0 }));
+      const bar = byId(code + "_Level_bar") || byId(code + "_Lev_bar");
+      const px = byId(code + "_Level_px") || byId(code + "_Lev_px");
+      const geo = px ? { y: parseFloat(px.getAttribute("y")), h: parseFloat(px.getAttribute("height")) } : null;
+      const barFill = bar ? (bar.style.fill || bar.getAttribute("fill") || "#29cdf5") : null;
+      const p0 = parseFloat((byId(code + "_P_txt") || {}).textContent) || 10;
+      const max = parseFloat((M.pumpingStations.find(x => x.stationCode === code).clearWaterTank || {}).maxLevelM) || 6;
+      const outPeak = Math.max(...s.profile24.map(d => d.out || 0));
+      const pumpTotal = root.querySelectorAll('rect[id^="' + code + '_Pump"]').length;
+      cfg[code] = { prof: s.profile24, lines, bar, geo, barFill, p0, out0, max, outPeak, pumpTotal };
+    });
+
+    const lerp = (prof, t, key) => {
+      const h0 = Math.floor(t) % 24, h1 = (h0 + 1) % 24, fr = t - Math.floor(t);
+      const a = prof[h0][key], b = prof[h1][key];
+      if (a == null || b == null) return a != null ? a : b;
+      return a + (b - a) * fr;
+    };
+    const jitter = amp => 1 + (Math.random() * 2 - 1) * amp;
+
+    /* pump groups incl. transmission side */
+    const PGROUPS = { MH: 3, BK_03: 4, BK_04: 3, BK_TR1: 3, BK_TR2: 5, BK_TR3: 2 };  /* base active at load */
+    Object.keys(PGROUPS).forEach(g => {
+      PGROUPS[g] = { base: PGROUPS[g], total: root.querySelectorAll('rect[id^="' + g + '_Pump"]').length };
+    });
+    function setPumps(prefix, n, total) {
+      for (let i = 1; i <= total; i++)
+        setPumpFill(byId(prefix + "_Pump" + i), i <= n ? "red" : "rgb(67, 67, 67)");
+    }
+
+    /* transmission base values */
+    const TRBASE = {
+      TR1: { fl: 46474, ps: 33.37 }, TR2: { fl: 46510, ps: 36.03 }, TR3: { fl: 51900, ps: 25.1 },
+      MHTR: 39250, MH_F: 23807, MH_A: 15761, MH_B: 8046, MH_C: 8017,
+      BK03: { CH: 3109, NG: 5518, ME: 5841 }, BK04: { VI: 9440, PY: 229 }
+    };
+
+    /* ---------- simulation ---------- */
+    let simDate = new Date(), running = true, speed = 1, timer = null;
+    const WD = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    function tick() {
+      simDate = new Date(simDate.getTime() + 6 * 60000 * speed);
+      const t = simDate.getHours() + simDate.getMinutes() / 60;
+      const hh = simDate.getHours() % 12 || 12;
+      const ampm = simDate.getHours() >= 12 ? "PM" : "AM";
+      setText("time_box", "SAMPLE · " + simDate.getDate() + " " + MO[simDate.getMonth()] + " " + simDate.getFullYear() + " " + hh + ":" + String(simDate.getMinutes()).padStart(2, "0") + " " + ampm);
+
+      let eastF = 0, eastN = 0, westF = 0, westN = 0;
+      ST.forEach(code => {
+        const c = cfg[code]; if (!c) return;
+        const qin = Math.max(0, Math.round(lerp(c.prof, t, "qin") * jitter(0.03)));
+        const out = Math.max(0, Math.round(lerp(c.prof, t, "out") * jitter(0.03)));
+        const lvl = Math.max(0.3, Math.min(c.max, lerp(c.prof, t, "lvl") * jitter(0.015)));
+        const inl = (lerp(c.prof, t, "inl") || 10) * jitter(0.02);
+        const factor = out / (c.out0 || 1);
+        const pOut = Math.max(2, c.p0 * (0.75 + 0.35 * (out / (c.outPeak || out || 1))));
+
+        setText(code + "_Qin_txt", qin);
+        setText(code + "_F_txt", out);
+        setText(code + "_Inlet_txt", inl.toFixed(2));
+        setText(code + "_P_txt", pOut.toFixed(2));
+        setText(code + (code === "TB" ? "_Lev_txt" : "_Level_txt"), lvl.toFixed(2));
+        c.lines.forEach(l => setText(l.id, Math.max(0, Math.round(out * l.share * jitter(0.04)))));
+        if (c.bar && c.geo) {
+          const ratio = lvl / c.max;
+          setBar(c.bar, Math.max(2, c.geo.h * ratio), ratio >= 0.9 ? "rgb(67, 217, 107)" : "rgb(0, 214, 255)");
+        }
+        const n = Math.max(0, Math.min(c.pumpTotal, Math.round(c.pumpTotal * out / (c.outPeak * 1.05))));
+        setPumps(code, n, c.pumpTotal);
+        if (EAST.indexOf(code) >= 0) { eastF += out / (c.prof.reduce((s, d) => s + (d.out || 0), 0) / 24); eastN++; }
+        else { westF += out / (c.prof.reduce((s, d) => s + (d.out || 0), 0) / 24); westN++; }
+      });
+
+      const fe = eastN ? eastF / eastN : 1, fw = westN ? westF / westN : 1;
+      setText("BK_TR1_FL_txt", Math.round(TRBASE.TR1.fl * fe * jitter(0.01)));
+      setText("BK_TR2_FL_txt", Math.round(TRBASE.TR2.fl * fe * jitter(0.01)));
+      setText("BK_TR3_FL_txt", Math.round(TRBASE.TR3.fl * fe * jitter(0.01)));
+      setText("BK_TR1_PS_txt", (TRBASE.TR1.ps * (1.06 - 0.1 * fe) * jitter(0.01)).toFixed(2));
+      setText("BK_TR2_PS_txt", (TRBASE.TR2.ps * (1.06 - 0.1 * fe) * jitter(0.01)).toFixed(2));
+      setText("BK_TR3_PS_txt", (TRBASE.TR3.ps * (1.06 - 0.1 * fe) * jitter(0.01)).toFixed(2));
+      setText("MHTR_TR_txt", Math.round(TRBASE.MHTR * fw * jitter(0.01)));
+      setText("MH_F_txt", Math.round(TRBASE.MH_F * fw * jitter(0.01)));
+      setText("MH_F_A_txt", Math.round(TRBASE.MH_A * fw * jitter(0.02)));
+      setText("MH_F_B_txt", Math.round(TRBASE.MH_B * fw * jitter(0.02)));
+      setText("MH_F_C_txt", Math.round(TRBASE.MH_C * fw * jitter(0.02)));
+      setText("BK_03_CH_txt", Math.round(TRBASE.BK03.CH * fe * jitter(0.02)));
+      setText("BK_03_NG_txt", Math.round(TRBASE.BK03.NG * fe * jitter(0.02)));
+      setText("BK_03_ME_txt", Math.round(TRBASE.BK03.ME * fe * jitter(0.02)));
+      setText("BK_04_VI_txt", Math.round(TRBASE.BK04.VI * fe * jitter(0.02)));
+      setText("BK_04_PY_txt", Math.round(TRBASE.BK04.PY * fe * jitter(0.05)));
+      Object.keys(PGROUPS).forEach(g => {
+        const gg = PGROUPS[g];
+        const f = g === "MH" ? fw : fe;
+        const n = Math.max(0, Math.min(gg.total, Math.round(gg.base * f)));
+        setPumps(g, n, gg.total);
+      });
+    }
+
+    function start() { if (!timer) timer = setInterval(tick, 1500); running = true; $("#sm-play").textContent = "⏸ หยุดจำลอง"; $("#sm-play").classList.add("on"); }
+    function stop() { clearInterval(timer); timer = null; running = false; $("#sm-play").textContent = "▶ เล่นจำลอง"; $("#sm-play").classList.remove("on"); }
+
+    $("#sm-play").addEventListener("click", () => running ? stop() : start());
+    $("#sm-speed").addEventListener("click", e => {
+      speed = speed === 1 ? 5 : 1;
+      e.target.textContent = "ความเร็ว ×" + speed;
+      e.target.classList.toggle("on", speed === 5);
+    });
+    $("#sm-snap").addEventListener("click", () => { stop(); restoreAll(); setText("time_box", "ค่าจริง · 3 Jul 2026 3:08 PM"); restoreAll(); });
+
+    tick(); start();
   })();
 
   /* ============================================================

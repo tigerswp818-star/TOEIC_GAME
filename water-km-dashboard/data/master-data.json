@@ -53,6 +53,11 @@
       "version": 10,
       "date": "2026-07-03",
       "detail": "ชุดที่ 9: หน้า 'RTU รายจุด' — ทะเบียน RTU ครบ 236 จุดพร้อมตำแหน่งติดตั้ง, รหัสสาขา 16 สาขา, RCV เพิ่ม 3 ตัว (RCV12/52/53), ยืนยัน BK03: CH=แจ้งวัฒนะ NG=งามวงศ์วาน, RCV38 สี่พระยาอุโมงค์ = จุดลอดแม่น้ำ"
+    },
+    {
+      "version": 10,
+      "date": "2026-07-03",
+      "detail": "ถอด AI Chatbot ออกจากแผน Future Add-on ตามคำสั่งผู้ใช้"
     }
   ],
   "waterTreatmentPlants": [
@@ -4645,8 +4650,7 @@
   "futureAddOn": [
     "Pump Capacity",
     "Alarm History",
-    "Maintenance",
-    "AI Chatbot"
+    "Maintenance"
   ],
   "rtuNetworkOverview": {
     "totalPoints": "236 จุดตามทะเบียนหน้า 'RTU รายจุด' (สอดคล้องบันทึกการเรียนรู้ 'กว่า 210 จุด') — Legend แผนที่ 81 จุดคือชุดย่อยที่พล็อตบนแผนที่",
